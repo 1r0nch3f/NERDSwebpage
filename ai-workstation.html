@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom AI Workstation Build - NERDS PC</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #1f1f1f; line-height: 1.7; background: transparent; }
+  .container { max-width: 900px; margin: 0 auto; padding: 20px 24px 40px; }
+  p { font-size: 17px; margin-bottom: 16px; }
+  .section-heading {
+    font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 400;
+    text-transform: uppercase; color: #1a1a1a; margin: 40px 0 20px;
+    padding-bottom: 8px; border-bottom: 3px solid #e53935;
+  }
+  .build-card {
+    background: #fff; border: 1px solid #ddd; border-radius: 8px;
+    padding: 20px 24px; margin-bottom: 16px;
+  }
+  .build-card h3 { font-size: 18px; font-weight: 700; color: #1a5276; margin-bottom: 8px; }
+  .build-card p { font-size: 15px; margin: 0; color: #333; }
+  .checklist {
+    background: #fff; border: 1px solid #ddd; border-radius: 8px;
+    padding: 20px 24px; margin-bottom: 20px;
+  }
+  .check-item { display: flex; align-items: flex-start; margin-bottom: 12px; }
+  .check-item:last-child { margin-bottom: 0; }
+  .check-icon { color: #27AE60; font-size: 18px; margin-right: 12px; flex-shrink: 0; line-height: 1.5; }
+  .check-item p { font-size: 15px; margin: 0; color: #333; }
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-bottom: 32px;
+  }
+  .compare-card {
+    border-radius: 8px; padding: 20px 24px;
+  }
+  .compare-local {
+    background: #e8f8f0; border: 2px solid #27AE60;
+  }
+  .compare-cloud {
+    background: #fdf2f2; border: 2px solid #e53935;
+  }
+  .compare-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  .compare-card ul { padding-left: 18px; margin: 0; }
+  .compare-card li { font-size: 14px; margin-bottom: 6px; color: #333; }
+  .compare-card li:last-child { margin-bottom: 0; }
+  .price-block {
+    background: #1a2332; border-radius: 8px; padding: 24px;
+    margin-bottom: 20px; text-align: center;
+  }
+  .price-block .price { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .price-block .note { font-size: 15px; color: #aaa; }
+  .cta-box {
+    text-align: center; padding: 24px; background: #f9f9f9;
+    border-radius: 8px; border: 1px solid #ddd; margin-top: 32px;
+  }
+  .cta-box h3 { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
+  .cta-box p { font-size: 15px; color: #666; margin-bottom: 16px; }
+  .cta-btn {
+    display: inline-block; background: #1a1a1a; color: #fff;
+    padding: 12px 32px; border-radius: 4px; font-size: 16px;
+    font-weight: 700; text-decoration: none;
+  }
+  .cta-btn:hover { background: #333; }
+  @media (max-width: 600px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <p>Some AI workloads do not belong in the cloud. If you need fast local inference, you are processing sensitive data that cannot leave your network, or you are tired of paying monthly cloud compute fees, a purpose-built AI workstation is the answer.</p>
+
+  <p style="margin-bottom: 32px;">This is what NERDS was built on. We have been building custom computers for years. AI workstations are the same discipline with different specs: more GPU, more VRAM, more memory, optimized cooling, and the right software stack to make it all work.</p>
+
+  <h2 class="section-heading">What We Build</h2>
+
+  <div class="build-card">
+    <h3>Local AI Inference Workstation</h3>
+    <p>For businesses running AI models on-site. Think local chatbots, document processing, image generation, or code assistance without sending data to the cloud. Built around high-VRAM GPUs with fast NVMe storage and enough system memory to handle large models.</p>
+  </div>
+
+  <div class="build-card">
+    <h3>Content Creation Powerhouse</h3>
+    <p>For studios, agencies, and creators using AI-assisted video editing, image generation, 3D rendering, or music production. Optimized for tools like Stable Diffusion, ComfyUI, DaVinci Resolve with AI features, and similar creative AI workloads.</p>
+  </div>
+
+  <div class="build-card">
+    <h3>Data Processing and Analytics Machine</h3>
+    <p>For businesses crunching large datasets locally. Financial analysis, scientific computing, or any workflow where you need GPU-accelerated processing without cloud latency or data transfer concerns.</p>
+  </div>
+
+  <div class="build-card" style="margin-bottom: 32px;">
+    <h3>AI Development Workstation</h3>
+    <p>For developers and researchers fine-tuning models, running experiments, or building AI applications. Multi-GPU configurations, large memory pools, and development environments pre-configured and ready to go.</p>
+  </div>
+
+  <h2 class="section-heading">What Is Included</h2>
+
+  <div class="checklist">
+    <div class="check-item"><span class="check-icon">&#10003;</span><p>Consultation to determine exact hardware requirements for your workload</p></div>
+    <div class="check-item"><span class="check-icon">&#10003;</span><p>Component selection optimized for AI performance, not just benchmark numbers</p></div>
+    <div class="check-item"><span class="check-icon">&#10003;</span><p>Professional assembly and cable management</p></div>
+    <div class="check-item"><span class="check-icon">&#10003;</span><p>Operating system installation and configuration</p></div>
+    <div class="check-item"><span class="check-icon">&#10003;</span><p>AI software stack setup: drivers, CUDA/ROCm, Python environments, and the specific tools you need</p></div>
+    <div class="check-item"><span class="check-icon">&#10003;</span><p>Stress testing and burn-in to verify stability under sustained AI workloads</p></div>
+    <div class="check-item"><span class="check-icon">&#10003;</span><p>Documentation of your build specs and software configuration</p></div>
+    <div class="check-item"><span class="check-icon">&#10003;</span><p>30 days of support for any hardware or configuration issues</p></div>
+  </div>
+
+  <h2 class="section-heading">Why Local Over Cloud</h2>
+
+  <div class="compare-grid">
+    <div class="compare-card compare-local">
+      <h3 style="color: #1e8449;">Local Workstation</h3>
+      <ul>
+        <li>One-time cost, runs for years</li>
+        <li>Your data never leaves your building</li>
+        <li>No per-hour or per-token charges</li>
+        <li>No waiting on cloud queue times</li>
+        <li>Dedicated to your workloads 24/7</li>
+        <li>Works without internet if needed</li>
+      </ul>
+    </div>
+    <div class="compare-card compare-cloud">
+      <h3 style="color: #c0392b;">Cloud Compute</h3>
+      <ul>
+        <li>Ongoing monthly costs that add up</li>
+        <li>Data leaves your network</li>
+        <li>Charges by the hour or by the token</li>
+        <li>Queue times during peak demand</li>
+        <li>Shared resources with other users</li>
+        <li>Requires reliable internet connection</li>
+      </ul>
+    </div>
+  </div>
+
+  <p style="margin-bottom: 32px;">For businesses running AI tools daily, a local workstation pays for itself in months. For medical offices, law firms, financial services, or any business handling sensitive information, keeping data on-site is not just convenient. It is a compliance advantage.</p>
+
+  <h2 class="section-heading">What This Costs</h2>
+
+  <div class="price-block">
+    <p class="price">Starting at $2,500</p>
+    <p class="note">Every build quoted individually based on your specific workload</p>
+  </div>
+
+  <p>Entry-level local inference machines start at $2,500. High-end multi-GPU builds for heavy workloads can run $8,000 to $15,000 or more depending on specs.</p>
+
+  <p>I will spec it out, show you exactly what you are getting and why, and give you a firm price before we order a single part.</p>
+
+  <p>Build time is typically 1 to 2 weeks after parts arrive.</p>
+
+  <div class="cta-box">
+    <h3>Need a machine built for AI?</h3>
+    <p>Tell me what you need it to do and I will spec the right build.</p>
+    <a href="https://www.chattnerds.com/contact" class="cta-btn" target="_top">Request a Build Quote</a>
+  </div>
+
+</div>
+</body>
+</html>
