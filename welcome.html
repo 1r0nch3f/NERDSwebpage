@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome - NERDS PC</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #1f1f1f; line-height: 1.7; background: transparent; }
+  .container { max-width: 920px; margin: 0 auto; padding: 20px 24px 40px; }
+  p { font-size: 17px; margin-bottom: 16px; }
+  .intro { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 2px solid #eee; }
+  .intro p { font-size: 17px; color: #333; }
+  .personal-box {
+    background: #1a2332; border-radius: 8px; padding: 24px 28px;
+    margin-bottom: 32px;
+  }
+  .personal-box h3 {
+    font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 400;
+    text-transform: uppercase; color: #fff; margin-bottom: 10px; letter-spacing: 1px;
+  }
+  .personal-box p { font-size: 15px; color: #ccc; margin-bottom: 10px; }
+  .personal-box p:last-child { margin-bottom: 0; }
+  .personal-box .highlight { color: #e53935; font-weight: 700; }
+  .section-heading {
+    font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 400;
+    text-transform: uppercase; color: #1a1a1a; margin: 36px 0 20px;
+    padding-bottom: 8px; border-bottom: 3px solid #e53935;
+  }
+  .pillars { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 36px; }
+  .pillar { text-align: center; padding: 28px 20px; border-radius: 10px; transition: transform 0.2s; }
+  .pillar:hover { transform: translateY(-4px); }
+  .pillar-pc { background: #f0f0f0; border: 2px solid #ddd; }
+  .pillar-ai { background: #e8f4fd; border: 2px solid #b3d9f2; }
+  .pillar-3d { background: #fef3e2; border: 2px solid #f5d69b; }
+  .pillar .icon { font-size: 44px; margin-bottom: 12px; display: block; }
+  .pillar h3 { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 500; text-transform: uppercase; margin-bottom: 10px; color: #1a1a1a; }
+  .pillar p { font-size: 14px; color: #444; margin: 0 0 16px; line-height: 1.6; }
+  .pillar-btn { display: inline-block; padding: 8px 20px; border-radius: 4px; font-size: 13px; font-weight: 700; text-decoration: none; text-transform: uppercase; letter-spacing: 0.5px; }
+  .btn-dark { background: #1a1a1a; color: #fff; }
+  .btn-dark:hover { background: #333; }
+  .btn-blue { background: #2E86C1; color: #fff; }
+  .btn-blue:hover { background: #1a5276; }
+  .btn-orange { background: #E67E22; color: #fff; }
+  .btn-orange:hover { background: #c46a15; }
+  .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 36px; }
+  .service-item { display: flex; align-items: flex-start; padding: 14px 16px; background: #fff; border: 1px solid #eee; border-radius: 6px; }
+  .service-icon { margin-right: 10px; flex-shrink: 0; font-size: 16px; line-height: 1.7; }
+  .service-icon.pc { color: #1a1a1a; }
+  .service-icon.ai { color: #2E86C1; }
+  .service-icon.print { color: #E67E22; }
+  .service-item p { font-size: 14px; margin: 0; color: #333; }
+  .service-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 6px; border-radius: 3px; margin-left: 8px; vertical-align: middle; }
+  .label-pc { background: #eee; color: #555; }
+  .label-ai { background: #d4edfc; color: #1a5276; }
+  .label-3d { background: #fde8cc; color: #9c5a10; }
+  .always-on { background: #e53935; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 36px; }
+  .always-on .headline { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 500; color: #fff; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+  .always-on p { font-size: 15px; color: rgba(255,255,255,0.9); margin: 0; }
+  .wom-box { background: #fff; border: 2px solid #27AE60; border-radius: 8px; padding: 24px; margin-bottom: 36px; text-align: center; }
+  .wom-box h3 { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 400; text-transform: uppercase; color: #1a1a1a; margin-bottom: 10px; }
+  .wom-box p { font-size: 15px; color: #444; margin-bottom: 8px; }
+  .wom-box p:last-child { margin-bottom: 0; }
+  .pricing-box { background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 24px; margin-bottom: 36px; }
+  .pricing-box p { font-size: 15px; color: #444; margin-bottom: 12px; }
+  .pricing-box p:last-child { margin-bottom: 0; }
+  .budget-section { margin-bottom: 36px; }
+  .budget-bar { display: flex; border-radius: 6px; overflow: hidden; height: 36px; margin-bottom: 12px; }
+  .bar-gpu { background: #e53935; flex: 33; display: flex; align-items: center; justify-content: center; }
+  .bar-cpu { background: #E67E22; flex: 22; display: flex; align-items: center; justify-content: center; }
+  .bar-rest { background: #2E86C1; flex: 45; display: flex; align-items: center; justify-content: center; }
+  .bar-gpu span, .bar-cpu span, .bar-rest span { font-size: 12px; font-weight: 700; color: #fff; }
+  .budget-labels { display: flex; justify-content: space-between; gap: 12px; }
+  .budget-label { text-align: center; flex: 1; }
+  .budget-label .pct { font-size: 18px; font-weight: 700; }
+  .budget-label .desc { font-size: 12px; color: #666; }
+  .cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .cta-card { text-align: center; padding: 24px 20px; border-radius: 8px; }
+  .cta-card h3 { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 400; text-transform: uppercase; margin-bottom: 8px; color: #1a1a1a; }
+  .cta-card p { font-size: 14px; color: #555; margin-bottom: 16px; }
+  .cta-custom { background: #f4f4f4; border: 2px solid #ddd; }
+  .cta-contact { background: #e8f4fd; border: 2px solid #b3d9f2; }
+  .cta-btn { display: inline-block; padding: 10px 24px; border-radius: 4px; font-size: 14px; font-weight: 700; text-decoration: none; }
+  .byp-box { text-align: center; padding: 24px; background: #f4f4f4; border-radius: 8px; border: 2px solid #ddd; margin-bottom: 32px; }
+  .byp-box h3 { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 500; text-transform: uppercase; color: #1a1a1a; margin-bottom: 8px; }
+  .byp-box p { font-size: 15px; color: #555; margin: 0; }
+  @media (max-width: 700px) {
+    .pillars { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .cta-row { grid-template-columns: 1fr; }
+    .budget-labels { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="intro">
+    <p>I am Mike, and this is NERDS PC. I handle computer repair, custom builds, AI integration, 3D printing, and just about anything tech-related for folks in Dalton, Chattanooga, Cleveland, and the surrounding area.</p>
+    <p>When you reach out, you talk to me. Not a call center, not a ticket system, not somebody reading off a script who has to "check with their manager." I am the owner. I make the decisions. You get a straight answer and your stuff gets handled.</p>
+  </div>
+
+  <div class="personal-box">
+    <h3>The kind of service you don't get anymore</h3>
+    <p>You call, <span class="highlight">I answer</span>. You have a question, <span class="highlight">I give you an answer right then</span>. No hold music, no department transfers, no waiting three days for a callback. If one of my guys handles something for you, it is because I trust them to do it the same way I would.</p>
+    <p>That is not a sales pitch. That is just how I run things.</p>
+  </div>
+
+  <h2 class="section-heading">What We Do</h2>
+
+  <div class="pillars">
+    <div class="pillar pillar-pc">
+      <span class="icon">&#128421;</span>
+      <h3>PC Services</h3>
+      <p>Repair, custom builds, diagnostics, data recovery, networking, and remote support. Hardware and software, desktops and laptops.</p>
+      <a href="https://www.chattnerds.com/services" class="pillar-btn btn-dark" onclick="window.open(this.href,'_blank');return false;">View Services</a>
+    </div>
+    <div class="pillar pillar-ai">
+      <span class="icon">&#129302;</span>
+      <h3>AI Services</h3>
+      <p>AI assessments, tool setup, business automation, ongoing strategy, and custom AI workstation builds for local businesses.</p>
+      <a href="https://www.chattnerds.com/ai-services" class="pillar-btn btn-blue" onclick="window.open(this.href,'_blank');return false;">Explore AI</a>
+    </div>
+    <div class="pillar pillar-3d">
+      <span class="icon">&#9881;</span>
+      <h3>3D Printing</h3>
+      <p>Custom prints, prototypes, replacement parts, and creative projects. If you can design it or describe it, I can print it.</p>
+      <a href="https://www.chattnerds.com/3d-printing" class="pillar-btn btn-orange" onclick="window.open(this.href,'_blank');return false;">Learn More</a>
+    </div>
+  </div>
+
+  <div class="always-on">
+    <p class="headline">Available 24/7</p>
+    <p>Call, text, or email any time. I do not keep banker's hours.</p>
+  </div>
+
+  <h2 class="section-heading">Everything I Can Help With</h2>
+
+  <div class="services-grid">
+    <div class="service-item"><span class="service-icon pc">&#9670;</span><p>Desktop and laptop repair <span class="service-label label-pc">PC</span></p></div>
+    <div class="service-item"><span class="service-icon pc">&#9670;</span><p>Custom PC builds for gaming, work, or general use <span class="service-label label-pc">PC</span></p></div>
+    <div class="service-item"><span class="service-icon pc">&#9670;</span><p>Data recovery and OS reinstalls <span class="service-label label-pc">PC</span></p></div>
+    <div class="service-item"><span class="service-icon pc">&#9670;</span><p>Home and small-office network setup <span class="service-label label-pc">PC</span></p></div>
+    <div class="service-item"><span class="service-icon pc">&#9670;</span><p>Driver and game troubleshooting <span class="service-label label-pc">PC</span></p></div>
+    <div class="service-item"><span class="service-icon pc">&#9670;</span><p>Remote support for issues that don't need a drop-off <span class="service-label label-pc">PC</span></p></div>
+    <div class="service-item"><span class="service-icon ai">&#9670;</span><p>AI readiness assessments <span class="service-label label-ai">AI</span></p></div>
+    <div class="service-item"><span class="service-icon ai">&#9670;</span><p>AI tool setup and business automation <span class="service-label label-ai">AI</span></p></div>
+    <div class="service-item"><span class="service-icon ai">&#9670;</span><p>AI strategy retainers <span class="service-label label-ai">AI</span></p></div>
+    <div class="service-item"><span class="service-icon ai">&#9670;</span><p>Custom AI workstation builds <span class="service-label label-ai">AI</span></p></div>
+    <div class="service-item"><span class="service-icon print">&#9670;</span><p>Custom 3D prints and prototypes <span class="service-label label-3d">3D</span></p></div>
+    <div class="service-item"><span class="service-icon print">&#9670;</span><p>Replacement parts and creative projects <span class="service-label label-3d">3D</span></p></div>
+  </div>
+
+  <div class="wom-box">
+    <h3>We Don't Advertise</h3>
+    <p>No ads. No sponsored posts. No cold calls. Every customer we have came from a referral or found us because somebody they trust told them about us.</p>
+    <p>If you are here, somebody sent you. That is the only marketing I need.</p>
+    <p style="font-size: 14px; color: #888; margin-top: 8px;">Need a reference? I have got plenty. Just ask.</p>
+  </div>
+
+  <h2 class="section-heading">How Pricing Works</h2>
+
+  <div class="pricing-box">
+    <p>Parts and component prices change constantly, so every build and most repairs are quoted individually. Starting prices are listed on the Services and Shop pages.</p>
+    <p>Tell me what you need and I will give you a real number. No guessing, no hidden fees, no surprises on the invoice.</p>
+  </div>
+
+  <div class="budget-section">
+    <h2 class="section-heading">Example: $1,500 Build Breakdown</h2>
+    <div class="budget-bar">
+      <div class="bar-gpu"><span>GPU</span></div>
+      <div class="bar-cpu"><span>CPU</span></div>
+      <div class="bar-rest"><span>Everything Else</span></div>
+    </div>
+    <div class="budget-labels">
+      <div class="budget-label"><p class="pct" style="color:#e53935;">~33%</p><p class="desc">GPU ~$500</p></div>
+      <div class="budget-label"><p class="pct" style="color:#E67E22;">~22%</p><p class="desc">CPU ~$330</p></div>
+      <div class="budget-label"><p class="pct" style="color:#2E86C1;">~45%</p><p class="desc">Everything Else ~$670</p></div>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <div class="cta-card cta-custom">
+      <h3>Want a Custom Build?</h3>
+      <p>Fill out the form and I will spec it out for you.</p>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" class="cta-btn btn-dark" onclick="window.open(this.href,'_blank');return false;">Start Your Build</a>
+    </div>
+    <div class="cta-card cta-contact">
+      <h3>Need Something Else?</h3>
+      <p>Repair, AI, 3D printing, or just a question. Reach out.</p>
+      <a href="https://www.chattnerds.com/contact" class="cta-btn btn-blue" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
+    </div>
+  </div>
+
+  <div class="byp-box">
+    <h3>Bring Your Parts, I Build It</h3>
+    <p>Already have your components? I will put it together, cable manage it, and make sure it posts. Assembly service starting at $100.</p>
+  </div>
+
+</div>
+</body>
+</html>
