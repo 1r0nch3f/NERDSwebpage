@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NERDS PC - CPU Cooling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#e53935;--bg:#0d0d0d;--card:#161616;--line:#2a2a2a;--txt:#f2f2f2;--mut:#9a9a9a}
+body{background:var(--bg);color:var(--txt);font-family:'Open Sans',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:48px 22px 70px}
+h1{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(38px,7vw,68px);text-transform:uppercase;letter-spacing:1px;line-height:.98}
+h1 .dot{color:var(--red)}
+.lede{color:var(--mut);max-width:680px;margin:16px 0 6px;font-size:16px}
+.note-top{display:inline-block;margin-top:14px;font-size:13px;color:var(--mut);border-left:3px solid var(--red);padding:6px 12px;background:#141414}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-top:34px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;transition:transform .18s ease,border-color .18s ease}
+.card:hover{transform:translateY(-4px);border-color:var(--red)}
+.tier{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:600}
+.name{font-family:'Oswald',sans-serif;font-size:27px;font-weight:600;text-transform:uppercase;margin:2px 0 12px;line-height:1.05}
+.price{font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;color:#fff;line-height:1}
+.price small{font-size:14px;color:var(--mut);font-weight:400;display:block;margin-top:4px;font-family:'Open Sans',sans-serif}
+.psu-badge{display:inline-block;margin:12px 0 4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#cfe;background:#10312f;border:1px solid #1d5a55;border-radius:20px;padding:4px 11px}
+.specs{list-style:none;margin:14px 0 18px;border-top:1px solid var(--line);padding-top:14px}
+.specs li{font-size:14px;padding:5px 0;color:#d6d6d6;display:flex;gap:9px}
+.specs li b{color:var(--mut);font-weight:600;min-width:62px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding-top:1px}
+.btn{margin-top:auto;display:block;text-align:center;background:var(--red);color:#fff;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:13px;border-radius:8px;font-size:15px;transition:background .15s}
+.btn:hover{background:#c62828}
+.subhead{font-family:'Oswald',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:1px;margin:42px 0 4px;color:#fff;border-left:4px solid var(--red);padding-left:12px}
+.subhead span{color:var(--mut);font-size:13px;letter-spacing:.5px;display:block;font-family:'Open Sans',sans-serif;text-transform:none;padding-top:3px}
+.upsell{margin-top:30px;background:#141414;border:1px dashed var(--line);border-radius:10px;padding:18px 22px;font-size:14px;color:#d6d6d6}
+.upsell b{color:var(--red)}
+.brands{margin-top:54px;border-top:1px solid var(--line);padding-top:30px}
+.brands h3{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:18px;margin-bottom:18px}
+.brow{display:flex;flex-wrap:wrap;gap:10px 26px;margin-bottom:18px}
+.bgroup{font-size:14px}
+.bgroup .lab{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:4px;font-family:'Oswald',sans-serif}
+.bgroup .vals{color:#cfcfcf}
+.climate{margin-top:26px;background:#1a1310;border:1px solid #3a2a1f;border-left:4px solid #ff8c00;border-radius:8px;padding:16px 20px;font-size:13px;color:#e4d4c4}
+.climate b{color:#ff8c00}
+.foot-cta{margin-top:40px;text-align:center}
+.foot-cta .btn{display:inline-block;padding:14px 40px}
+.disclaim{text-align:center;color:var(--mut);font-size:12px;margin-top:26px}
+@media(max-width:520px){.wrap{padding:32px 16px 50px}}
+</style></head>
+<body><div class="wrap"><h1>CPU<span class="dot">.</span> Cooling</h1><p class="lede">From quiet, high-value air towers to 360mm liquid coolers with built-in displays. Pick the cooling that fits your build and your look.</p><div class="subhead">Air Coolers<span>Quiet, reliable, excellent value</span></div><div class="grid"><div class="card">
+<div class="tier">CPU Cooling</div>
+<div class="name">Peerless Assassin 120 SE</div>
+<div class="price">$49<small>Installed with your build</small></div>
+<ul class="specs"><li><b>Detail</b><span>Dual-tower air, 6 heatpipes, twin 120mm PWM fans</span></li></ul>
+<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
+</div><div class="card">
+<div class="tier">CPU Cooling</div>
+<div class="name">Phantom Spirit 120 EVO</div>
+<div class="price">$69<small>Installed with your build</small></div>
+<ul class="specs"><li><b>Detail</b><span>7 heatpipes, dual 120mm PWM, strong value performer</span></li></ul>
+<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
+</div><div class="card">
+<div class="tier">CPU Cooling</div>
+<div class="name">Peerless Assassin Vision MAX</div>
+<div class="price">$79<small>Installed with your build</small></div>
+<ul class="specs"><li><b>Detail</b><span>Air tower with a 5-inch magnetic display screen</span></li></ul>
+<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
+</div></div><div class="subhead">Liquid / AIO Coolers<span>360mm performance, optional display screens</span></div><div class="grid"><div class="card">
+<div class="tier">CPU Cooling</div>
+<div class="name">Frozen Prism 360</div>
+<div class="price">$79<small>Installed with your build</small></div>
+<ul class="specs"><li><b>Detail</b><span>360mm liquid AIO, ARGB, 3x PWM fans</span></li></ul>
+<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
+</div><div class="card">
+<div class="tier">CPU Cooling</div>
+<div class="name">Trofeo Vision 360</div>
+<div class="price">$199<small>Installed with your build</small></div>
+<ul class="specs"><li><b>Detail</b><span>360mm AIO with a 6.86-inch LCD screen</span></li></ul>
+<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
+</div><div class="card">
+<div class="tier">CPU Cooling</div>
+<div class="name">Wonder Vision 360 Turbo</div>
+<div class="price">$239<small>Installed with your build</small></div>
+<ul class="specs"><li><b>Detail</b><span>360mm AIO, curved high-res display, high-performance pump</span></li></ul>
+<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
+</div></div><div class="climate"><b>Heads up on pricing:</b> Memory and storage prices are running high right now because of AI-driven demand on RAM and NAND. <b>All prices are starting points and subject to change</b> with component availability and market pricing. Listed brands and components may be substituted with another of equal or greater value. Want more RAM, a bigger drive, or a different config? Reach out and I will put together a current quote.</div><div class="brands"><h3>Brands We Build With</h3><div class="brow"><div class="bgroup"><span class="lab">Cooling</span><span class="vals">Thermalright</span></div><div class="bgroup"><span class="lab">Cases</span><span class="vals">Montech, Corsair, HYTE</span></div><div class="bgroup"><span class="lab">Processors</span><span class="vals">AMD, Intel</span></div><div class="bgroup"><span class="lab">Power</span><span class="vals">Montech</span></div></div></div><div class="foot-cta"><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a></div><p class="disclaim">Prices are starting points and subject to change with component availability and market pricing. Contact us for current pricing before finalizing a build.</p></div></body></html>
