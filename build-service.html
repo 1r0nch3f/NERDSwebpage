@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NERDS PC - Bring Your Parts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#e53935;--bg:#0d0d0d;--card:#161616;--line:#2a2a2a;--txt:#f2f2f2;--mut:#9a9a9a}
+body{background:var(--bg);color:var(--txt);font-family:'Open Sans',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:48px 22px 70px}
+h1{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(38px,7vw,68px);text-transform:uppercase;letter-spacing:1px;line-height:.98}
+h1 .dot{color:var(--red)}
+.lede{color:var(--mut);max-width:680px;margin:16px 0 6px;font-size:16px}
+.note-top{display:inline-block;margin-top:14px;font-size:13px;color:var(--mut);border-left:3px solid var(--red);padding:6px 12px;background:#141414}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-top:34px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;transition:transform .18s ease,border-color .18s ease}
+.card:hover{transform:translateY(-4px);border-color:var(--red)}
+.tier{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:600}
+.name{font-family:'Oswald',sans-serif;font-size:27px;font-weight:600;text-transform:uppercase;margin:2px 0 12px;line-height:1.05}
+.price{font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;color:#fff;line-height:1}
+.price small{font-size:14px;color:var(--mut);font-weight:400;display:block;margin-top:4px;font-family:'Open Sans',sans-serif}
+.psu-badge{display:inline-block;margin:12px 0 4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#cfe;background:#10312f;border:1px solid #1d5a55;border-radius:20px;padding:4px 11px}
+.specs{list-style:none;margin:14px 0 18px;border-top:1px solid var(--line);padding-top:14px}
+.specs li{font-size:14px;padding:5px 0;color:#d6d6d6;display:flex;gap:9px}
+.specs li b{color:var(--mut);font-weight:600;min-width:62px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding-top:1px}
+.btn{margin-top:auto;display:block;text-align:center;background:var(--red);color:#fff;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:13px;border-radius:8px;font-size:15px;transition:background .15s}
+.btn:hover{background:#c62828}
+.subhead{font-family:'Oswald',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:1px;margin:42px 0 4px;color:#fff;border-left:4px solid var(--red);padding-left:12px}
+.subhead span{color:var(--mut);font-size:13px;letter-spacing:.5px;display:block;font-family:'Open Sans',sans-serif;text-transform:none;padding-top:3px}
+.upsell{margin-top:30px;background:#141414;border:1px dashed var(--line);border-radius:10px;padding:18px 22px;font-size:14px;color:#d6d6d6}
+.upsell b{color:var(--red)}
+.brands{margin-top:54px;border-top:1px solid var(--line);padding-top:30px}
+.brands h3{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:18px;margin-bottom:18px}
+.brow{display:flex;flex-wrap:wrap;gap:10px 26px;margin-bottom:18px}
+.bgroup{font-size:14px}
+.bgroup .lab{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:4px;font-family:'Oswald',sans-serif}
+.bgroup .vals{color:#cfcfcf}
+.climate{margin-top:26px;background:#1a1310;border:1px solid #3a2a1f;border-left:4px solid #ff8c00;border-radius:8px;padding:16px 20px;font-size:13px;color:#e4d4c4}
+.climate b{color:#ff8c00}
+.foot-cta{margin-top:40px;text-align:center}
+.foot-cta .btn{display:inline-block;padding:14px 40px}
+.disclaim{text-align:center;color:var(--mut);font-size:12px;margin-top:26px}
+@media(max-width:520px){.wrap{padding:32px 16px 50px}}
+
+.section{margin-top:54px}
+.checks{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:26px}
+.checks li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;font-size:14px;color:#d6d6d6;display:flex;gap:12px;align-items:flex-start}
+.checks li .ck{color:var(--red);font-weight:700;font-size:17px;line-height:1.3}
+.checks li b{color:#fff;display:block;margin-bottom:3px;font-size:15px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:26px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px}
+.step .num{font-family:'Oswald',sans-serif;font-size:46px;font-weight:700;color:var(--red);line-height:1}
+.step b{display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.5px;font-size:17px;margin:8px 0 6px;color:#fff}
+.step p{font-size:14px;color:#cfcfcf}
+.svc{margin-top:24px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.svc-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:15px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+.svc-row:last-child{border-bottom:0}
+.svc-row .l b{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.5px;font-size:16px;color:#fff}
+.svc-row .l span{display:block;font-size:13px;color:var(--mut);margin-top:2px}
+.svc-row .p{font-family:'Oswald',sans-serif;font-weight:600;color:var(--red);font-size:20px;white-space:nowrap}
+.turn{margin-top:24px;background:#10312f;border:1px solid #1d5a55;border-radius:10px;padding:16px 20px;font-size:14px;color:#cfe}
+.turn b{color:#fff;text-transform:uppercase;font-family:'Oswald',sans-serif;letter-spacing:.5px}
+</style></head>
+<body><div class="wrap"><h1>Bring Your Parts<span class="dot">.</span> We Build It</h1><p class="lede">Have the parts but don&rsquo;t want the stress of putting them together? That&rsquo;s where NERDS Custom Computers comes in. You buy the components, we handle the build, testing, and tuning.</p><div class="section"><div class="subhead">What&rsquo;s Included<span>Every build, start to finish</span></div><ul class="checks"><li><span class="ck">&#10003;</span><div><b>Compatibility Review</b>We review your full part list before starting to confirm everything works together.</div></li><li><span class="ck">&#10003;</span><div><b>Component Testing</b>Each part is tested on arrival to confirm it is in good working order.</div></li><li><span class="ck">&#10003;</span><div><b>Professional Assembly</b>Clean cable management and proper installation throughout.</div></li><li><span class="ck">&#10003;</span><div><b>Stress Testing</b>Validation and burn-in tests to ensure performance and stability.</div></li><li><span class="ck">&#10003;</span><div><b>Optional Windows Install</b>Windows and drivers set up and ready if you want it.</div></li><li><span class="ck">&#10003;</span><div><b>Labor Warranty Included</b>Our build labor is backed by warranty, every time.</div></li></ul></div><div class="section"><div class="subhead">How It Works<span>Three simple steps</span></div><div class="steps"><div class="step"><div class="num">1</div><b>Submit Your Parts List</b><p>Send us your list and we pre-check it for compatibility.</p></div><div class="step"><div class="num">2</div><b>Drop Off or Ship Parts</b><p>We intake-test each component and begin assembly.</p></div><div class="step"><div class="num">3</div><b>Stress Test &amp; Pickup</b><p>Your system is tested, quality checked, and ready to go.</p></div></div></div><div class="section"><div class="subhead">Build Labor<span>Priced by complexity &mdash; parts not included</span></div><div class="grid"><div class="card"><div class="tier">Labor</div><div class="name">Standard Build</div><div class="price">$125<small>Build labor</small></div><ul class="specs"><li><b>For</b><span>Air-cooled, single GPU, up to 2 drives</span></li></ul><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Start Pre Check</a></div><div class="card"><div class="tier">Labor</div><div class="name">Advanced Build</div><div class="price">$150<small>Build labor</small></div><ul class="specs"><li><b>For</b><span>AIO cooler, multiple drives, RGB sync, custom case layouts</span></li></ul><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Start Pre Check</a></div><div class="card"><div class="tier">Labor</div><div class="name">Enthusiast Build</div><div class="price">$200+<small>Build labor</small></div><ul class="specs"><li><b>For</b><span>Dual GPU, custom loop, or complex cases (quoted)</span></li></ul><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Start Pre Check</a></div></div></div><div class="section"><div class="subhead">Add-On Services<span>Mix and match with any build</span></div><div class="svc"><div class="svc-row"><div class="l"><b>Windows Install &amp; Drivers</b><span>Windows install, activation (key required), driver setup</span></div><div class="p">$50</div></div><div class="svc-row"><div class="l"><b>Data Migration</b><span>Transfer files from your old drive to a new SSD/HDD (based on size)</span></div><div class="p">$40&ndash;$75</div></div><div class="svc-row"><div class="l"><b>Cable Sleeving / Aesthetic Mods</b><span>Custom sleeved cables, RGB tuning, specialty requests</span></div><div class="p">Quote</div></div><div class="svc-row"><div class="l"><b>Performance Tune-Up</b><span>BIOS update, fan curves, XMP/EXPO setup</span></div><div class="p">$25</div></div><div class="svc-row"><div class="l"><b>Dust Cleaning</b><span>Case, filters, and reused parts cleaning</span></div><div class="p">$25</div></div><div class="svc-row"><div class="l"><b>Rush Service</b><span>Faster turnaround by build complexity (not available for custom loop builds)</span></div><div class="p">$50&ndash;$150</div></div></div><div class="turn"><b>Typical turnaround:</b> 1&ndash;3 business days once all parts are received and pass testing.</div></div><div class="climate"><b>Heads up on pricing:</b> Labor rates above are starting points and may vary with build complexity. All prices are subject to change &mdash; reach out and we&rsquo;ll confirm a quote for your build.</div><div class="foot-cta"><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Start Your Pre Check</a></div><p class="disclaim">Parts are not included in build labor pricing. Final pricing confirmed at quote.</p></div></body></html>
