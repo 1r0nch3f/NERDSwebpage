@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Graphics Cards - NERDS PC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0e0e10;--card:#17181b;--line:#2a2c31;--red:#e53935;--text:#e6e6e6;--muted:#a8a8a8}
+  body{font-family:'Open Sans',Arial,sans-serif;color:var(--text);line-height:1.7;background:var(--bg)}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px 46px}
+  h1{font-family:'Oswald',sans-serif;font-size:46px;font-weight:600;text-transform:uppercase;color:#fff;letter-spacing:1px;margin:26px 0 6px}
+  h1 .dot{color:var(--red)}
+  .lede{font-size:17px;color:#d6d6d6;margin-bottom:8px;max-width:760px}
+  .section-heading{font-family:'Oswald',sans-serif;font-size:26px;font-weight:400;text-transform:uppercase;color:#fff;margin:34px 0 18px;padding-bottom:8px;border-bottom:3px solid var(--red)}
+  .tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin:28px 0 8px}
+  .tile{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-top:4px solid var(--red);border-radius:12px;padding:30px 24px;text-align:center;transition:transform .18s,border-color .18s}
+  .tile:hover{transform:translateY(-5px)}
+  .tile .brand{font-family:'Oswald',sans-serif;font-size:26px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:6px}
+  .tile .series{font-size:13px;color:var(--muted);margin-bottom:16px}
+  .tile .go{display:inline-block;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#fff;padding:8px 18px;border-radius:5px;background:var(--red)}
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:transform .18s,border-color .18s}
+  .card:hover{transform:translateY(-4px);border-color:#3a3d44}
+  .gpu-img{position:relative;width:100%;aspect-ratio:16/10;background:#101113;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line)}
+  .gpu-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .noimg-label{display:none;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:13px;color:#5a5d63}
+  .gpu-img.noimg .noimg-label{display:flex}
+  .card .body{padding:18px 20px}
+  .tier{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:600}
+  .name{font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;text-transform:uppercase;margin:2px 0 8px;line-height:1.05;color:#fff}
+  .blurb{font-size:14px;color:var(--muted);margin:0}
+  .climate{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:10px;padding:18px 22px;margin-top:30px;font-size:14px;color:#cfcfcf}
+  .foot-cta{text-align:center;margin-top:30px}
+  .btn{display:inline-block;background:var(--red);color:#fff;padding:13px 34px;border-radius:5px;font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px;text-decoration:none}
+  .btn:hover{background:#c62f2c}
+  .disclaim{font-size:12px;color:#7e7e7e;margin-top:18px;text-align:center}
+  @media(max-width:760px){.tiles,.grid{grid-template-columns:1fr}h1{font-size:34px}}
+</style></head>
+<body><div class="wrap"><h1>Graphics Cards<span class="dot">.</span></h1><p class="lede">The current generation from all three vendors is on the shelves and shipping. I build with whatever fits your budget, resolution target, and the games or software you actually run. Pricing changes week to week, so everything here is a starting point. Message me for a current quote.</p><div class="tiles"><a class="tile" href="https://1r0nch3f.github.io/NERDSwebpage/gpu-nvidia.html" onclick="window.open(this.href,'_blank');return false;"><div class="brand">NVIDIA</div><div class="series">GeForce RTX 50 Series</div><span class="go">View Lineup</span></a><a class="tile" href="https://1r0nch3f.github.io/NERDSwebpage/gpu-amd.html" onclick="window.open(this.href,'_blank');return false;"><div class="brand">AMD</div><div class="series">Radeon RX 9000 Series</div><span class="go">View Lineup</span></a><a class="tile" href="https://1r0nch3f.github.io/NERDSwebpage/gpu-intel.html" onclick="window.open(this.href,'_blank');return false;"><div class="brand">Intel</div><div class="series">Arc Battlemage Series</div><span class="go">View Lineup</span></a></div><div class="climate"><b>Not sure what you need?</b> Tell me your monitor, the resolution and refresh rate you game at, and what you run most. I will point you to the right card instead of selling you more than you need.</div><div class="foot-cta"><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Build Quote</a></div><p class="disclaim">Prices change week to week with availability and market pricing. Everything here is a starting point. Contact me for a current quote before finalizing a build.</p></div></body></html>
