@@ -7,28 +7,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Open Sans', Arial, sans-serif; color: #1f1f1f; line-height: 1.7; background: transparent; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
   .container { max-width: 900px; margin: 0 auto; padding: 20px 24px 40px; }
   p { font-size: 17px; margin-bottom: 16px; }
   .section-heading {
     font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 400;
-    text-transform: uppercase; color: #1a1a1a; margin: 40px 0 20px;
+    text-transform: uppercase; color: #fff; margin: 40px 0 20px;
     padding-bottom: 8px; border-bottom: 3px solid #e53935;
   }
   .dept-block {
-    background: #fff; border: 1px solid #ddd; border-radius: 8px;
+    background: #17181b; border: 1px solid #2a2c31; border-radius: 8px;
     padding: 20px 24px; margin-bottom: 16px;
   }
-  .dept-block h3 { font-size: 18px; font-weight: 700; color: #1a5276; margin-bottom: 12px; }
+  .dept-block h3 { font-size: 18px; font-weight: 700; color: #8fcdf0; margin-bottom: 12px; }
   .dept-block ul { padding-left: 20px; margin: 0; }
-  .dept-block li { font-size: 15px; color: #333; margin-bottom: 8px; }
+  .dept-block li { font-size: 15px; color: #cfcfcf; margin-bottom: 8px; }
   .dept-block li:last-child { margin-bottom: 0; }
   .phase-card {
-    background: #f4f4f4; padding: 20px 24px; margin-bottom: 16px;
+    background: #17181b; padding: 20px 24px; margin-bottom: 16px;
     border-radius: 0 8px 8px 0;
   }
-  .phase-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #1a1a1a; }
-  .phase-card p { font-size: 15px; margin: 0; color: #333; }
+  .phase-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+  .phase-card p { font-size: 15px; margin: 0; color: #cfcfcf; }
   .phase-1 { border-left: 4px solid #2E86C1; }
   .phase-2 { border-left: 4px solid #27AE60; }
   .phase-3 { border-left: 4px solid #E67E22; }
@@ -41,17 +41,29 @@
   .price-block .price { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px; }
   .price-block .note { font-size: 15px; color: #aaa; }
   .cta-box {
-    text-align: center; padding: 24px; background: #f9f9f9;
-    border-radius: 8px; border: 1px solid #ddd; margin-top: 32px;
+    text-align: center; padding: 24px; background: #17181b;
+    border-radius: 8px; border: 1px solid #2a2c31; margin-top: 32px;
   }
-  .cta-box h3 { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
-  .cta-box p { font-size: 15px; color: #666; margin-bottom: 16px; }
+  .cta-box h3 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .cta-box p { font-size: 15px; color: #a8a8a8; margin-bottom: 16px; }
   .cta-btn {
-    display: inline-block; background: #1a1a1a; color: #fff;
+    display: inline-block; background: #e53935; color: #fff;
     padding: 12px 32px; border-radius: 4px; font-size: 16px;
     font-weight: 700; text-decoration: none;
   }
-  .cta-btn:hover { background: #333; }
+  .cta-btn:hover { background: #c62f2c; }
+
+  .ai-nav { margin-top: 40px; padding-top: 28px; border-top: 1px solid #2a2c31; }
+  .ai-nav-title { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 18px; color: #fff; margin-bottom: 14px; }
+  .ai-nav-links { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .ai-nav-links a { display: inline-block; background: #17181b; border: 1px solid #2a2c31; color: #e6e6e6; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; text-decoration: none; transition: border-color .15s, transform .15s; }
+  .ai-nav-links a:hover { border-color: #e53935; transform: translateY(-2px); }
+  .ai-nav-back { display: flex; flex-wrap: wrap; gap: 10px; }
+  .ai-nav-back a { display: inline-block; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; text-decoration: none; }
+  .ai-nav-back a.primary { background: #e53935; color: #fff; }
+  .ai-nav-back a.primary:hover { background: #c62f2c; }
+  .ai-nav-back a.ghost { background: transparent; border: 1px solid #2a2c31; color: #cfcfcf; }
+  .ai-nav-back a.ghost:hover { border-color: #8fcdf0; color: #fff; }
 </style>
 </head>
 <body>
@@ -144,6 +156,20 @@
     <a href="https://www.chattnerds.com/contact" class="cta-btn" onclick="window.open(this.href,'_blank');return false;">Request a Quote</a>
   </div>
 
+
+  <div class="ai-nav">
+    <div class="ai-nav-title">More AI Services</div>
+    <div class="ai-nav-links">
+    <a href="https://1r0nch3f.github.io/NERDSwebpage/assessment.html" onclick="window.open(this.href,'_blank');return false;">AI Readiness Assessment</a>
+    <a href="https://1r0nch3f.github.io/NERDSwebpage/starter-setup.html" onclick="window.open(this.href,'_blank');return false;">Starter AI Setup</a>
+    <a href="https://1r0nch3f.github.io/NERDSwebpage/ai-retainer.html" onclick="window.open(this.href,'_blank');return false;">AI Strategy Retainer</a>
+    <a href="https://1r0nch3f.github.io/NERDSwebpage/ai-workstation.html" onclick="window.open(this.href,'_blank');return false;">Custom AI Workstation Build</a>
+    </div>
+    <div class="ai-nav-back">
+      <a class="primary" href="https://www.chattnerds.com/ai-services" onclick="window.open(this.href,'_blank');return false;">All AI Services</a>
+      <a class="ghost" href="https://www.chattnerds.com/contact" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
+    </div>
+  </div>
 </div>
 </body>
 </html>
