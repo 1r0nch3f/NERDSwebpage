@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warranty and Support - NERDS PC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
+  .banner { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%); padding: 54px 24px; text-align: center; margin-bottom: 30px; position: relative; overflow: hidden; }
+  .banner::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 25% 50%, rgba(229,57,53,0.12) 0%, transparent 60%), radial-gradient(circle at 75% 50%, rgba(229,57,53,0.08) 0%, transparent 50%); }
+  .banner h1 { font-family: 'Oswald', sans-serif; font-size: 46px; font-weight: 500; text-transform: uppercase; color: #fff; letter-spacing: 2px; position: relative; z-index: 1; margin-bottom: 12px; }
+  .banner-line { width: 120px; height: 4px; margin: 0 auto; background: #e53935; border-radius: 2px; position: relative; z-index: 1; }
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px 44px; }
+  .intro { font-size: 17px; color: #d6d6d6; margin-bottom: 8px; }
+  .note { font-size: 14px; color: #9a9a9a; margin-top: 14px; font-style: italic; }
+  .section-heading { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 400; text-transform: uppercase; color: #fff; margin: 34px 0 18px; padding-bottom: 8px; border-bottom: 3px solid #e53935; }
+  .faq { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; margin-bottom: 12px; }
+  .faq summary { cursor: pointer; list-style: none; padding: 17px 22px; font-size: 16px; font-weight: 700; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: #e53935; font-size: 24px; font-weight: 400; line-height: 1; flex-shrink: 0; }
+  .faq[open] summary::after { content: "\2013"; }
+  .faq summary:hover { color: #e53935; }
+  .faq .a { padding: 4px 22px 20px; color: #cfcfcf; font-size: 15px; }
+  .faq .a a { color: #e53935; font-weight: 700; text-decoration: none; }
+  .faq .a a:hover { text-decoration: underline; }
+  .lead { background: #17181b; border: 1px solid #2a2c31; border-left: 4px solid #e53935; border-radius: 10px; padding: 22px 26px; margin-bottom: 8px; }
+  .lead p { font-size: 15px; color: #cfcfcf; margin-bottom: 12px; }
+  .lead p:last-child { margin-bottom: 0; }
+  .policy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .policy-box { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; padding: 22px 24px; }
+  .policy-yes { border-top: 3px solid #34b56a; }
+  .policy-no { border-top: 3px solid #e53935; }
+  .policy-box h3 { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 18px; color: #fff; margin-bottom: 14px; }
+  .policy-box ul { list-style: none; padding: 0; margin: 0; }
+  .policy-box li { font-size: 14px; color: #cfcfcf; padding-left: 24px; position: relative; margin-bottom: 12px; line-height: 1.55; }
+  .policy-box li:last-child { margin-bottom: 0; }
+  .policy-yes li::before { content: "\2713"; color: #34b56a; position: absolute; left: 0; font-weight: 700; }
+  .policy-no li::before { content: "\2715"; color: #e53935; position: absolute; left: 0; font-weight: 700; }
+  .policy-prose { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; padding: 24px 26px; }
+  .policy-prose p { font-size: 15px; color: #cfcfcf; margin-bottom: 14px; }
+  .policy-prose p:last-child { margin-bottom: 0; }
+  .foot { text-align: center; padding: 28px; background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; margin-top: 36px; }
+  .foot h3 { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 400; text-transform: uppercase; color: #fff; margin-bottom: 8px; }
+  .foot p { font-size: 15px; color: #a8a8a8; margin-bottom: 16px; }
+  .foot a { display: inline-block; padding: 11px 28px; border-radius: 4px; font-size: 15px; font-weight: 700; text-decoration: none; margin: 4px; }
+  .foot a.primary { background: #e53935; color: #fff; }
+  .foot a.primary:hover { background: #c62f2c; }
+  .foot a.ghost { background: transparent; border: 1px solid #2a2c31; color: #cfcfcf; }
+  .foot a.ghost:hover { border-color: #e53935; color: #fff; }
+  @media (max-width: 700px) { .banner h1 { font-size: 32px; } .policy-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="banner"><h1>Warranty &amp; Support</h1><div class="banner-line"></div></div>
+<div class="container">
+
+  <div class="lead">
+    <p>Here is how I stand behind what I build, in plain language. My labor carries a lifetime warranty for as long as you own the build. The parts carry their own manufacturer warranties.</p>
+    <p>If a part fails on its own, I pull it, handle the RMA, and ship it back to the maker on their dime. I do not charge you to remove and replace a part that failed through no fault of yours. The one exception is damage from misuse. The manufacturer will not cover that, and neither will my bench time, so that one is on you.</p>
+  </div>
+
+  <h2 class="section-heading">What I Support</h2>
+  <p class="intro">So there are no surprises later, here is exactly what is covered on a gaming computer I build.</p>
+  <div class="policy-grid">
+    <div class="policy-box policy-yes"><h3>Covered</h3><ul><li>The physical hardware your gaming computer originally shipped with, as documented by me.</li><li>The Windows 11 installation or reinstallation process.</li><li>Driver software for the hardware originally shipped.</li></ul></div>
+    <div class="policy-box policy-no"><h3>Not Covered</h3><ul><li>Issues caused by changes you make to the Windows operating system yourself.</li><li>Removing or fixing malicious software introduced to the computer.</li><li>Any software or games added to the computer after it left me.</li><li>Any hardware added later that I did not install or that is not listed on the original invoice.</li></ul></div>
+  </div>
+  <p class="note">I do not carry an official SLA on my products.</p>
+
+  <h2 class="section-heading">My Quality Standard</h2>
+  <div class="policy-prose"><p>I do not hand over a machine I would not run myself. Before your build ever leaves me it gets a full once over for fit and finish and a benchmark run to prove it performs the way I told you it would. That is also where I catch a bad part before it ever becomes your problem.</p><p>If something does not pass, I am not going to rush it out the door just to hit a date. I will fix it right, and I will call you and tell you straight if that means a little more time.</p><p>Every machine I build is built to order, one at a time. That takes time, but it is the only way I know to hand you something fully up to date and dialed in instead of pulled off a shelf.</p><p>One heads up around the holidays. In November and December parts shipping slows down because everybody is buying at once. If we are building in that window I will give you a realistic timeline up front so you are not left wondering.</p></div>
+
+  <div class="foot">
+    <h3>Questions About a Build or Your Warranty?</h3>
+    <p>Reach out and I will walk you through it. No runaround.</p>
+    <a class="primary" href="https://www.chattnerds.com/contact" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
+    <a class="ghost" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get a Build Quote</a>
+  </div>
+</div>
+</body></html>

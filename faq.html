@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ - NERDS PC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
+  .banner { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%); padding: 54px 24px; text-align: center; margin-bottom: 30px; position: relative; overflow: hidden; }
+  .banner::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 25% 50%, rgba(229,57,53,0.12) 0%, transparent 60%), radial-gradient(circle at 75% 50%, rgba(229,57,53,0.08) 0%, transparent 50%); }
+  .banner h1 { font-family: 'Oswald', sans-serif; font-size: 46px; font-weight: 500; text-transform: uppercase; color: #fff; letter-spacing: 2px; position: relative; z-index: 1; margin-bottom: 12px; }
+  .banner-line { width: 120px; height: 4px; margin: 0 auto; background: #e53935; border-radius: 2px; position: relative; z-index: 1; }
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px 44px; }
+  .intro { font-size: 17px; color: #d6d6d6; margin-bottom: 8px; }
+  .note { font-size: 14px; color: #9a9a9a; margin-top: 14px; font-style: italic; }
+  .section-heading { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 400; text-transform: uppercase; color: #fff; margin: 34px 0 18px; padding-bottom: 8px; border-bottom: 3px solid #e53935; }
+  .faq { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; margin-bottom: 12px; }
+  .faq summary { cursor: pointer; list-style: none; padding: 17px 22px; font-size: 16px; font-weight: 700; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: #e53935; font-size: 24px; font-weight: 400; line-height: 1; flex-shrink: 0; }
+  .faq[open] summary::after { content: "\2013"; }
+  .faq summary:hover { color: #e53935; }
+  .faq .a { padding: 4px 22px 20px; color: #cfcfcf; font-size: 15px; }
+  .faq .a a { color: #e53935; font-weight: 700; text-decoration: none; }
+  .faq .a a:hover { text-decoration: underline; }
+  .lead { background: #17181b; border: 1px solid #2a2c31; border-left: 4px solid #e53935; border-radius: 10px; padding: 22px 26px; margin-bottom: 8px; }
+  .lead p { font-size: 15px; color: #cfcfcf; margin-bottom: 12px; }
+  .lead p:last-child { margin-bottom: 0; }
+  .policy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .policy-box { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; padding: 22px 24px; }
+  .policy-yes { border-top: 3px solid #34b56a; }
+  .policy-no { border-top: 3px solid #e53935; }
+  .policy-box h3 { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 18px; color: #fff; margin-bottom: 14px; }
+  .policy-box ul { list-style: none; padding: 0; margin: 0; }
+  .policy-box li { font-size: 14px; color: #cfcfcf; padding-left: 24px; position: relative; margin-bottom: 12px; line-height: 1.55; }
+  .policy-box li:last-child { margin-bottom: 0; }
+  .policy-yes li::before { content: "\2713"; color: #34b56a; position: absolute; left: 0; font-weight: 700; }
+  .policy-no li::before { content: "\2715"; color: #e53935; position: absolute; left: 0; font-weight: 700; }
+  .policy-prose { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; padding: 24px 26px; }
+  .policy-prose p { font-size: 15px; color: #cfcfcf; margin-bottom: 14px; }
+  .policy-prose p:last-child { margin-bottom: 0; }
+  .foot { text-align: center; padding: 28px; background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; margin-top: 36px; }
+  .foot h3 { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 400; text-transform: uppercase; color: #fff; margin-bottom: 8px; }
+  .foot p { font-size: 15px; color: #a8a8a8; margin-bottom: 16px; }
+  .foot a { display: inline-block; padding: 11px 28px; border-radius: 4px; font-size: 15px; font-weight: 700; text-decoration: none; margin: 4px; }
+  .foot a.primary { background: #e53935; color: #fff; }
+  .foot a.primary:hover { background: #c62f2c; }
+  .foot a.ghost { background: transparent; border: 1px solid #2a2c31; color: #cfcfcf; }
+  .foot a.ghost:hover { border-color: #e53935; color: #fff; }
+  @media (max-width: 700px) { .banner h1 { font-size: 32px; } .policy-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="banner"><h1>Frequently Asked Questions</h1><div class="banner-line"></div></div>
+<div class="container">
+  <p class="intro">Straight answers to the questions I get asked most. Do not see yours here? Reach out and ask me directly.</p>
+
+  <h2 class="section-heading">Getting Started</h2>
+  <div class="faq-group">
+    <details class="faq"><summary>How do I get service started?</summary><div class="a">Call or text me and we will set up a time. I do not have a storefront anymore, so everything runs by appointment. Drop off, remote, or I come to you. If it is urgent, tell me and I will get you in same day when I can.</div></details>
+    <details class="faq"><summary>How do I cancel or reschedule?</summary><div class="a">Just call or text me directly. No portal, no phone tree. You talk to me and we find a time that works.</div></details>
+    <details class="faq"><summary>What area do you cover?</summary><div class="a">Dalton and the surrounding areas. If you are a little outside that, reach out anyway and we will figure it out.</div></details>
+    <details class="faq"><summary>Are you really available after hours and weekends?</summary><div class="a">Yes. Call, text, or email any time. I do not keep banker's hours. I might not pick up at 3am, but I will get back to you fast.</div></details>
+    <details class="faq"><summary>Do you offer remote support?</summary><div class="a">Yes. A lot of issues do not need you to unplug anything or haul a tower across town. I can remote in, take a look, and fix plenty of it right there.</div></details>
+    <details class="faq"><summary>Do you do house calls?</summary><div class="a">Yes. If it is easier for me to come to you, I will. That works well for home networks, business setups, and anything that is a pain to move.</div></details>
+    <details class="faq"><summary>What payment methods do you take?</summary><div class="a">All the major ones. I run payments through Wave, so whatever it covers, you are good.</div></details>
+  </div>
+
+  <h2 class="section-heading">Repairs and Diagnostics</h2>
+  <div class="faq-group">
+    <details class="faq"><summary>How long will it take to service my PC or laptop?</summary><div class="a">Depends on what is wrong. A lot of stuff I knock out the same day. Bigger jobs, or parts I have to order, take longer. Either way I keep you posted. No guessing.</div></details>
+    <details class="faq"><summary>What is included in the free consultation?</summary><div class="a">I look over your device, find out what is actually going on, and tell you your options. If it needs a paid repair or a deeper diagnostic, I give you the number before I do anything.</div></details>
+    <details class="faq"><summary>What is included in the comprehensive diagnostic?</summary><div class="a">A full hardware and software workup to find the real root cause, not just the symptom. When it is done you get straight repair or replacement options that make sense for your situation.</div></details>
+    <details class="faq"><summary>Do you work on Apple and Mac products?</summary><div class="a">Yes, and I am certified for it. Apple gear, Windows machines, laptops, desktops. I handle all of it.</div></details>
+  </div>
+
+  <h2 class="section-heading">Custom Builds</h2>
+  <div class="faq-group">
+    <details class="faq"><summary>What types of services does NERDS PC offer?</summary><div class="a">A wide range. Virus and malware removal, operating system and software installs, hardware repair and upgrades, custom PC builds, data recovery and backup, laptop screen replacements, and more.</div></details>
+    <details class="faq"><summary>How does the PC build service work?</summary><div class="a">Pick your parts from what I recommend, or bring your own. We spec it out, I build it clean and test it, and I let you know when it is ready for pickup.</div></details>
+    <details class="faq"><summary>Can I bring my own parts?</summary><div class="a">Yes. If you already have the components, I will assemble it, cable manage it, and make sure it posts and runs right. Assembly starts at $100.</div></details>
+    <details class="faq"><summary>How does the warranty work on a build?</summary><div class="a">Short version: lifetime labor warranty from me, and parts are covered by their own manufacturer warranty. If a part fails on its own I pull it, handle the RMA, and ship it back at no charge to you, with the maker covering return shipping. Full details, including what I do and do not support, are on the <a href="https://1r0nch3f.github.io/NERDSwebpage/warranty.html" onclick="window.open(this.href,'_blank');return false;">warranty and support page</a>.</div></details>
+    <details class="faq"><summary>Why are full build prices not listed on the site?</summary><div class="a">Parts prices move constantly right now, especially memory and GPUs. A hard number listed today would just be wrong next week. Starting prices are on the shop pages, and I quote each build for real when you are ready.</div></details>
+    <details class="faq"><summary>Can you still build a gaming PC for $500?</summary><div class="a">Yes, but I will be honest with you about it. At $500 you get something that games, but there is not much room to upgrade later. I build for the long haul. Parts that last and a platform you can grow for years. The cheap build is fine to start, you will just hit a wall sooner.</div></details>
+  </div>
+
+  <h2 class="section-heading">AI Services</h2>
+  <div class="faq-group">
+    <details class="faq"><summary>I am a small local business. Is AI even worth it for me?</summary><div class="a">Think about when robotics hit the assembly line. The shops that learned to use it pulled ahead, and the ones that waited got left behind. AI is that same moment for office and everyday business work. You do not have to go all in, but ignoring it is not free either.</div></details>
+    <details class="faq"><summary>Will AI replace my employees?</summary><div class="a">No. The point is not to get rid of your people, it is to take the boring repetitive work off their plate so they spend time on the things that actually need a person. Done right, it learns how YOU run your business, not some generic version of it.</div></details>
+    <details class="faq"><summary>Is my business data kept private?</summary><div class="a">That is a big part of how I do it. I can set you up local, on your own hardware, so your data stays your data and stays under your control. It learns how you do YOUR business, and none of it has to leave your shop.</div></details>
+    <details class="faq"><summary>How do I know if my business is ready for AI?</summary><div class="a">That is exactly what the AI Readiness Assessment is for. I come out, look at how you actually work, and tell you where AI fits and where it does not. No hype, no pressure.</div></details>
+  </div>
+
+  <h2 class="section-heading">3D Printing</h2>
+  <div class="faq-group">
+    <details class="faq"><summary>What can you print, and in what materials?</summary><div class="a">Most materials are on the table. Cost varies with the material you need and how complex the design is, so it is quoted per job. Tell me what you are after and I will give you a real number.</div></details>
+    <details class="faq"><summary>Can you recreate a part if I only have the broken one?</summary><div class="a">Most of the time, yes. I can design it from the part you have and print a replacement. Custom design work is not cheap though, it is hands-on time at the keyboard. Design labor runs $165 an hour, and I give you an estimate up front.</div></details>
+    <details class="faq"><summary>Do you do prototypes or small production runs?</summary><div class="a">Yes. Prototypes and short runs are their own thing, so reach out and we will talk through exactly what you need.</div></details>
+  </div>
+
+  <h2 class="section-heading">How I Work</h2>
+  <div class="faq-group">
+    <details class="faq"><summary>Why don't you advertise?</summary><div class="a">No ads, no sponsored posts, no cold calls. Every customer I have came from a referral or somebody they trust. If you are here, somebody sent you, and that is the only marketing I need.</div></details>
+  </div>
+
+  <div class="foot">
+    <h3>Still Have a Question?</h3>
+    <p>If it is not answered here, just ask. You will get a real answer from me, not a script.</p>
+    <a class="primary" href="https://www.chattnerds.com/contact" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
+    <a class="ghost" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get a Build Quote</a>
+  </div>
+</div>
+</body></html>
