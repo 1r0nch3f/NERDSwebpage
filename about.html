@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NERDS PC - About</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#e53935;--bg:#0d0d0d;--card:#161616;--line:#2a2a2a;--txt:#f2f2f2;--mut:#9a9a9a}
+body{background:var(--bg);color:var(--txt);font-family:'Open Sans',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:48px 22px 70px}
+h1{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(38px,7vw,68px);text-transform:uppercase;letter-spacing:1px;line-height:.98}
+h1 .dot{color:var(--red)}
+.lede{color:var(--mut);max-width:680px;margin:16px 0 6px;font-size:16px}
+.note-top{display:inline-block;margin-top:14px;font-size:13px;color:var(--mut);border-left:3px solid var(--red);padding:6px 12px;background:#141414}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-top:34px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;transition:transform .18s ease,border-color .18s ease}
+.card:hover{transform:translateY(-4px);border-color:var(--red)}
+.tier{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:600}
+.name{font-family:'Oswald',sans-serif;font-size:27px;font-weight:600;text-transform:uppercase;margin:2px 0 12px;line-height:1.05}
+.price{font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;color:#fff;line-height:1}
+.price small{font-size:14px;color:var(--mut);font-weight:400;display:block;margin-top:4px;font-family:'Open Sans',sans-serif}
+.psu-badge{display:inline-block;margin:12px 0 4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#cfe;background:#10312f;border:1px solid #1d5a55;border-radius:20px;padding:4px 11px}
+.specs{list-style:none;margin:14px 0 18px;border-top:1px solid var(--line);padding-top:14px}
+.specs li{font-size:14px;padding:5px 0;color:#d6d6d6;display:flex;gap:9px}
+.specs li b{color:var(--mut);font-weight:600;min-width:62px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding-top:1px}
+.btn{margin-top:auto;display:block;text-align:center;background:var(--red);color:#fff;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:13px;border-radius:8px;font-size:15px;transition:background .15s}
+.btn:hover{background:#c62828}
+.subhead{font-family:'Oswald',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:1px;margin:42px 0 4px;color:#fff;border-left:4px solid var(--red);padding-left:12px}
+.subhead span{color:var(--mut);font-size:13px;letter-spacing:.5px;display:block;font-family:'Open Sans',sans-serif;text-transform:none;padding-top:3px}
+.upsell{margin-top:30px;background:#141414;border:1px dashed var(--line);border-radius:10px;padding:18px 22px;font-size:14px;color:#d6d6d6}
+.upsell b{color:var(--red)}
+.brands{margin-top:54px;border-top:1px solid var(--line);padding-top:30px}
+.brands h3{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:18px;margin-bottom:18px}
+.brow{display:flex;flex-wrap:wrap;gap:10px 26px;margin-bottom:18px}
+.bgroup{font-size:14px}
+.bgroup .lab{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:4px;font-family:'Oswald',sans-serif}
+.bgroup .vals{color:#cfcfcf}
+.climate{margin-top:26px;background:#1a1310;border:1px solid #3a2a1f;border-left:4px solid #ff8c00;border-radius:8px;padding:16px 20px;font-size:13px;color:#e4d4c4}
+.climate b{color:#ff8c00}
+.foot-cta{margin-top:40px;text-align:center}
+.foot-cta .btn{display:inline-block;padding:14px 40px}
+.disclaim{text-align:center;color:var(--mut);font-size:12px;margin-top:26px}
+@media(max-width:520px){.wrap{padding:32px 16px 50px}}
+
+.section{margin-top:54px}
+.checks{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:26px}
+.checks li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;font-size:14px;color:#d6d6d6;display:flex;gap:12px;align-items:flex-start}
+.checks li .ck{color:var(--red);font-weight:700;font-size:17px;line-height:1.3}
+.checks li b{color:#fff;display:block;margin-bottom:3px;font-size:15px}
+.prose p{color:#d2d2d2;font-size:16px;margin-top:14px;max-width:760px}
+.creds{margin-top:24px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:10px;padding:22px 24px}
+.creds .big{font-family:'Oswald',sans-serif;font-size:clamp(22px,4vw,30px);font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#fff;line-height:1.1}
+.creds .big span{color:var(--red)}
+.creds p{color:#cfcfcf;font-size:15px;margin-top:8px;max-width:680px}
+.pills{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.pill{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:#e8e8e8;border:1px solid var(--line);background:#101010;border-radius:30px;padding:7px 14px}
+</style></head>
+<body><div class="wrap"><h1>About<span class="dot">.</span> NERDS PC</h1><div class="prose"><p>I&rsquo;m Mike, the owner of NERDS PC. I started this because I love building computers and I got tired of seeing people handed off to call centers and sold parts they didn&rsquo;t need. When you come to NERDS PC, you deal with me directly. I build the machine, I test it, and I stand behind it.</p></div><div class="section"><div class="subhead">Certifications<span>Credentials behind every build</span></div><div class="creds"><div class="big">10+ Industry <span>Certifications</span></div><p>From CompTIA A+ to Certified Ethical Hacker (CEH), plus Apple, Microsoft, and Google credentials. Real training behind every build and repair.</p><div class="pills"><span class="pill">CompTIA A+</span><span class="pill">Apple Certified Mac Technician</span><span class="pill">Certified Ethical Hacker (CEH)</span><span class="pill">Microsoft Certified</span><span class="pill">Google AI Essentials</span></div></div></div><div class="section"><div class="subhead">How I Work</div><div class="prose"><p>A good PC should fit the person using it, not the other way around. I take the time to understand what you actually need, recommend parts that make sense for your budget, and build something that lasts. No filler, no pressure, and no parts you will never use.</p></div></div><div class="section"><div class="subhead">Who I Am</div><div class="prose"><p>I have been building and repairing computers for years, hold more than ten industry certifications, and teach the next round of techs as an adjunct professor at Chattanooga State. NERDS PC is local and hands-on, but my builds have shipped all over the world. Most of my work comes from word of mouth, and that keeps me honest.</p></div></div><div class="section"><div class="subhead">What I Do</div><ul class="checks"><li><span class="ck">&#10003;</span><div><b>Custom Builds</b>Gaming rigs, workstations, and everyday machines built to order around your goals and your budget.</div></li><li><span class="ck">&#10003;</span><div><b>Repairs and Upgrades</b>Diagnostics, fixes, and upgrades for the machine you already own, explained in plain terms.</div></li><li><span class="ck">&#10003;</span><div><b>Honest Advice</b>Straight recommendations, whether that means spending more, spending less, or keeping what you have.</div></li></ul></div><div class="section"><div class="subhead">Why NERDS PC</div><div class="prose"><p>You are not a ticket number here. You get one person who builds your machine, answers your questions in plain terms, and picks up the phone when you call. Whether you are gaming, working, streaming, or setting up a server, I am here to help you get it right. That is the whole point of NERDS PC.</p></div></div><div class="foot-cta"><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Start Your Build</a></div></div></body></html>
