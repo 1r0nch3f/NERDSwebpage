@@ -7,21 +7,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Open Sans', Arial, sans-serif; color: #1f1f1f; line-height: 1.7; background: transparent; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
   .container { max-width: 960px; margin: 0 auto; padding: 20px 24px 40px; }
   p { font-size: 17px; margin-bottom: 16px; }
 
   /* Tagline area */
   .tagline {
     text-align: center; margin-bottom: 36px; padding-bottom: 32px;
-    border-bottom: 2px solid #eee;
+    border-bottom: 2px solid #2a2c31;
   }
   .tagline .slogan {
     font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 400;
-    color: #555; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 2px;
+    color: #ccc; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 2px;
   }
   .tagline .slogan em { font-style: italic; color: #e53935; }
-  .tagline p { font-size: 18px; color: #333; max-width: 700px; margin: 0 auto; }
+  .tagline p { font-size: 18px; color: #b0b0b0; max-width: 700px; margin: 0 auto; }
 
   /* Three pillars */
   .pillars {
@@ -31,63 +31,62 @@
   .pillar {
     text-align: center; padding: 28px 20px; border-radius: 10px;
     transition: transform 0.2s; cursor: pointer;
+    background: #17181b; border: 2px solid #2a2c31;
   }
-  .pillar:hover { transform: translateY(-4px); }
-  .pillar-pc { background: #f0f0f0; border: 2px solid #ddd; }
-  .pillar-ai { background: #e8f5f8; border: 2px solid #b8e0ea; }
-  .pillar-3d { background: #f5f0e8; border: 2px solid #e0d4b8; }
+  .pillar:hover { transform: translateY(-4px); border-color: #e53935; }
   .pillar-icon { font-size: 40px; margin-bottom: 10px; }
   .pillar h3 {
     font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 500;
-    text-transform: uppercase; margin-bottom: 8px; color: #1a1a1a;
+    text-transform: uppercase; margin-bottom: 8px; color: #fff;
   }
-  .pillar p { font-size: 15px; color: #555; margin: 0; line-height: 1.6; }
+  .pillar p { font-size: 15px; color: #a8a8a8; margin: 0; line-height: 1.6; }
 
   /* Owner intro */
-  .intro { margin-bottom: 36px; padding-bottom: 32px; border-bottom: 2px solid #eee; }
-  .intro p { font-size: 17px; color: #333; max-width: 800px; }
+  .intro { margin-bottom: 36px; padding-bottom: 32px; border-bottom: 2px solid #2a2c31; }
+  .intro p { font-size: 17px; color: #b8b8b8; max-width: 800px; }
 
   /* ---- Professional Services Section ---- */
   .pro-section {
     margin-bottom: 36px; padding-bottom: 32px;
-    border-bottom: 2px solid #eee;
+    border-bottom: 2px solid #2a2c31;
   }
   .pro-heading {
     font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 500;
-    text-transform: uppercase; color: #1a1a1a; margin-bottom: 6px;
+    text-transform: uppercase; color: #fff; margin-bottom: 6px;
     letter-spacing: 1px;
   }
   .pro-heading span { color: #e53935; }
   .pro-sub {
-    font-size: 17px; color: #555; margin-bottom: 24px; max-width: 760px;
+    font-size: 17px; color: #a8a8a8; margin-bottom: 24px; max-width: 760px;
   }
   .pro-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
   }
   .pro-card {
-    background: #fafafa; border: 2px solid #e8e8e8; border-radius: 10px;
+    background: #17181b; border: 2px solid #2a2c31; border-radius: 10px;
     padding: 24px 22px; transition: transform 0.2s, border-color 0.2s;
     cursor: pointer; text-decoration: none; color: inherit; display: block;
   }
   .pro-card:hover { transform: translateY(-3px); border-color: #e53935; }
   .pro-card h4 {
     font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 500;
-    text-transform: uppercase; color: #1a1a1a; margin-bottom: 8px;
+    text-transform: uppercase; color: #fff; margin-bottom: 8px;
   }
-  .pro-card p { font-size: 15px; color: #555; margin: 0; line-height: 1.6; }
+  .pro-card p { font-size: 15px; color: #a8a8a8; margin: 0; line-height: 1.6; }
   .pro-card .tag {
     display: inline-block; font-size: 12px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px;
     border-radius: 4px; margin-top: 12px;
   }
-  .tag-new { background: #e8f5f8; color: #0e7c91; }
-  .tag-consult { background: #f0e8f5; color: #6a3d91; }
+  .tag-new { background: rgba(24,192,216,0.15); color: #18C0D8; }
+  .tag-consult { background: rgba(160,100,220,0.15); color: #b080e0; }
 
   /* Featured callout */
   .featured {
-    background: #1a1a1a; color: #e6e6e6; border-radius: 10px;
+    background: #111214; color: #e6e6e6; border-radius: 10px;
     padding: 30px 28px; margin-bottom: 18px;
     border-left: 5px solid #18C0D8;
+    border-top: 1px solid #2a2c31; border-right: 1px solid #2a2c31; border-bottom: 1px solid #2a2c31;
   }
   .featured h4 {
     font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 500;
@@ -108,14 +107,14 @@
 
   /* Bottom CTA */
   .bottom-cta {
-    text-align: center; padding: 36px 24px; background: #f8f8f8;
-    border-radius: 10px; border: 2px solid #eee;
+    text-align: center; padding: 36px 24px; background: #17181b;
+    border-radius: 10px; border: 2px solid #2a2c31;
   }
   .bottom-cta h3 {
     font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 500;
-    text-transform: uppercase; color: #1a1a1a; margin-bottom: 8px;
+    text-transform: uppercase; color: #fff; margin-bottom: 8px;
   }
-  .bottom-cta p { font-size: 17px; color: #555; margin-bottom: 20px; }
+  .bottom-cta p { font-size: 17px; color: #a8a8a8; margin-bottom: 20px; }
   .cta-btn {
     display: inline-block; font-family: 'Oswald', sans-serif; font-size: 18px;
     font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
@@ -125,10 +124,10 @@
   }
   .cta-btn:hover { background: #c62828; }
   .cta-phone {
-    font-family: 'Oswald', sans-serif; font-size: 20px; color: #333;
+    font-family: 'Oswald', sans-serif; font-size: 20px; color: #ccc;
     margin-top: 14px;
   }
-  .cta-phone a { color: #e53935; text-decoration: none; }
+  .cta-phone a { color: #18C0D8; text-decoration: none; }
 
   @media (max-width: 700px) {
     .pillars { grid-template-columns: 1fr; }
@@ -149,17 +148,17 @@
 
   <!-- THREE PILLARS -->
   <div class="pillars">
-    <div class="pillar pillar-pc" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform','_blank')">
+    <div class="pillar" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform','_blank')">
       <div class="pillar-icon">&#128421;</div>
       <h3>PC Services</h3>
       <p>Custom builds, repair, diagnostics, networking, upgrades, and remote support. From gaming rigs to office workstations.</p>
     </div>
-    <div class="pillar pillar-ai" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/assessment.html','_blank')">
+    <div class="pillar" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/assessment.html','_blank')">
       <div class="pillar-icon">&#129302;</div>
       <h3>AI Services</h3>
       <p>AI readiness assessments, local deployment, business automation, strategy retainers, and custom AI workstation builds.</p>
     </div>
-    <div class="pillar pillar-3d" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/3d-printing.html','_blank')">
+    <div class="pillar" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/3d-printing.html','_blank')">
       <div class="pillar-icon">&#9881;</div>
       <h3>3D Printing</h3>
       <p>Custom prints, prototypes, replacement parts, and multi-color designs. If you can think it, we can print it.</p>
