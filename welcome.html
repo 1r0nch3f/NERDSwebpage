@@ -45,7 +45,68 @@
   .intro { margin-bottom: 36px; padding-bottom: 32px; border-bottom: 2px solid #2a2c31; }
   .intro p { font-size: 17px; color: #b8b8b8; max-width: 800px; }
 
-  /* ---- Professional Services Section ---- */
+  /* ---- Build Budget Section ---- */
+  .budget-section {
+    margin-bottom: 36px; padding-bottom: 32px;
+    border-bottom: 2px solid #2a2c31;
+  }
+  .section-heading {
+    font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 500;
+    text-transform: uppercase; color: #fff; margin-bottom: 18px;
+    padding-bottom: 8px; border-bottom: 3px solid #e53935;
+  }
+  .budget-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px;
+    margin-bottom: 20px;
+  }
+  .budget-card {
+    background: #17181b; border: 2px solid #2a2c31; border-radius: 8px;
+    padding: 20px 16px; text-align: center;
+    transition: transform 0.2s, border-color 0.2s; cursor: pointer;
+  }
+  .budget-card:hover { transform: translateY(-3px); border-color: #e53935; }
+  .budget-card .tier {
+    font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 500;
+    text-transform: uppercase; color: #a8a8a8; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .budget-card .price {
+    font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 600;
+    color: #fff; margin-bottom: 6px;
+  }
+  .budget-card .price span { font-size: 16px; color: #a8a8a8; font-weight: 400; }
+  .budget-card .desc {
+    font-size: 13px; color: #888; line-height: 1.5;
+  }
+  .budget-note {
+    font-size: 14px; color: #666; text-align: center; margin-bottom: 14px;
+  }
+  .budget-links {
+    display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;
+  }
+  .budget-link {
+    display: inline-block; font-family: 'Oswald', sans-serif; font-size: 15px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
+    color: #18C0D8; background: rgba(24,192,216,0.1); border: 1px solid rgba(24,192,216,0.25);
+    border-radius: 6px; padding: 8px 22px; cursor: pointer; text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .budget-link:hover { background: rgba(24,192,216,0.2); color: #fff; }
+
+  /* ---- What We Do Section ---- */
+  .services-section {
+    margin-bottom: 36px; padding-bottom: 32px;
+    border-bottom: 2px solid #2a2c31;
+  }
+  .services-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .service-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px; background: #17181b; border-radius: 6px;
+    border: 1px solid #2a2c31;
+  }
+  .service-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .service-item span { font-size: 15px; color: #b8b8b8; }
   .pro-section {
     margin-bottom: 36px; padding-bottom: 32px;
     border-bottom: 2px solid #2a2c31;
@@ -131,6 +192,8 @@
 
   @media (max-width: 700px) {
     .pillars { grid-template-columns: 1fr; }
+    .budget-grid { grid-template-columns: 1fr 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
     .pro-grid { grid-template-columns: 1fr; }
     .tagline .slogan { font-size: 24px; }
     .pro-heading { font-size: 24px; }
@@ -168,6 +231,79 @@
   <!-- OWNER INTRO -->
   <div class="intro">
     <p>NERDS PC runs on word-of-mouth referrals. No advertising, no call centers, no ticket queues. When you call, you get me or one of my guys. That's it. We've built this business on doing good work for people who tell other people, and that's how we plan to keep it. Whether you need a PC fixed, a custom machine built, AI integrated into your workflow, or a one-off part printed, the person you talk to is the person doing the work.</p>
+  </div>
+
+  <!-- PC BUILD BUDGET -->
+  <div class="budget-section">
+    <div class="section-heading">Custom PC Build Budget</div>
+    <div class="budget-grid">
+      <div class="budget-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">
+        <div class="tier">Entry</div>
+        <div class="price">$639</div>
+        <div class="desc">Everyday use, light gaming, office work</div>
+      </div>
+      <div class="budget-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">
+        <div class="tier">Mid-Range</div>
+        <div class="price">$799 <span>- $899</span></div>
+        <div class="desc">Solid 1080p/1440p gaming, streaming, content work</div>
+      </div>
+      <div class="budget-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">
+        <div class="tier">High-End</div>
+        <div class="price">$1,099 <span>- $1,149</span></div>
+        <div class="desc">High-refresh gaming, creative workloads, multitasking</div>
+      </div>
+      <div class="budget-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">
+        <div class="tier">Enthusiast</div>
+        <div class="price">$1,499 <span>- $1,799</span></div>
+        <div class="desc">4K gaming, heavy production, no compromises</div>
+      </div>
+    </div>
+    <p class="budget-note">All builds include PSU. GPU, cooler, storage, and case priced separately. Prices subject to change.</p>
+    <div class="budget-links">
+      <a class="budget-link" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">AMD Builds</a>
+      <a class="budget-link" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/intel.html','_blank')">Intel Builds</a>
+      <a class="budget-link" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/coolers.html','_blank')">CPU Coolers</a>
+      <a class="budget-link" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/storage.html','_blank')">Storage</a>
+    </div>
+  </div>
+
+  <!-- WHAT WE CAN HELP WITH -->
+  <div class="services-section">
+    <div class="section-heading">What We Can Help With</div>
+    <div class="services-grid">
+      <div class="service-item">
+        <span class="service-icon">&#128421;</span>
+        <span>Custom PC builds — gaming, workstation, office, AI</span>
+      </div>
+      <div class="service-item">
+        <span class="service-icon">&#128295;</span>
+        <span>PC repair, diagnostics, and troubleshooting</span>
+      </div>
+      <div class="service-item">
+        <span class="service-icon">&#127760;</span>
+        <span>Networking — wired, wireless, VLANs, firewalls</span>
+      </div>
+      <div class="service-item">
+        <span class="service-icon">&#128187;</span>
+        <span>Remote support — we can fix it without a house call</span>
+      </div>
+      <div class="service-item">
+        <span class="service-icon">&#9881;</span>
+        <span>3D printing — custom parts, prototypes, replacements</span>
+      </div>
+      <div class="service-item">
+        <span class="service-icon">&#128200;</span>
+        <span>Hardware upgrades — RAM, storage, GPU, cooling</span>
+      </div>
+      <div class="service-item">
+        <span class="service-icon">&#129302;</span>
+        <span>AI integration — local deployment, automation, strategy</span>
+      </div>
+      <div class="service-item">
+        <span class="service-icon">&#128230;</span>
+        <span>Bring your own parts — we'll build it, you save money</span>
+      </div>
+    </div>
   </div>
 
   <!-- PROFESSIONAL SERVICES -->
