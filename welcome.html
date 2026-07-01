@@ -45,6 +45,41 @@
   .intro { margin-bottom: 36px; padding-bottom: 32px; border-bottom: 2px solid #2a2c31; }
   .intro p { font-size: 17px; color: #b8b8b8; max-width: 800px; }
 
+  /* ---- Steam Machine Challenger callout ---- */
+  .steam-section {
+    margin-bottom: 36px; padding-bottom: 32px;
+    border-bottom: 2px solid #2a2c31;
+  }
+  .steam-card {
+    background: #17181b; border: 2px solid #2a2c31; border-left: 5px solid #e53935;
+    border-radius: 10px; padding: 30px 28px; display: block; text-decoration: none; color: inherit;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .steam-card:hover { transform: translateY(-3px); border-color: #e53935; }
+  .steam-eyebrow {
+    font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 2px; color: #18C0D8; margin-bottom: 10px;
+  }
+  .steam-card h4 {
+    font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 600;
+    text-transform: uppercase; color: #fff; margin-bottom: 8px; line-height: 1.2;
+  }
+  .steam-card h4 span { color: #e53935; }
+  .steam-card p { font-size: 15px; color: #b8b8b8; margin: 0 0 16px; line-height: 1.7; max-width: 640px; }
+  .steam-meta {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .steam-price {
+    font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 500; color: #e53935;
+  }
+  .steam-link {
+    display: inline-block; font-family: 'Oswald', sans-serif; font-size: 14px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
+    color: #fff; background: #e53935; border-radius: 6px;
+    padding: 9px 22px; transition: background 0.2s;
+  }
+  .steam-card:hover .steam-link { background: #c62828; }
+
   /* ---- Build Budget Section ---- */
   .budget-section {
     margin-bottom: 36px; padding-bottom: 32px;
@@ -231,6 +266,19 @@
   <!-- OWNER INTRO -->
   <div class="intro">
     <p>NERDS PC runs on word-of-mouth referrals. No advertising, no call centers, no ticket queues. When you call, you get me or one of my guys. That's it. We've built this business on doing good work for people who tell other people, and that's how we plan to keep it. Whether you need a PC fixed, a custom machine built, AI integrated into your workflow, or a one-off part printed, the person you talk to is the person doing the work.</p>
+  </div>
+
+  <!-- STEAM MACHINE CHALLENGER -->
+  <div class="steam-section">
+    <a class="steam-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/steam-machine-challenger-build.html','_blank')">
+      <div class="steam-eyebrow">New &middot; Tale of the Tape</div>
+      <h4>Valve's Steam Machine has a <span>challenger</span></h4>
+      <p>Reservation lottery running into 2027? We build the NERDS Challenger this week instead &mdash; a Bazzite-powered custom tower with a 3D V-Cache CPU, double the graphics memory, and an open upgrade path. See the full spec-by-spec breakdown.</p>
+      <div class="steam-meta">
+        <span class="steam-price">Starting at $1,199</span>
+        <span class="steam-link">See The Full Comparison</span>
+      </div>
+    </a>
   </div>
 
   <!-- PC BUILD BUDGET -->
