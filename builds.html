@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GD8KXQQMB6');
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom PC Build Gallery | NERDS PC</title>
+<meta name="description" content="Browse recent custom PC builds from NERDS PC in Dalton, Chattanooga, and Cleveland TN — RGB rigs, workstations, and full build walkthroughs.">
+<link rel="canonical" href="https://www.chattnerds.com/builds.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NERDS PC">
+<meta property="og:title" content="Custom PC Build Gallery | NERDS PC">
+<meta property="og:description" content="Browse recent custom PC builds from NERDS PC in Dalton, Chattanooga, and Cleveland TN — RGB rigs, workstations, and full build walkthroughs.">
+<meta property="og:url" content="https://www.chattnerds.com/builds.html">
+<meta property="og:image" content="https://www.chattnerds.com/NERDS_OG_logo_6K.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Custom PC Build Gallery | NERDS PC">
+<meta name="twitter:description" content="Browse recent custom PC builds from NERDS PC in Dalton, Chattanooga, and Cleveland TN — RGB rigs, workstations, and full build walkthroughs.">
+<meta name="twitter:image" content="https://www.chattnerds.com/NERDS_OG_logo_6K.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Site Navigation */
+  .site-nav { background: #0e0e10; border-bottom: 1px solid #2a2c31; position: sticky; top: 0; z-index: 999; }
+  .site-nav-inner { max-width: 1100px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .site-nav-logo { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; text-decoration: none; }
+  .site-nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+  .site-nav-links { display: flex; align-items: center; gap: 22px; }
+  .site-nav-links a { font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; color: #cfcfcf; text-decoration: none; white-space: nowrap; }
+  .site-nav-links a:hover { color: #fff; }
+  .site-nav-links a.site-nav-cta { background: #e53935; color: #fff; padding: 8px 18px; border-radius: 5px; }
+  .site-nav-links a.site-nav-cta:hover { background: #c62828; color: #fff; }
+  @media (max-width: 860px) {
+    .site-nav-toggle { display: block; }
+    .site-nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #0e0e10; border-bottom: 1px solid #2a2c31; flex-direction: column;
+      align-items: flex-start; padding: 16px 24px; gap: 16px;
+    }
+    .site-nav-links.open { display: flex; }
+    .site-nav-links a.site-nav-cta { width: 100%; text-align: center; }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px 24px 60px; }
+  .page-title {
+    font-family: 'Oswald', sans-serif; font-size: 34px; font-weight: 500;
+    text-transform: uppercase; color: #fff; margin: 24px 0 8px;
+    padding-bottom: 12px; border-bottom: 3px solid #e53935;
+  }
+  .page-sub { font-size: 16px; color: #a8a8a8; margin: 12px 0 32px; max-width: 700px; }
+
+  .gallery-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+    margin-bottom: 18px;
+  }
+  .gallery-item {
+    border-radius: 10px; overflow: hidden; border: 1px solid #2a2c31;
+    background: #17181b; aspect-ratio: 4 / 3;
+  }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gallery-item.wide { grid-column: span 2; aspect-ratio: 16 / 7; }
+
+  .video-block {
+    grid-column: span 2; background: #17181b; border: 1px solid #2a2c31;
+    border-radius: 10px; padding: 16px; margin-bottom: 18px;
+  }
+  .video-block h3 {
+    font-family: 'Oswald', sans-serif; font-size: 16px; text-transform: uppercase;
+    color: #fff; margin-bottom: 12px; letter-spacing: 0.5px;
+  }
+  .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 8px; overflow: hidden; }
+  .video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+  .cta-box {
+    text-align: center; padding: 32px 24px; background: #17181b;
+    border-radius: 10px; border: 1px solid #2a2c31; margin-top: 12px;
+  }
+  .cta-box h3 { font-family: 'Oswald', sans-serif; font-size: 22px; text-transform: uppercase; color: #fff; margin-bottom: 8px; }
+  .cta-box p { font-size: 15px; color: #a8a8a8; margin-bottom: 18px; }
+  .cta-btn {
+    display: inline-block; background: #e53935; color: #fff;
+    padding: 12px 32px; border-radius: 4px; font-size: 16px;
+    font-weight: 700; text-decoration: none;
+  }
+  .cta-btn:hover { background: #c62f2c; }
+
+  @media (max-width: 700px) {
+    .gallery-grid { grid-template-columns: 1fr; }
+    .gallery-item.wide { grid-column: span 1; aspect-ratio: 4/3; }
+    .video-block { grid-column: span 1; }
+  }
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="https://www.chattnerds.com/" class="site-nav-logo">NERDS PC</a>
+    <button class="site-nav-toggle" onclick="document.querySelector('.site-nav-links').classList.toggle('open')">&#9776;</button>
+    <div class="site-nav-links">
+      <a href="https://www.chattnerds.com/">Home</a>
+      <a href="https://www.chattnerds.com/build-service.html">PC Builds</a>
+      <a href="https://www.chattnerds.com/ai-services.html">AI Services</a>
+      <a href="https://www.chattnerds.com/3d-printing.html">3D Printing</a>
+      <a href="https://www.chattnerds.com/builds.html">Builds</a>
+      <a href="https://www.chattnerds.com/about.html">About</a>
+      <a href="https://www.chattnerds.com/faq.html">FAQ</a>
+      <a href="https://www.chattnerds.com/contact.html">Contact</a>
+      <a href="https://www.chattnerds.com/quote.html" class="site-nav-cta">Get a Quote</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <h1 class="page-title">Builds</h1>
+  <p class="page-sub">A look at recent custom builds out the door — RGB showcases, workstations, and a few full build walkthroughs on video.</p>
+
+  <div class="gallery-grid">
+
+    <div class="gallery-item wide">
+      <img src="https://www.chattnerds.com/build-havn420.jpg" alt="HAVN 420 case custom PC build with purple RGB GPU fans and a custom NERDS boot screen" loading="lazy">
+    </div>
+
+    <div class="video-block">
+      <h3>Full Build Walkthrough</h3>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/igs1amXlnCU" title="NERDS PC custom build walkthrough" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-case-assembly.jpg" alt="PC case mid-assembly with radiator fans and internal panels laid out" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-desk-blue.jpg" alt="Dual monitor gaming desk setup with blue ambient lighting and NERDS branded desk mat" loading="lazy">
+    </div>
+
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-arc-sparkle.jpg" alt="Sparkle Intel Arc graphics card installed in a custom PC build with white RGB fans" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-purple-rgb.jpg" alt="Custom PC build interior with purple and blue RGB fan lighting" loading="lazy">
+    </div>
+
+    <div class="video-block">
+      <h3>Build Spotlight</h3>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/xhkPycmeDWM" title="NERDS PC build spotlight" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-purple-controller.jpg" alt="Custom PC build with rainbow RGB fans next to a lit-up gaming controller sign" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-clear-glass.jpg" alt="Clear glass panel custom PC build showing GeForce RTX graphics card and white fans" loading="lazy">
+    </div>
+
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-ryzen-9800x3d.jpg" alt="AMD Ryzen 7 9800X3D custom build with orange RGB fans and live system stats panel" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-rtx4080-teal.jpg" alt="Custom PC build with RTX 4080 graphics card and teal RGB lighting" loading="lazy">
+    </div>
+
+    <div class="video-block">
+      <h3>Build Spotlight</h3>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/YyfV0YcN8Og" title="NERDS PC build spotlight" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-zotac-blue.jpg" alt="Custom PC build with Zotac graphics card and blue purple RGB fan lighting" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-arc-a770-red.jpg" alt="Intel Arc A770 Limited Edition graphics card in a custom build with red RGB accents" loading="lazy">
+    </div>
+
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-evga-3090ti.jpg" alt="EVGA GeForce RTX 3090 Ti custom PC build with white RGB lighting and live temperature display" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-montech-white.jpg" alt="White Montech case custom PC build with Radeon graphics card and blue RGB lighting" loading="lazy">
+    </div>
+
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-legacy-inprogress.jpg" alt="Legacy PC modernization build in progress on a workbench with new parts installed" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://www.chattnerds.com/build-msi-dragon.jpg" alt="Dual monitor gaming setup with MSI dragon themed wallpaper and red RGB custom PC" loading="lazy">
+    </div>
+
+  </div>
+
+  <div class="cta-box">
+    <h3>Want a Build Like This?</h3>
+    <p>Tell us your budget and what you'll use it for, and we'll put a build together that fits.</p>
+    <a href="https://www.chattnerds.com/quote.html" class="cta-btn">Get a Quote</a>
+  </div>
+
+</div>
+</body>
+</html>

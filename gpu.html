@@ -30,6 +30,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Site Navigation */
+  .site-nav { background: #0e0e10; border-bottom: 1px solid #2a2c31; position: sticky; top: 0; z-index: 999; }
+  .site-nav-inner { max-width: 1100px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .site-nav-logo { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; text-decoration: none; }
+  .site-nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+  .site-nav-links { display: flex; align-items: center; gap: 22px; }
+  .site-nav-links a { font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; color: #cfcfcf; text-decoration: none; white-space: nowrap; }
+  .site-nav-links a:hover { color: #fff; }
+  .site-nav-links a.site-nav-cta { background: #e53935; color: #fff; padding: 8px 18px; border-radius: 5px; }
+  .site-nav-links a.site-nav-cta:hover { background: #c62828; color: #fff; }
+  @media (max-width: 860px) {
+    .site-nav-toggle { display: block; }
+    .site-nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #0e0e10; border-bottom: 1px solid #2a2c31; flex-direction: column;
+      align-items: flex-start; padding: 16px 24px; gap: 16px;
+    }
+    .site-nav-links.open { display: flex; }
+    .site-nav-links a.site-nav-cta { width: 100%; text-align: center; }
+  }
+
   *{box-sizing:border-box;margin:0;padding:0}
   :root{--bg:#0e0e10;--card:#17181b;--line:#2a2c31;--red:#e53935;--text:#e6e6e6;--muted:#a8a8a8}
   body{font-family:'Open Sans',Arial,sans-serif;color:var(--text);line-height:1.7;background:var(--bg)}
@@ -77,22 +98,40 @@
   }
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head>
-<body><div class="wrap">
+<body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="https://www.chattnerds.com/" class="site-nav-logo">NERDS PC</a>
+    <button class="site-nav-toggle" onclick="document.querySelector('.site-nav-links').classList.toggle('open')">&#9776;</button>
+    <div class="site-nav-links">
+      <a href="https://www.chattnerds.com/">Home</a>
+      <a href="https://www.chattnerds.com/build-service.html">PC Builds</a>
+      <a href="https://www.chattnerds.com/ai-services.html">AI Services</a>
+      <a href="https://www.chattnerds.com/3d-printing.html">3D Printing</a>
+      <a href="https://www.chattnerds.com/builds.html">Builds</a>
+      <a href="https://www.chattnerds.com/about.html">About</a>
+      <a href="https://www.chattnerds.com/faq.html">FAQ</a>
+      <a href="https://www.chattnerds.com/contact.html">Contact</a>
+      <a href="https://www.chattnerds.com/quote.html" class="site-nav-cta">Get a Quote</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
 <h1>Graphics Cards<span class="dot">.</span></h1>
 <p class="lede">The current generation from all three vendors is on the shelves and shipping. I build with whatever fits your budget, resolution target, and the games or software you actually run. Pricing changes week to week, so everything here is a starting point. Message me for a current quote.</p>
 
 <div class="tiles">
-  <a class="tile" href="https://www.chattnerds.com/gpu-nvidia.html" onclick="window.open(this.href,'_blank');return false;">
+  <a class="tile" href="https://www.chattnerds.com/gpu-nvidia.html">
     <div class="logo-frame"><img src="logo-nvidia.svg" alt="NVIDIA" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="logo-fallback">NVIDIA</span></div>
     <div class="series">GeForce RTX 50 Series</div>
     <span class="go">View Lineup</span>
   </a>
-  <a class="tile" href="https://www.chattnerds.com/gpu-amd.html" onclick="window.open(this.href,'_blank');return false;">
+  <a class="tile" href="https://www.chattnerds.com/gpu-amd.html">
     <div class="logo-frame"><img src="logo-amd.svg" alt="AMD" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="logo-fallback">AMD</span></div>
     <div class="series">Radeon RX 9000 Series</div>
     <span class="go">View Lineup</span>
   </a>
-  <a class="tile" href="https://www.chattnerds.com/gpu-intel.html" onclick="window.open(this.href,'_blank');return false;">
+  <a class="tile" href="https://www.chattnerds.com/gpu-intel.html">
     <div class="logo-frame"><img src="logo-intel.svg" alt="Intel" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="logo-fallback">INTEL</span></div>
     <div class="series">Arc Battlemage Series</div>
     <span class="go">View Lineup</span>
@@ -134,6 +173,6 @@
 <p class="stat-cap">Approximate averages at high settings, pulled from independent reviews. Real frame rates move with in-game settings, upscaling (DLSS / FSR / XeSS), your CPU, and the specific game. Want numbers for an exact card and the games you actually play? Message me and I will get you the real figures.</p>
 
 <div class="climate"><b>Not sure what you need?</b> Tell me your monitor, the resolution and refresh rate you game at, and what you run most. I will point you to the right card instead of selling you more than you need.</div>
-<div class="foot-cta"><a class="btn" href="https://www.chattnerds.com/quote.html" onclick="window.open(this.href,'_blank');return false;">Get A Build Quote</a></div>
+<div class="foot-cta"><a class="btn" href="https://www.chattnerds.com/quote.html">Get A Build Quote</a></div>
 <p class="disclaim">Prices change week to week with availability and market pricing. Everything here is a starting point. Contact me for a current quote before finalizing a build.</p>
 </div></body></html>

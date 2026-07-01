@@ -51,6 +51,27 @@
 }
 </script>
 <style>
+  /* Site Navigation */
+  .site-nav { background: #0e0e10; border-bottom: 1px solid #2a2c31; position: sticky; top: 0; z-index: 999; }
+  .site-nav-inner { max-width: 1100px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .site-nav-logo { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; text-decoration: none; }
+  .site-nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+  .site-nav-links { display: flex; align-items: center; gap: 22px; }
+  .site-nav-links a { font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; color: #cfcfcf; text-decoration: none; white-space: nowrap; }
+  .site-nav-links a:hover { color: #fff; }
+  .site-nav-links a.site-nav-cta { background: #e53935; color: #fff; padding: 8px 18px; border-radius: 5px; }
+  .site-nav-links a.site-nav-cta:hover { background: #c62828; color: #fff; }
+  @media (max-width: 860px) {
+    .site-nav-toggle { display: block; }
+    .site-nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #0e0e10; border-bottom: 1px solid #2a2c31; flex-direction: column;
+      align-items: flex-start; padding: 16px 24px; gap: 16px;
+    }
+    .site-nav-links.open { display: flex; }
+    .site-nav-links a.site-nav-cta { width: 100%; text-align: center; }
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
   .container { max-width: 960px; margin: 0 auto; padding: 20px 24px 40px; }
@@ -246,6 +267,24 @@
 </style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="https://www.chattnerds.com/" class="site-nav-logo">NERDS PC</a>
+    <button class="site-nav-toggle" onclick="document.querySelector('.site-nav-links').classList.toggle('open')">&#9776;</button>
+    <div class="site-nav-links">
+      <a href="https://www.chattnerds.com/">Home</a>
+      <a href="https://www.chattnerds.com/build-service.html">PC Builds</a>
+      <a href="https://www.chattnerds.com/ai-services.html">AI Services</a>
+      <a href="https://www.chattnerds.com/3d-printing.html">3D Printing</a>
+      <a href="https://www.chattnerds.com/builds.html">Builds</a>
+      <a href="https://www.chattnerds.com/about.html">About</a>
+      <a href="https://www.chattnerds.com/faq.html">FAQ</a>
+      <a href="https://www.chattnerds.com/contact.html">Contact</a>
+      <a href="https://www.chattnerds.com/quote.html" class="site-nav-cta">Get a Quote</a>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
 
   <!-- TAGLINE -->
@@ -256,21 +295,21 @@
 
   <!-- THREE PILLARS -->
   <div class="pillars">
-    <div class="pillar" onclick="window.open('https://www.chattnerds.com/quote.html','_blank')">
+    <a class="pillar" href="https://www.chattnerds.com/quote.html">
       <div class="pillar-icon">&#128421;</div>
       <h3>PC Services</h3>
       <p>Custom builds, repair, diagnostics, networking, upgrades, and remote support. From gaming rigs to office workstations.</p>
-    </div>
-    <div class="pillar" onclick="window.open('https://www.chattnerds.com/assessment.html','_blank')">
+    </a>
+    <a class="pillar" href="https://www.chattnerds.com/assessment.html">
       <div class="pillar-icon">&#129302;</div>
       <h3>AI Services</h3>
       <p>AI readiness assessments, local deployment, business automation, strategy retainers, and custom AI workstation builds.</p>
-    </div>
-    <div class="pillar" onclick="window.open('https://www.chattnerds.com/3d-printing.html','_blank')">
+    </a>
+    <a class="pillar" href="https://www.chattnerds.com/3d-printing.html">
       <div class="pillar-icon">&#9881;</div>
       <h3>3D Printing</h3>
       <p>Custom prints, prototypes, replacement parts, and multi-color designs. If you can think it, we can print it.</p>
-    </div>
+    </a>
   </div>
 
   <!-- OWNER INTRO -->
@@ -283,40 +322,40 @@
     <div class="featured-tagline">Latest Build</div>
     <h4>NERDS vs. the Steam Machine</h4>
     <p>We built a custom PC to go head-to-head with Valve's Steam Machine — see the full tale of the tape and how our Challenger Build stacks up.</p>
-    <a class="featured-btn" onclick="window.open('https://www.chattnerds.com/steam-machine-welcome.html','_blank')">See the Showdown</a>
+    <a class="featured-btn" href="https://www.chattnerds.com/steam-machine-welcome.html">See the Showdown</a>
   </div>
 
   <!-- PC BUILD BUDGET -->
   <div class="budget-section">
     <div class="section-heading">Custom PC Build Budget</div>
     <div class="budget-grid">
-      <div class="budget-card" onclick="window.open('https://www.chattnerds.com/amd.html','_blank')">
+      <a class="budget-card" href="https://www.chattnerds.com/amd.html">
         <div class="tier">Entry</div>
         <div class="price">$639</div>
         <div class="desc">Everyday use, light gaming, office work</div>
-      </div>
-      <div class="budget-card" onclick="window.open('https://www.chattnerds.com/amd.html','_blank')">
+      </a>
+      <a class="budget-card" href="https://www.chattnerds.com/amd.html">
         <div class="tier">Mid-Range</div>
         <div class="price">$799 <span>- $899</span></div>
         <div class="desc">Solid 1080p/1440p gaming, streaming, content work</div>
-      </div>
-      <div class="budget-card" onclick="window.open('https://www.chattnerds.com/amd.html','_blank')">
+      </a>
+      <a class="budget-card" href="https://www.chattnerds.com/amd.html">
         <div class="tier">High-End</div>
         <div class="price">$1,099 <span>- $1,149</span></div>
         <div class="desc">High-refresh gaming, creative workloads, multitasking</div>
-      </div>
-      <div class="budget-card" onclick="window.open('https://www.chattnerds.com/amd.html','_blank')">
+      </a>
+      <a class="budget-card" href="https://www.chattnerds.com/amd.html">
         <div class="tier">Enthusiast</div>
         <div class="price">$1,499 <span>- $1,799</span></div>
         <div class="desc">4K gaming, heavy production, no compromises</div>
-      </div>
+      </a>
     </div>
     <p class="budget-note">All builds include PSU. GPU, cooler, storage, and case priced separately. Prices subject to change.</p>
     <div class="budget-links">
-      <a class="budget-link" onclick="window.open('https://www.chattnerds.com/amd.html','_blank')">AMD Builds</a>
-      <a class="budget-link" onclick="window.open('https://www.chattnerds.com/intel.html','_blank')">Intel Builds</a>
-      <a class="budget-link" onclick="window.open('https://www.chattnerds.com/coolers.html','_blank')">CPU Coolers</a>
-      <a class="budget-link" onclick="window.open('https://www.chattnerds.com/storage.html','_blank')">Storage</a>
+      <a class="budget-link" href="https://www.chattnerds.com/amd.html">AMD Builds</a>
+      <a class="budget-link" href="https://www.chattnerds.com/intel.html">Intel Builds</a>
+      <a class="budget-link" href="https://www.chattnerds.com/coolers.html">CPU Coolers</a>
+      <a class="budget-link" href="https://www.chattnerds.com/storage.html">Storage</a>
     </div>
   </div>
 
@@ -369,16 +408,16 @@
       <h4>Legacy PC Modernization</h4>
       <div class="featured-tagline">Old enough to know how things used to work. Modern enough to keep them working.</div>
       <p>If your production floor still runs on a Windows 95 or Windows 7 PC and the software vendor closed years ago, you're one dead hard drive away from a real problem. We clone your system, move it to modern hardware, and keep your fallback ready on the shelf. Zero risk to your production.</p>
-      <a class="featured-btn" onclick="window.open('https://www.chattnerds.com/legacy.html','_blank')">Learn More</a>
+      <a class="featured-btn" href="https://www.chattnerds.com/legacy.html">Learn More</a>
     </div>
 
     <div class="pro-grid">
-      <a class="pro-card" onclick="window.open('https://www.chattnerds.com/assessment.html','_blank')">
+      <a class="pro-card" href="https://www.chattnerds.com/assessment.html">
         <h4>AI Consultation</h4>
         <p>Not sure where AI fits in your business? We assess your workflows, identify where automation saves real time and money, and build a plan that makes sense for your size and budget. No hype, just practical answers.</p>
         <span class="tag tag-consult">Consultation</span>
       </a>
-      <a class="pro-card" onclick="window.open('https://www.chattnerds.com/business-automation.html','_blank')">
+      <a class="pro-card" href="https://www.chattnerds.com/business-automation.html">
         <h4>Business Automation</h4>
         <p>Email triage, scheduling, customer intake, document processing. We set up local AI tools that handle the repetitive work so your people can focus on the work that actually needs a human.</p>
         <span class="tag tag-new">AI Powered</span>
@@ -390,7 +429,7 @@
   <div class="bottom-cta">
     <h3>Let's talk about what you need</h3>
     <p>Whether it's a personal PC, a business project, or something you're not even sure how to describe yet, reach out. No pressure, no upsell. Just a straight conversation about what makes sense.</p>
-    <a class="cta-btn" onclick="window.open('https://www.chattnerds.com/quote.html','_blank')">Get A Quote</a>
+    <a class="cta-btn" href="https://www.chattnerds.com/quote.html">Get A Quote</a>
     <div class="cta-phone">Or call direct: <a href="tel:4235215694">423-521-5694</a></div>
   </div>
 

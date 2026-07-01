@@ -30,6 +30,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Site Navigation */
+  .site-nav { background: #0e0e10; border-bottom: 1px solid #2a2c31; position: sticky; top: 0; z-index: 999; }
+  .site-nav-inner { max-width: 1100px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .site-nav-logo { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; text-decoration: none; }
+  .site-nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+  .site-nav-links { display: flex; align-items: center; gap: 22px; }
+  .site-nav-links a { font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; color: #cfcfcf; text-decoration: none; white-space: nowrap; }
+  .site-nav-links a:hover { color: #fff; }
+  .site-nav-links a.site-nav-cta { background: #e53935; color: #fff; padding: 8px 18px; border-radius: 5px; }
+  .site-nav-links a.site-nav-cta:hover { background: #c62828; color: #fff; }
+  @media (max-width: 860px) {
+    .site-nav-toggle { display: block; }
+    .site-nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #0e0e10; border-bottom: 1px solid #2a2c31; flex-direction: column;
+      align-items: flex-start; padding: 16px 24px; gap: 16px;
+    }
+    .site-nav-links.open { display: flex; }
+    .site-nav-links a.site-nav-cta { width: 100%; text-align: center; }
+  }
+
   *{box-sizing:border-box;margin:0;padding:0}
   :root{--bg:#0e0e10;--card:#17181b;--line:#2a2c31;--red:#e53935;--text:#e6e6e6;--muted:#a8a8a8}
   body{font-family:'Open Sans',Arial,sans-serif;color:var(--text);line-height:1.7;background:var(--bg)}
@@ -62,4 +83,22 @@
   .disclaim{font-size:12px;color:#7e7e7e;margin-top:18px;text-align:center}
   @media(max-width:760px){.tiles,.grid{grid-template-columns:1fr}h1{font-size:34px}}
 </style></head>
-<body><div class="wrap"><h1>NVIDIA<span class="dot">.</span> RTX 50</h1><p class="lede">Blackwell architecture. Strong ray tracing, DLSS 4 with multi-frame generation, and the best feature set for creative work, AI workloads, and streaming.</p><div class="grid"><div class="card"><div class="gpu-img noimg"><img src="gpu-5060.jpg" alt="RTX 5060" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5060</div><p class="blurb">Solid 1080p and entry 1440p.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5060ti.jpg" alt="RTX 5060 Ti" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5060 Ti</div><p class="blurb">1080p maxed out and a comfortable 1440p.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5070.jpg" alt="RTX 5070" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5070</div><p class="blurb">1440p high refresh and entry 4K.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5070ti.jpg" alt="RTX 5070 Ti" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5070 Ti</div><p class="blurb">1440p ultra settings and strong 4K.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5080.jpg" alt="RTX 5080" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5080</div><p class="blurb">4K gaming and serious content creation.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5090.jpg" alt="RTX 5090" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5090</div><p class="blurb">The flagship. 4K high refresh and heavy compute.</p></div></div></div><div class="foot-cta"><a class="btn" href="https://www.chattnerds.com/quote.html" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a></div><p class="disclaim">Prices change week to week with availability and market pricing. Everything here is a starting point. Contact me for a current quote before finalizing a build.</p></div></body></html>
+<body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="https://www.chattnerds.com/" class="site-nav-logo">NERDS PC</a>
+    <button class="site-nav-toggle" onclick="document.querySelector('.site-nav-links').classList.toggle('open')">&#9776;</button>
+    <div class="site-nav-links">
+      <a href="https://www.chattnerds.com/">Home</a>
+      <a href="https://www.chattnerds.com/build-service.html">PC Builds</a>
+      <a href="https://www.chattnerds.com/ai-services.html">AI Services</a>
+      <a href="https://www.chattnerds.com/3d-printing.html">3D Printing</a>
+      <a href="https://www.chattnerds.com/builds.html">Builds</a>
+      <a href="https://www.chattnerds.com/about.html">About</a>
+      <a href="https://www.chattnerds.com/faq.html">FAQ</a>
+      <a href="https://www.chattnerds.com/contact.html">Contact</a>
+      <a href="https://www.chattnerds.com/quote.html" class="site-nav-cta">Get a Quote</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap"><h1>NVIDIA<span class="dot">.</span> RTX 50</h1><p class="lede">Blackwell architecture. Strong ray tracing, DLSS 4 with multi-frame generation, and the best feature set for creative work, AI workloads, and streaming.</p><div class="grid"><div class="card"><div class="gpu-img noimg"><img src="gpu-5060.jpg" alt="RTX 5060" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5060</div><p class="blurb">Solid 1080p and entry 1440p.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5060ti.jpg" alt="RTX 5060 Ti" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5060 Ti</div><p class="blurb">1080p maxed out and a comfortable 1440p.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5070.jpg" alt="RTX 5070" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5070</div><p class="blurb">1440p high refresh and entry 4K.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5070ti.jpg" alt="RTX 5070 Ti" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5070 Ti</div><p class="blurb">1440p ultra settings and strong 4K.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5080.jpg" alt="RTX 5080" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5080</div><p class="blurb">4K gaming and serious content creation.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-5090.jpg" alt="RTX 5090" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">GeForce RTX 50</div><div class="name">RTX 5090</div><p class="blurb">The flagship. 4K high refresh and heavy compute.</p></div></div></div><div class="foot-cta"><a class="btn" href="https://www.chattnerds.com/quote.html">Get A Quote</a></div><p class="disclaim">Prices change week to week with availability and market pricing. Everything here is a starting point. Contact me for a current quote before finalizing a build.</p></div></body></html>
