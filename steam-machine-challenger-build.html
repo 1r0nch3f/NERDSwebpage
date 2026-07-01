@@ -176,15 +176,15 @@
   .stat-cell{text-align:center;}
   .win{color:var(--green);font-weight:600;}
   .win-tag{
-    display:inline-block;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--green);
   }
   .tie-tag{
-    display:inline-block;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--chalk-dim);
   }
   .lose-tag{
-    display:inline-block;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
     text-transform:uppercase;color:#e8a99f;
   }
   .tape-table tr:hover td{background:rgba(217,164,65,.04);}
@@ -253,7 +253,15 @@
   .foot-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--chalk-dim);}
   .foot-row a{text-decoration:none;color:var(--chalk-dim);}
   .foot-row a:hover{color:var(--gold);}
-  .fine{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--chalk-dim);opacity:.7;margin-top:18px;line-height:1.6;}
+  .fine{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--chalk-dim);opacity:.7;margin-top:18px;line-height:1.6;}  /* FAQ */
+  section.faq{padding:20px 0 66px;}
+  .faq-list{display:flex;flex-direction:column;gap:14px;}
+  .faq-item{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px 24px;}
+  .faq-item h4{
+    font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:var(--chalk);
+    margin-bottom:8px;
+  }
+  .faq-item p{font-size:14px;color:var(--chalk-dim);line-height:1.6;margin:0;}
 </style>
 </head>
 <body>
@@ -389,6 +397,11 @@
           <td class="stat-cell win">Local, in person<span class="win-tag">Challenger wins</span></td>
         </tr>
         <tr>
+          <td class="row-label">Wireless &amp; Networking</td>
+          <td class="stat-cell win">WiFi 6E, BT 5.3, dedicated radio<span class="win-tag">Champ wins</span></td>
+          <td class="stat-cell">WiFi 6, BT, Gigabit LAN<span class="tie-tag">One gen behind</span></td>
+        </tr>
+        <tr>
           <td class="row-label">Price</td>
           <td class="stat-cell win">$1,049</td>
           <td class="stat-cell">$1,199<span class="lose-tag">Champ wins on price</span></td>
@@ -470,6 +483,58 @@
       </div>
     </div>
     <div class="price-note" style="text-align:center;margin-top:22px;">Want 32GB of RAM instead of 16GB? Add $494 to any loadout above.</div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Before You Call</div>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <h4>Does the Challenger Build have WiFi?</h4>
+        <p>Yes. The motherboard has WiFi 6 and Bluetooth built in, plus a Gigabit Ethernet port if you'd rather run a cable. That's one generation behind the Steam Machine's WiFi 6E, but it connects to any normal home network without issue.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Can I use a Steam Controller with it?</h4>
+        <p>Yes, over Bluetooth. The Steam Machine has a separate dedicated low-latency radio just for Valve's controller, which the Challenger Build doesn't replicate. In practice, Bluetooth pairing works fine for a Steam Controller or any other Bluetooth controller, keyboard, or headset.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Does it come with an operating system installed?</h4>
+        <p>Yes. It ships with Bazzite (a SteamOS-style Linux build) installed, updated, and configured, so it boots straight into a console-like experience out of the box.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Can I switch it to Windows later?</h4>
+        <p>Yes. It's standard PC hardware, so you can wipe it and install Windows, a different Linux distro, or dual-boot, whenever you want. Nothing about it is locked to one operating system.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Can I upgrade it down the road?</h4>
+        <p>Yes. RAM, storage, and the graphics card are all standard parts, not soldered or sealed. The Steam Machine's internals are fixed at purchase.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>What's the warranty?</h4>
+        <p>Local warranty and hands-on support, the same person who built it is who you call if something goes wrong. No shipping it off and waiting on a support ticket queue.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Do I have to wait in a reservation queue like the Steam Machine?</h4>
+        <p>No. It's built to order and typically ready within the week, no lottery or waitlist.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>How loud is it compared to the Steam Machine?</h4>
+        <p>We haven't run a side-by-side decibel test, so we won't make a claim either way. The Challenger Build uses a standard air cooler in a Micro ATX case; Valve custom-engineered the Steam Machine's single 120mm fan specifically for quiet operation in that sealed enclosure.</p>
+      </div>
+
+    </div>
   </div>
 </section>
 
