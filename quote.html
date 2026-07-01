@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get a Custom PC Quote - NERDS PC</title>
+<meta name="description" content="Request a custom PC build quote from NERDS PC in Dalton, Chattanooga, and Cleveland TN. Tell us your use case and budget, we'll get back to you directly.">
+<link rel="canonical" href="https://www.chattnerds.com/quote.html">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
+  .container { max-width: 700px; margin: 0 auto; padding: 20px 24px 60px; }
+  .page-title {
+    font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 500;
+    text-transform: uppercase; color: #fff; margin: 20px 0 8px;
+  }
+  .page-sub { font-size: 16px; color: #a8a8a8; margin-bottom: 32px; }
+  form {
+    background: #17181b; border: 1px solid #2a2c31; border-radius: 10px;
+    padding: 28px 26px;
+  }
+  .field { margin-bottom: 22px; }
+  .field:last-of-type { margin-bottom: 0; }
+  label.field-label {
+    display: block; font-family: 'Oswald', sans-serif; font-size: 14px;
+    text-transform: uppercase; letter-spacing: 0.5px; color: #fff;
+    margin-bottom: 8px;
+  }
+  label.field-label .req { color: #e53935; }
+  input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+    width: 100%; background: #0e0e10; border: 1px solid #2a2c31; border-radius: 6px;
+    padding: 12px 14px; color: #e6e6e6; font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 15px;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #e53935; }
+  textarea { resize: vertical; min-height: 90px; }
+  .checkbox-row, .radio-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .checkbox-option, .radio-option {
+    display: flex; align-items: center; gap: 8px; background: #0e0e10;
+    border: 1px solid #2a2c31; border-radius: 6px; padding: 9px 14px;
+    font-size: 14px; cursor: pointer;
+  }
+  .checkbox-option:has(input:checked), .radio-option:has(input:checked) {
+    border-color: #e53935; background: rgba(229,57,53,0.08);
+  }
+  .checkbox-option input, .radio-option input { accent-color: #e53935; }
+  .submit-btn {
+    display: block; width: 100%; font-family: 'Oswald', sans-serif; font-size: 17px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
+    color: #fff; background: #e53935; border: none; border-radius: 6px;
+    padding: 14px; cursor: pointer; margin-top: 28px; transition: background 0.2s;
+  }
+  .submit-btn:hover { background: #c62828; }
+  .form-note { font-size: 13px; color: #7a7a7a; margin-top: 14px; text-align: center; }
+  .success-box {
+    display: none; text-align: center; background: #17181b; border: 1px solid #2a2c31;
+    border-radius: 10px; padding: 40px 26px;
+  }
+  .success-box h2 { font-family: 'Oswald', sans-serif; color: #fff; text-transform: uppercase; margin-bottom: 10px; }
+  .success-box p { color: #a8a8a8; }
+  .back-link { display: inline-block; margin-top: 24px; color: #8fcdf0; text-decoration: none; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="form-view">
+    <div class="page-title">Get a Custom PC Quote</div>
+    <p class="page-sub">Tell us what you need it for and your budget. We'll get back to you directly, no sales script.</p>
+
+    <form id="quote-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <div class="field">
+        <label class="field-label" for="name">Name <span class="req">*</span></label>
+        <input type="text" id="name" name="name" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="email">Email <span class="req">*</span></label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="phone">Cell Phone Number</label>
+        <input type="tel" id="phone" name="phone">
+      </div>
+
+      <div class="field">
+        <label class="field-label">How do you wish to be reached? <span class="req">*</span></label>
+        <div class="checkbox-row">
+          <label class="checkbox-option"><input type="checkbox" name="contact_method" value="Email"> Email</label>
+          <label class="checkbox-option"><input type="checkbox" name="contact_method" value="Text"> Text</label>
+          <label class="checkbox-option"><input type="checkbox" name="contact_method" value="Call"> Call</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">What do you plan to use the PC for? <span class="req">*</span></label>
+        <div class="radio-row">
+          <label class="radio-option"><input type="radio" name="use_case" value="Gaming" required> Gaming</label>
+          <label class="radio-option"><input type="radio" name="use_case" value="School"> School</label>
+          <label class="radio-option"><input type="radio" name="use_case" value="Coding"> Coding</label>
+          <label class="radio-option"><input type="radio" name="use_case" value="AI or 3D Rendering"> AI / 3D Rendering</label>
+          <label class="radio-option"><input type="radio" name="use_case" value="Video Editing"> Video Editing</label>
+          <label class="radio-option"><input type="radio" name="use_case" value="Other"> Other</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="budget">Budget Range</label>
+        <select id="budget" name="budget">
+          <option value="">Select a range</option>
+          <option value="Under $800">Under $800</option>
+          <option value="$800 - $1,200">$800 - $1,200</option>
+          <option value="$1,200 - $1,800">$1,200 - $1,800</option>
+          <option value="$1,800+">$1,800+</option>
+          <option value="Not sure yet">Not sure yet</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="timeline">Timeline</label>
+        <select id="timeline" name="timeline">
+          <option value="">Select a timeline</option>
+          <option value="ASAP">ASAP</option>
+          <option value="Within 2 weeks">Within 2 weeks</option>
+          <option value="Within a month">Within a month</option>
+          <option value="Just exploring">Just exploring</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="details">Anything else we should know?</label>
+        <textarea id="details" name="details" placeholder="Games/software you use, existing parts you want to keep, size constraints, etc."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">Send My Quote Request</button>
+      <p class="form-note">We'll respond within 1 business day. No spam, no mailing lists.</p>
+    </form>
+  </div>
+
+  <div id="success-view" class="success-box">
+    <h2>Got It</h2>
+    <p>Thanks — your quote request is in. We'll reach out the way you asked to be contacted.</p>
+    <a class="back-link" href="https://www.chattnerds.com/">&larr; Back to NERDS PC</a>
+  </div>
+
+</div>
+
+<script>
+  const form = document.getElementById('quote-form');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const data = new FormData(form);
+    fetch(form.action, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    }).then(response => {
+      if (response.ok) {
+        document.getElementById('form-view').style.display = 'none';
+        document.getElementById('success-view').style.display = 'block';
+      } else {
+        alert('Something went wrong sending your request. Please email info@chattnerds.com directly, or try again.');
+      }
+    }).catch(() => {
+      alert('Something went wrong sending your request. Please email info@chattnerds.com directly, or try again.');
+    });
+  });
+</script>
+</body>
+</html>
