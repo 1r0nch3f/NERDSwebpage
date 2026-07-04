@@ -1,12 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GD8KXQQMB6');
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tale of the Tape: Steam Machine vs. the NERDS Challenger Build</title>
+<meta name="description" content="Full spec-by-spec breakdown: Valve's Steam Machine vs. the NERDS Challenger Build. See who wins on performance, price, and value.">
+<link rel="canonical" href="https://www.chattnerds.com/steam-machine-challenger-build.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NERDS PC">
+<meta property="og:title" content="Tale of the Tape: Steam Machine vs. the NERDS Challenger Build">
+<meta property="og:description" content="Full spec-by-spec breakdown: Valve's Steam Machine vs. the NERDS Challenger Build. See who wins on performance, price, and value.">
+<meta property="og:url" content="https://www.chattnerds.com/steam-machine-challenger-build.html">
+<meta property="og:image" content="https://www.chattnerds.com/NERDS_OG_logo_6K.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tale of the Tape: Steam Machine vs. the NERDS Challenger Build">
+<meta name="twitter:description" content="Full spec-by-spec breakdown: Valve's Steam Machine vs. the NERDS Challenger Build. See who wins on performance, price, and value.">
+<meta name="twitter:image" content="https://www.chattnerds.com/NERDS_OG_logo_6K.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Site Navigation */
+  .site-nav { background: #0e0e10; border-bottom: 1px solid #2a2c31; position: sticky; top: 0; z-index: 999; }
+  .site-nav-inner { max-width: 1100px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .site-nav-logo { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; text-decoration: none; }
+  .site-nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+  .site-nav-links { display: flex; align-items: center; gap: 22px; }
+  .site-nav-links a { font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; color: #cfcfcf; text-decoration: none; white-space: nowrap; }
+  .site-nav-links a:hover { color: #fff; }
+  .site-nav-links a.site-nav-cta { background: #e53935; color: #fff; padding: 8px 18px; border-radius: 5px; }
+  .site-nav-links a.site-nav-cta:hover { background: #c62828; color: #fff; }
+  @media (max-width: 860px) {
+    .site-nav-toggle { display: block; }
+    .site-nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #0e0e10; border-bottom: 1px solid #2a2c31; flex-direction: column;
+      align-items: flex-start; padding: 16px 24px; gap: 16px;
+    }
+    .site-nav-links.open { display: flex; }
+    .site-nav-links a.site-nav-cta { width: 100%; text-align: center; }
+  }
+
   :root{
     --ink:#0f0d0a;
     --panel:#1b1712;
@@ -132,15 +176,15 @@
   .stat-cell{text-align:center;}
   .win{color:var(--green);font-weight:600;}
   .win-tag{
-    display:inline-block;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--green);
   }
   .tie-tag{
-    display:inline-block;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--chalk-dim);
   }
   .lose-tag{
-    display:inline-block;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
     text-transform:uppercase;color:#e8a99f;
   }
   .tape-table tr:hover td{background:rgba(217,164,65,.04);}
@@ -209,24 +253,61 @@
   .foot-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--chalk-dim);}
   .foot-row a{text-decoration:none;color:var(--chalk-dim);}
   .foot-row a:hover{color:var(--gold);}
-  .fine{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--chalk-dim);opacity:.7;margin-top:18px;line-height:1.6;}
+  .fine{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--chalk-dim);opacity:.7;margin-top:18px;line-height:1.6;}  /* FAQ */
+  section.faq{padding:20px 0 66px;}
+  .faq-list{display:flex;flex-direction:column;gap:14px;}
+  .faq-item{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px 24px;}
+  .faq-item h4{
+    font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:var(--chalk);
+    margin-bottom:8px;
+  }
+  .faq-item p{font-size:14px;color:var(--chalk-dim);line-height:1.6;margin:0;}  /* Sold out stamp */
+  .sold-out-stamp{
+    position:fixed;top:38%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);
+    font-family:'Anton',sans-serif;font-size:clamp(60px,12vw,160px);color:#f2c14e;
+    letter-spacing:.05em;text-shadow:3px 3px 0 rgba(0,0,0,.5);
+    pointer-events:none;z-index:500;white-space:nowrap;
+    -webkit-text-stroke:2px #0f0d0a;
+  }
+  @media(max-width:700px){
+    .sold-out-stamp{font-size:16vw;}
+  }
 </style>
 </head>
 <body>
+<div class="sold-out-stamp">SOLD OUT</div>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="https://www.chattnerds.com/" class="site-nav-logo">NERDS PC</a>
+    <button class="site-nav-toggle" onclick="document.querySelector('.site-nav-links').classList.toggle('open')">&#9776;</button>
+    <div class="site-nav-links">
+      <a href="https://www.chattnerds.com/">Home</a>
+      <a href="https://www.chattnerds.com/build-service.html">PC Builds</a>
+      <a href="https://www.chattnerds.com/ai-services.html">AI Services</a>
+      <a href="https://www.chattnerds.com/3d-printing.html">3D Printing</a>
+      <a href="https://www.chattnerds.com/builds.html">Builds</a>
+      <a href="https://www.chattnerds.com/about.html">About</a>
+      <a href="https://www.chattnerds.com/faq.html">FAQ</a>
+      <a href="https://www.chattnerds.com/contact.html">Contact</a>
+      <a href="https://www.chattnerds.com/quote.html" class="site-nav-cta">Get a Quote</a>
+    </div>
+  </div>
+</nav>
+
 
 <nav>
   <div class="brand">
     <strong>NERDS Custom Computers</strong>
     <span>Dalton, GA &middot; Custom Builds &amp; IT</span>
   </div>
-  <a class="nav-cta" href="#bell">Get This Build</a>
+  <a class="nav-cta" href="#bell">Get On The List</a>
 </nav>
 
 <header class="hero">
   <div class="wrap">
     <div class="eyebrow">Tale of the Tape</div>
     <h1 class="hero-h">Same weight<br>class. <span class="accent">Better fighter.</span></h1>
-    <p class="sub">Valve's Steam Machine is finally shipping, if your name gets pulled in the reservation lottery. We build the <b>NERDS Challenger</b>, a custom PC running Bazzite for that same couch-ready SteamOS experience, on a 3D V-Cache gaming CPU with double the graphics memory and zero waitlist. Built, tested, and ready this week in Dalton.</p>
+    <p class="sub">Valve's Steam Machine is finally shipping, if your name gets pulled in the reservation lottery. We built the <b>NERDS Challenger</b>, a custom PC running Bazzite for that same couch-ready SteamOS experience, on a 3D V-Cache gaming CPU with double the graphics memory and zero waitlist. The first run sold out in 3 days. Those parts were priced for a limited batch, so pricing has changed since. Get on the list for the next one.</p>
     <div class="flags">
       <div class="flag red"><span class="dot red"></span>Steam Machine 512GB</div>
       <div class="flag gold"><span class="dot gold"></span>NERDS Challenger Build</div>
@@ -257,7 +338,7 @@
         <h3>NERDS Build</h3>
         <div class="subtitle">Custom tower, 512GB configuration</div>
         <div class="price-tag">$1,199</div>
-        <div class="price-note">Built to order. Ready for pickup or local delivery this week.</div>
+        <div class="price-note">Launch price for a limited batch. First run sold out in 3 days, pricing has changed since, get on the list for the next build.</div>
         <ul class="mini-specs">
           <li>CPU <b>Ryzen 5 7500X3D, 3D V-Cache</b></li>
           <li>GPU / VRAM <b>RX 9060 XT / 16GB</b></li>
@@ -319,12 +400,17 @@
         <tr>
           <td class="row-label">Availability</td>
           <td class="stat-cell">Reservation lottery</td>
-          <td class="stat-cell win">Built this week<span class="win-tag">Challenger wins</span></td>
+          <td class="stat-cell win">Sold out in 3 days, next list open now<span class="win-tag">Sold out fast</span></td>
         </tr>
         <tr>
           <td class="row-label">Warranty &amp; support</td>
           <td class="stat-cell">Valve ticket queue</td>
           <td class="stat-cell win">Local, in person<span class="win-tag">Challenger wins</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">Wireless &amp; Networking</td>
+          <td class="stat-cell win">WiFi 6E, BT 5.3, dedicated radio<span class="win-tag">Champ wins</span></td>
+          <td class="stat-cell">WiFi 6, BT, Gigabit LAN<span class="tie-tag">One gen behind</span></td>
         </tr>
         <tr>
           <td class="row-label">Price</td>
@@ -386,7 +472,7 @@
 <section class="loadout">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Pick Your Loadout</div>
+      <div class="eyebrow">What The First Run Cost</div>
       <h2>Same fighter, more tank</h2>
     </div>
     <div class="loadout-grid">
@@ -407,17 +493,16 @@
         <div class="loadout-note">Matches the Steam Machine's top tier</div>
       </div>
     </div>
-    <div class="price-note" style="text-align:center;margin-top:22px;">Want 32GB of RAM instead of 16GB? Add $494 to any loadout above.</div>
+    <div class="price-note" style="text-align:center;margin-top:22px;">32GB RAM instead of 16GB added $494 to any tier above. These were launch-batch prices for a limited run, parts cost and availability have changed since. Get on the list below for current pricing on the next build.</div>
   </div>
 </section>
 
 <section class="bell" id="bell">
   <div class="wrap">
     <div class="bell-card">
-      <div class="eyebrow" style="justify-content:center;">Ring the Bell</div>
+      <div class="eyebrow" style="justify-content:center;">Sold Out</div>
       <h2>NERDS Challenger Build</h2>
-      <div class="bell-price"><sup>$</sup>1,199</div>
-      <div class="price-note">Starting price, 512GB. Built and ready, no reservation required.</div>
+      <div class="price-note" style="color:var(--gold);font-weight:600;font-size:15px;">First run sold out in 3 days. Those parts were priced and sourced for a limited batch, and pricing and availability have changed since.</div>
       <ul class="bell-included">
         <li>Full assembly and cable management</li>
         <li>Bazzite (SteamOS) installed and configured</li>
@@ -426,6 +511,7 @@
         <li>Local warranty and hands-on support</li>
         <li>Free local pickup, Dalton and Chattanooga</li>
       </ul>
+      <div class="price-note" style="margin-top:4px;">Want the next one? Get on the list and we will reach out with current pricing once the next batch is ready to build.</div>
       <div class="cta-row">
         <a class="btn primary" href="tel:4235215694">Call or Text 423-521-5694</a>
         <a class="btn ghost" href="mailto:info@chattnerds.com">Email info@chattnerds.com</a>
@@ -444,16 +530,5 @@
   </div>
 </footer>
 
-
-<!-- NERDS MERCH SHOP FOOTER -->
-<div style="background:#000;border-top:1px solid #2a2c31;padding:24px 16px;text-align:center;">
-  <a href="https://nerds-vzh-shop.fourthwall.com" target="_blank" rel="noopener"
-     style="display:inline-block;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:.6px;text-transform:uppercase;color:#0D0D0D;background:#E67E22;padding:12px 30px;border-radius:6px;text-decoration:none;">
-    &#128722; Shop NERDS Merch
-  </a>
-  <div style="margin-top:10px;font-family:'Open Sans',sans-serif;font-size:12px;color:#8a8a8a;letter-spacing:.3px;">
-    Shirts, hoodies &amp; more &middot; nerds-vzh-shop.fourthwall.com
-  </div>
-</div>
 </body>
 </html>

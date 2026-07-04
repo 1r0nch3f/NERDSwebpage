@@ -1,12 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GD8KXQQMB6');
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NERDS vs. the Steam Machine</title>
+<title>NERDS vs. the Steam Machine | Custom PC Build Comparison</title>
+<meta name="description" content="We built a custom PC to challenge Valve's Steam Machine. See the full comparison and how the NERDS Challenger Build stacks up.">
+<link rel="canonical" href="https://www.chattnerds.com/steam-machine-welcome.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NERDS PC">
+<meta property="og:title" content="NERDS vs. the Steam Machine">
+<meta property="og:description" content="We built a custom PC to challenge Valve's Steam Machine. See the full comparison and how the NERDS Challenger Build stacks up.">
+<meta property="og:url" content="https://www.chattnerds.com/steam-machine-welcome.html">
+<meta property="og:image" content="https://www.chattnerds.com/NERDS_OG_logo_6K.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NERDS vs. the Steam Machine">
+<meta name="twitter:description" content="We built a custom PC to challenge Valve's Steam Machine. See the full comparison and how the NERDS Challenger Build stacks up.">
+<meta name="twitter:image" content="https://www.chattnerds.com/NERDS_OG_logo_6K.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Site Navigation */
+  .site-nav { background: #0e0e10; border-bottom: 1px solid #2a2c31; position: sticky; top: 0; z-index: 999; }
+  .site-nav-inner { max-width: 1100px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .site-nav-logo { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; text-decoration: none; }
+  .site-nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+  .site-nav-links { display: flex; align-items: center; gap: 22px; }
+  .site-nav-links a { font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; color: #cfcfcf; text-decoration: none; white-space: nowrap; }
+  .site-nav-links a:hover { color: #fff; }
+  .site-nav-links a.site-nav-cta { background: #e53935; color: #fff; padding: 8px 18px; border-radius: 5px; }
+  .site-nav-links a.site-nav-cta:hover { background: #c62828; color: #fff; }
+  @media (max-width: 860px) {
+    .site-nav-toggle { display: block; }
+    .site-nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #0e0e10; border-bottom: 1px solid #2a2c31; flex-direction: column;
+      align-items: flex-start; padding: 16px 24px; gap: 16px;
+    }
+    .site-nav-links.open { display: flex; }
+    .site-nav-links a.site-nav-cta { width: 100%; text-align: center; }
+  }
+
   :root{
     --ink:#0f0d0a;
     --panel:#1b1712;
@@ -105,9 +149,40 @@
   .foot-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--chalk-dim);}
   .foot-row a{text-decoration:none;color:var(--chalk-dim);}
   .foot-row a:hover{color:var(--gold);}
+
+  /* Sold out stamp */
+  .sold-out-stamp{
+    position:fixed;top:38%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);
+    font-family:'Anton',sans-serif;font-size:clamp(60px,12vw,160px);color:#f2c14e;
+    letter-spacing:.05em;text-shadow:3px 3px 0 rgba(0,0,0,.5);
+    pointer-events:none;z-index:500;white-space:nowrap;
+    -webkit-text-stroke:2px #0f0d0a;
+  }
+  @media(max-width:700px){
+    .sold-out-stamp{font-size:16vw;}
+  }
 </style>
 </head>
 <body>
+<div class="sold-out-stamp">SOLD OUT</div>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="https://www.chattnerds.com/" class="site-nav-logo">NERDS PC</a>
+    <button class="site-nav-toggle" onclick="document.querySelector('.site-nav-links').classList.toggle('open')">&#9776;</button>
+    <div class="site-nav-links">
+      <a href="https://www.chattnerds.com/">Home</a>
+      <a href="https://www.chattnerds.com/build-service.html">PC Builds</a>
+      <a href="https://www.chattnerds.com/ai-services.html">AI Services</a>
+      <a href="https://www.chattnerds.com/3d-printing.html">3D Printing</a>
+      <a href="https://www.chattnerds.com/builds.html">Builds</a>
+      <a href="https://www.chattnerds.com/about.html">About</a>
+      <a href="https://www.chattnerds.com/faq.html">FAQ</a>
+      <a href="https://www.chattnerds.com/contact.html">Contact</a>
+      <a href="https://www.chattnerds.com/quote.html" class="site-nav-cta">Get a Quote</a>
+    </div>
+  </div>
+</nav>
+
 
 <nav>
   <div class="brand">
@@ -126,7 +201,7 @@
     </div>
 
     <h1>The <span class="accent">Challenger</span> has entered the building.</h1>
-    <p class="lede">Valve's Steam Machine just launched at $1,049, and if your name gets pulled in the reservation lottery, you might have it by Christmas. We build the same kind of couch-ready SteamOS machine <b>this week</b>, with a 3D V-Cache gaming CPU and double the graphics memory. No lottery. No waitlist.</p>
+    <p class="lede">Valve's Steam Machine launched at $1,049, and if your name gets pulled in the reservation lottery, you might have it by Christmas. We built the same kind of couch-ready SteamOS machine with a 3D V-Cache gaming CPU and double the graphics memory, no lottery, no waitlist. The first run sold out in 3 days flat. Those parts were priced for a limited batch, pricing has changed since. Get on the list for the next one.</p>
 
     <div class="stat-row">
       <div class="stat-pill">
@@ -138,19 +213,19 @@
         <div class="lbl">V-Cache CPU</div>
       </div>
       <div class="stat-pill">
-        <div class="num">0</div>
-        <div class="lbl">Day Waitlist</div>
+        <div class="num">Sold Out</div>
+        <div class="lbl">First Run, 3 days</div>
       </div>
       <div class="stat-pill">
         <div class="num">$1,199</div>
-        <div class="lbl">Starting Price</div>
+        <div class="lbl">Launch Price</div>
       </div>
     </div>
 
     <div class="cta-center">
-      <a class="btn" href="steam-machine-challenger-build.html">See the Full Tale of the Tape</a>
+      <a class="btn" href="steam-machine-challenger-build.html#bell">Get On The List</a>
     </div>
-    <div class="cta-sub">Full spec breakdown, pricing, and loadout options</div>
+    <div class="cta-sub">Full spec breakdown, what it sold for, and how to reserve the next build</div>
   </div>
 </main>
 
@@ -161,16 +236,5 @@
   </div>
 </footer>
 
-
-<!-- NERDS MERCH SHOP FOOTER -->
-<div style="background:#000;border-top:1px solid #2a2c31;padding:24px 16px;text-align:center;">
-  <a href="https://nerds-vzh-shop.fourthwall.com" target="_blank" rel="noopener"
-     style="display:inline-block;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:.6px;text-transform:uppercase;color:#0D0D0D;background:#E67E22;padding:12px 30px;border-radius:6px;text-decoration:none;">
-    &#128722; Shop NERDS Merch
-  </a>
-  <div style="margin-top:10px;font-family:'Open Sans',sans-serif;font-size:12px;color:#8a8a8a;letter-spacing:.3px;">
-    Shirts, hoodies &amp; more &middot; nerds-vzh-shop.fourthwall.com
-  </div>
-</div>
 </body>
 </html>
