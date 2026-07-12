@@ -1,517 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-GD8KXQQMB6');
-</script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tale of the Tape: Steam Machine vs. the NERDS Challenger Build</title>
-<meta name="description" content="Full spec-by-spec breakdown: Valve's Steam Machine vs. the NERDS Challenger Build. See who wins on performance, price, and value.">
-<link rel="canonical" href="https://www.chattnerds.com/steam-machine-challenger-build.html">
-
+<title>Console Prices Are Climbing. Build Something Better. | NERDS PC</title>
+<meta name="description" content="PlayStation is killing discs. Xbox just raised prices again. For $1,200 you can build an all-AMD gaming PC that outperforms both and does everything else too.">
+<meta property="og:title" content="Console Prices Are Climbing. Build Something Better.">
+<meta property="og:description" content="All-AMD gaming PC starting at $1,200. Outperforms PS5 Pro and Xbox Series X, and it is not just a gaming machine.">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="NERDS PC">
-<meta property="og:title" content="Tale of the Tape: Steam Machine vs. the NERDS Challenger Build">
-<meta property="og:description" content="Full spec-by-spec breakdown: Valve's Steam Machine vs. the NERDS Challenger Build. See who wins on performance, price, and value.">
 <meta property="og:url" content="https://www.chattnerds.com/steam-machine-challenger-build.html">
-<meta property="og:image" content="https://www.chattnerds.com/NERDS_OG_logo_6K.png">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Tale of the Tape: Steam Machine vs. the NERDS Challenger Build">
-<meta name="twitter:description" content="Full spec-by-spec breakdown: Valve's Steam Machine vs. the NERDS Challenger Build. See who wins on performance, price, and value.">
-<meta name="twitter:image" content="https://www.chattnerds.com/NERDS_OG_logo_6K.png">
+<link rel="canonical" href="https://www.chattnerds.com/steam-machine-challenger-build.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-GD8KXQQMB6');</script>
 <style>
-  /* Site Navigation */
-  .site-nav { background: #0e0e10; border-bottom: 1px solid #2a2c31; position: sticky; top: 0; z-index: 999; }
-  .site-nav-inner { max-width: 1100px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
-  .site-nav-logo { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; text-decoration: none; }
-  .site-nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
-  .site-nav-links { display: flex; align-items: center; gap: 22px; }
-  .site-nav-links a { font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; color: #cfcfcf; text-decoration: none; white-space: nowrap; }
-  .site-nav-links a:hover { color: #fff; }
-  .site-nav-links a.site-nav-cta { background: #e53935; color: #fff; padding: 8px 18px; border-radius: 5px; }
-  .site-nav-links a.site-nav-cta:hover { background: #c62828; color: #fff; }
-  @media (max-width: 860px) {
-    .site-nav-toggle { display: block; }
-    .site-nav-links {
-      display: none; position: absolute; top: 100%; left: 0; right: 0;
-      background: #0e0e10; border-bottom: 1px solid #2a2c31; flex-direction: column;
-      align-items: flex-start; padding: 16px 24px; gap: 16px;
-    }
-    .site-nav-links.open { display: flex; }
-    .site-nav-links a.site-nav-cta { width: 100%; text-align: center; }
-  }
-
   :root{
-    --ink:#0f0d0a;
-    --panel:#1b1712;
-    --panel-2:#221d16;
-    --chalk:#f2ead9;
-    --chalk-dim:#c9bfab;
-    --gold:#d9a441;
-    --gold-dim:#8f6f2f;
-    --red:#a8342a;
-    --red-dim:#5c231f;
-    --green:#4f9d69;
-    --line:#3c352a;
-    --rope:#5a4c34;
+    --ink:#0a0a0c;
+    --panel:#141418;
+    --panel-2:#1a1a20;
+    --chalk:#eae8e3;
+    --chalk-dim:#9e9b94;
+    --blue:#3d7cf5;
+    --green:#3bb566;
+    --red:#e53935;
+    --gold:#d4a843;
+    --line:#27272e;
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
-    margin:0;
-    background:
-      radial-gradient(1200px 600px at 15% -10%, #241d13 0%, transparent 60%),
-      radial-gradient(900px 500px at 110% 10%, #1a1410 0%, transparent 55%),
-      var(--ink);
-    color:var(--chalk);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
+    margin:0;background:var(--ink);color:var(--chalk);
+    font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px;}
   a{color:inherit;}
 
   /* ---------- NAV ---------- */
   nav{
     display:flex;align-items:center;justify-content:space-between;
-    padding:22px 24px;border-bottom:1px solid var(--line);
+    padding:20px 24px;border-bottom:1px solid var(--line);
     position:sticky;top:0;z-index:20;
-    background:rgba(15,13,10,0.86);backdrop-filter:blur(8px);
+    background:rgba(10,10,12,0.88);backdrop-filter:blur(8px);
   }
   .brand{display:flex;flex-direction:column;line-height:1;}
-  .brand strong{font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.06em;font-size:19px;text-transform:uppercase;}
-  .brand span{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.12em;margin-top:4px;}
+  .brand strong{font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.06em;font-size:18px;text-transform:uppercase;}
+  .brand span{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--red);letter-spacing:.12em;margin-top:4px;}
   .nav-cta{
     font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
-    background:var(--gold);color:var(--ink);padding:11px 18px;border-radius:3px;text-decoration:none;
+    background:var(--red);color:#fff;padding:11px 18px;border-radius:3px;text-decoration:none;
     transition:transform .15s ease, box-shadow .15s ease;
   }
-  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(217,164,65,.25);}
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(229,57,53,.3);}
 
   /* ---------- HERO ---------- */
-  header.hero{padding:76px 0 54px;position:relative;overflow:hidden;}
+  header.hero{padding:72px 0 56px;position:relative;}
   .eyebrow{
-    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.28em;text-transform:uppercase;
-    color:var(--gold);display:flex;align-items:center;gap:14px;margin-bottom:22px;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--red);display:flex;align-items:center;gap:14px;margin-bottom:20px;
     animation:fadeUp .7s ease both;
   }
-  .eyebrow::before, .eyebrow::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+  .eyebrow::before,.eyebrow::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent);}
   h1.hero-h{
-    font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
-    font-size:clamp(40px,7vw,78px);line-height:0.96;letter-spacing:.01em;margin:0 0 22px;
+    font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;
+    font-size:clamp(36px,6.5vw,72px);line-height:0.98;letter-spacing:.01em;margin:0 0 24px;
     animation:fadeUp .8s ease .05s both;
   }
-  h1.hero-h .accent{color:var(--gold);}
+  h1.hero-h .accent{color:var(--red);}
   .hero p.sub{
-    font-size:17px;color:var(--chalk-dim);max-width:620px;line-height:1.65;margin:0 0 34px;
+    font-size:17px;color:var(--chalk-dim);max-width:640px;line-height:1.7;margin:0 0 32px;
     animation:fadeUp .8s ease .12s both;
   }
   .hero p.sub b{color:var(--chalk);font-weight:600;}
-  .flags{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .8s ease .2s both;}
-  .flag{
-    font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
-    padding:10px 16px;border-radius:3px;display:flex;align-items:center;gap:9px;
-  }
-  .flag.red{background:rgba(168,52,42,.16);border:1px solid var(--red-dim);color:#e8a99f;}
-  .flag.gold{background:rgba(217,164,65,.14);border:1px solid var(--gold-dim);color:var(--gold);}
-  .dot{width:8px;height:8px;border-radius:50%;}
-  .dot.red{background:var(--red);}
-  .dot.gold{background:var(--gold);}
-
   @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 
-  /* ---------- CORNER CARDS ---------- */
-  section.corners{padding:10px 0 60px;}
-  .corner-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
-  @media(max-width:720px){.corner-grid{grid-template-columns:1fr;}}
-  .corner{
-    background:var(--panel);border-radius:6px;padding:30px 28px 28px;position:relative;overflow:hidden;
+  /* ---------- THREE CARDS ---------- */
+  section.matchup{padding:10px 0 60px;}
+  .three-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+  @media(max-width:820px){.three-grid{grid-template-columns:1fr;}}
+  .console-card{
+    background:var(--panel);border-radius:6px;padding:28px 24px 24px;position:relative;overflow:hidden;
     border-top:4px solid var(--line);
   }
-  .corner.red-corner{border-top-color:var(--red);}
-  .corner.gold-corner{border-top-color:var(--gold);}
-  .corner-tag{
-    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--chalk-dim);margin-bottom:10px;
+  .console-card.ps{border-top-color:var(--blue);}
+  .console-card.xb{border-top-color:var(--green);}
+  .console-card.nerds{border-top-color:var(--red);background:linear-gradient(135deg,var(--panel-2),var(--panel));}
+  .card-badge{
+    position:absolute;top:12px;right:12px;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    padding:4px 8px;border-radius:3px;
   }
-  .corner h3{
-    font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.02em;
-    font-size:26px;margin:0 0 4px;
-  }
-  .corner .subtitle{font-size:13px;color:var(--chalk-dim);margin-bottom:22px;}
-  .price-tag{font-family:'Anton',sans-serif;font-size:44px;margin-bottom:4px;}
-  .red-corner .price-tag{color:#e8a99f;}
-  .gold-corner .price-tag{color:var(--gold);}
-  .price-note{font-size:12px;color:var(--chalk-dim);margin-bottom:22px;}
-  .mini-specs{list-style:none;margin:0;padding:0;font-size:14px;color:var(--chalk-dim);}
+  .card-badge.ps-badge{background:rgba(61,124,245,.15);color:var(--blue);}
+  .card-badge.xb-badge{background:rgba(59,181,102,.15);color:var(--green);}
+  .card-badge.nerds-badge{background:rgba(229,57,53,.15);color:var(--red);}
+  .card-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--chalk-dim);margin-bottom:8px;}
+  .console-card h3{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:24px;margin:0 0 4px;}
+  .console-card .subtitle{font-size:13px;color:var(--chalk-dim);margin-bottom:18px;line-height:1.5;}
+  .price-tag{font-family:'Oswald',sans-serif;font-weight:700;font-size:40px;margin-bottom:4px;}
+  .price-was{font-family:'Oswald',sans-serif;font-weight:500;font-size:22px;color:var(--chalk-dim);text-decoration:line-through;margin-bottom:2px;}
+  .ps .price-tag{color:var(--blue);}
+  .xb .price-tag{color:var(--green);}
+  .nerds .price-tag{color:var(--red);}
+  .price-note{font-size:12px;color:var(--chalk-dim);margin-bottom:18px;line-height:1.5;}
+  .mini-specs{list-style:none;margin:0;padding:0;font-size:13px;color:var(--chalk-dim);}
   .mini-specs li{padding:7px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;}
   .mini-specs li:first-child{border-top:none;}
   .mini-specs b{color:var(--chalk);font-weight:600;text-align:right;}
 
-  /* ---------- TALE OF THE TAPE TABLE ---------- */
-  section.tape{padding:20px 0 66px;}
-  .section-head{margin-bottom:30px;}
-  .section-head .eyebrow{margin-bottom:14px;}
-  .section-head h2{
-    font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(28px,4vw,40px);margin:0;letter-spacing:.01em;
+  /* ---------- NOT JUST GAMING ---------- */
+  section.beyond{padding:20px 0 60px;}
+  .section-head{margin-bottom:28px;}
+  .section-head .eyebrow{margin-bottom:12px;}
+  .section-head h2{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:clamp(26px,4vw,38px);margin:0;letter-spacing:.01em;}
+  .section-head p.section-sub{font-size:15px;color:var(--chalk-dim);margin-top:10px;max-width:640px;line-height:1.65;}
+  .use-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:720px){.use-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:480px){.use-grid{grid-template-columns:1fr;}}
+  .use-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:22px 20px;
+    transition:border-color .15s ease, transform .15s ease;
   }
+  .use-card:hover{border-color:var(--red);transform:translateY(-2px);}
+  .use-icon{font-size:28px;margin-bottom:10px;}
+  .use-card h4{font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;font-size:14px;letter-spacing:.04em;margin-bottom:6px;}
+  .use-card p{font-size:13px;color:var(--chalk-dim);line-height:1.55;margin:0;}
+
+  /* ---------- SPEC TABLE ---------- */
+  section.tape{padding:10px 0 60px;}
   .tape-table{width:100%;border-collapse:collapse;background:var(--panel);border-radius:6px;overflow:hidden;}
   .tape-table thead th{
     font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--chalk-dim);text-align:left;padding:16px 18px;background:var(--panel-2);border-bottom:1px solid var(--line);
+    color:var(--chalk-dim);text-align:left;padding:14px 16px;background:var(--panel-2);border-bottom:1px solid var(--line);
   }
   .tape-table thead th:not(:first-child){text-align:center;}
-  .tape-table td{padding:16px 18px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle;}
+  .tape-table td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle;}
   .tape-table tr:last-child td{border-bottom:none;}
-  .row-label{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--chalk-dim);white-space:nowrap;}
+  .row-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--chalk-dim);white-space:nowrap;}
   .stat-cell{text-align:center;}
   .win{color:var(--green);font-weight:600;}
-  .win-tag{
-    display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--green);
-  }
-  .tie-tag{
-    display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--chalk-dim);
-  }
-  .lose-tag{
-    display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
-    text-transform:uppercase;color:#e8a99f;
-  }
-  .tape-table tr:hover td{background:rgba(217,164,65,.04);}
+  .tag-sm{display:inline-block;margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;}
+  .tag-win{color:var(--green);}
+  .tag-tie{color:var(--chalk-dim);}
+  .tag-lose{color:var(--chalk-dim);opacity:.6;}
+  .tape-table tr:hover td{background:rgba(229,57,53,.03);}
+
+  /* ---------- TRUE COST ---------- */
+  section.cost{padding:10px 0 60px;}
+  .cost-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+  @media(max-width:820px){.cost-grid{grid-template-columns:1fr;}}
+  .cost-card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:28px 24px;text-align:center;}
+  .cost-card.nerds-cost{border-color:rgba(229,57,53,.3);}
+  .cost-card h4{font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:14px;margin-bottom:14px;color:var(--chalk-dim);}
+  .cost-big{font-family:'Oswald',sans-serif;font-weight:700;font-size:36px;margin-bottom:6px;}
+  .ps .cost-big,.cost-card.ps-cost .cost-big{color:var(--blue);}
+  .xb .cost-big,.cost-card.xb-cost .cost-big{color:var(--green);}
+  .cost-card.nerds-cost .cost-big{color:var(--red);}
+  .cost-breakdown{list-style:none;padding:0;margin:14px 0 0;text-align:left;font-size:12px;color:var(--chalk-dim);}
+  .cost-breakdown li{padding:5px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;}
+  .cost-breakdown li:first-child{border-top:none;}
 
   /* ---------- PARTS ---------- */
-  section.parts{padding:10px 0 66px;}
-  .parts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  section.parts{padding:10px 0 60px;}
+  .parts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
   @media(max-width:820px){.parts-grid{grid-template-columns:repeat(2,1fr);}}
-  @media(max-width:520px){.parts-grid{grid-template-columns:1fr;}}
-  .part-card{
-    background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;
+  @media(max-width:520px){.parts-grid{grid-template-columns:1fr;}}.part-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px;
     transition:border-color .15s ease, transform .15s ease;
   }
-  .part-card:hover{border-color:var(--gold-dim);transform:translateY(-2px);}
-  .part-role{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
-  .part-name{font-family:'Oswald',sans-serif;font-weight:500;font-size:15px;line-height:1.35;color:var(--chalk);}
+  .part-card:hover{border-color:var(--red);transform:translateY(-2px);}
+  .part-role{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+  .part-name{font-family:'Oswald',sans-serif;font-weight:500;font-size:14px;line-height:1.35;color:var(--chalk);}
 
-  /* ---------- LOADOUT ---------- */
-  section.loadout{padding:10px 0 66px;}
-  .loadout-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
-  @media(max-width:760px){.loadout-grid{grid-template-columns:1fr;}}
-  .loadout-card{
-    background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:28px 24px;text-align:center;position:relative;
-  }
-  .loadout-card.featured{border-color:var(--gold-dim);background:linear-gradient(135deg,var(--panel-2),var(--panel));}
-  .loadout-badge{
-    position:absolute;top:-11px;left:50%;transform:translateX(-50%);
-    background:var(--gold);color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
-    text-transform:uppercase;padding:4px 10px;border-radius:3px;
-  }
-  .loadout-card h4{font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:15px;margin:6px 0 10px;color:var(--chalk-dim);}
-  .loadout-price{font-family:'Anton',sans-serif;font-size:38px;color:var(--gold);margin:4px 0;}
-  .loadout-note{font-size:12px;color:var(--chalk-dim);margin-top:6px;}
-
-  /* ---------- PRICE / CTA ---------- */
-  section.bell{padding:10px 0 90px;}
+  /* ---------- CTA ---------- */
+  section.bell{padding:10px 0 80px;}
   .bell-card{
     background:linear-gradient(135deg,var(--panel-2),var(--panel));
-    border:1px solid var(--gold-dim);border-radius:8px;padding:44px;text-align:center;
+    border:1px solid rgba(229,57,53,.25);border-radius:8px;padding:44px;text-align:center;
     position:relative;
   }
-  .bell-card h2{
-    font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(30px,5vw,46px);margin:0 0 12px;
-  }
-  .bell-price{font-family:'Anton',sans-serif;color:var(--gold);font-size:clamp(48px,8vw,72px);margin:8px 0;}
-  .bell-price sup{font-size:22px;top:-1.6em;}
+  .bell-card h2{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:clamp(28px,5vw,44px);margin:0 0 12px;}
+  .bell-price{font-family:'Oswald',sans-serif;font-weight:700;color:var(--red);font-size:clamp(44px,8vw,68px);margin:8px 0;}
+  .bell-price sup{font-size:20px;top:-1.4em;}
   .bell-included{
-    list-style:none;padding:0;margin:26px auto 34px;max-width:520px;text-align:left;
+    list-style:none;padding:0;margin:24px auto 32px;max-width:540px;text-align:left;
     display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;font-size:14px;color:var(--chalk-dim);
   }
   .bell-included li{display:flex;gap:8px;align-items:flex-start;}
-  .bell-included li::before{content:"✓";color:var(--green);font-weight:700;}
+  .bell-included li::before{content:"\2713";color:var(--green);font-weight:700;}
   @media(max-width:560px){.bell-included{grid-template-columns:1fr;}}
   .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
   .btn{
     font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;letter-spacing:.05em;text-transform:uppercase;
     padding:15px 26px;border-radius:3px;text-decoration:none;transition:transform .15s ease, box-shadow .15s ease;
   }
-  .btn.primary{background:var(--gold);color:var(--ink);}
-  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(217,164,65,.28);}
+  .btn.primary{background:var(--red);color:#fff;}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(229,57,53,.3);}
   .btn.ghost{border:1px solid var(--line);color:var(--chalk);}
-  .btn.ghost:hover{border-color:var(--gold-dim);}
+  .btn.ghost:hover{border-color:var(--red);}
 
   /* ---------- FOOTER ---------- */
-  footer{border-top:1px solid var(--line);padding:30px 0 44px;}
+  footer{border-top:1px solid var(--line);padding:28px 0 40px;}
   .foot-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--chalk-dim);}
   .foot-row a{text-decoration:none;color:var(--chalk-dim);}
-  .foot-row a:hover{color:var(--gold);}
-  .fine{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--chalk-dim);opacity:.7;margin-top:18px;line-height:1.6;}  /* FAQ */
-  section.faq{padding:20px 0 66px;}
-  .faq-list{display:flex;flex-direction:column;gap:14px;}
-  .faq-item{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px 24px;}
-  .faq-item h4{
-    font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:var(--chalk);
-    margin-bottom:8px;
-  }
-  .faq-item p{font-size:14px;color:var(--chalk-dim);line-height:1.6;margin:0;}  /* Sold out stamp */
-  .sold-out-stamp{
-    position:fixed;top:38%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);
-    font-family:'Anton',sans-serif;font-size:clamp(60px,12vw,160px);color:#f2c14e;
-    letter-spacing:.05em;text-shadow:3px 3px 0 rgba(0,0,0,.5);
-    pointer-events:none;z-index:500;white-space:nowrap;
-    -webkit-text-stroke:2px #0f0d0a;
-  }
-  @media(max-width:700px){
-    .sold-out-stamp{font-size:16vw;}
-  }
+  .foot-row a:hover{color:var(--red);}
+  .fine{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--chalk-dim);opacity:.7;margin-top:16px;line-height:1.6;}
 </style>
 </head>
 <body>
-<div class="sold-out-stamp">SOLD OUT</div>
-<nav class="site-nav">
-  <div class="site-nav-inner">
-    <a href="https://www.chattnerds.com/" class="site-nav-logo">NERDS PC</a>
-    <button class="site-nav-toggle" onclick="document.querySelector('.site-nav-links').classList.toggle('open')">&#9776;</button>
-    <div class="site-nav-links">
-      <a href="https://www.chattnerds.com/">Home</a>
-      <a href="https://www.chattnerds.com/build-service.html">PC Builds</a>
-      <a href="https://www.chattnerds.com/ai-services.html">AI Services</a>
-      <a href="https://www.chattnerds.com/3d-printing.html">3D Printing</a>
-      <a href="https://www.chattnerds.com/builds.html">Builds</a>
-      <a href="https://www.chattnerds.com/about.html">About</a>
-      <a href="https://www.chattnerds.com/faq.html">FAQ</a>
-      <a href="https://www.chattnerds.com/contact.html">Contact</a>
-      <a href="https://www.chattnerds.com/quote.html" class="site-nav-cta">Get a Quote</a>
-    </div>
-  </div>
-</nav>
-
 
 <nav>
   <div class="brand">
     <strong>NERDS Custom Computers</strong>
     <span>Dalton, GA &middot; Custom Builds &amp; IT</span>
   </div>
-  <a class="nav-cta" href="#bell">Get On The List</a>
+  <a class="nav-cta" href="#bell">Get This Build</a>
 </nav>
 
 <header class="hero">
   <div class="wrap">
-    <div class="eyebrow">Tale of the Tape</div>
-    <h1 class="hero-h">Same weight<br>class. <span class="accent">Better fighter.</span></h1>
-    <p class="sub">Valve's Steam Machine is finally shipping, if your name gets pulled in the reservation lottery. We built the <b>NERDS Challenger</b>, a custom PC running Bazzite for that same couch-ready SteamOS experience, on a 3D V-Cache gaming CPU with double the graphics memory and zero waitlist. The first run sold out in 3 days. Those parts were priced for a limited batch, so pricing has changed since. Get on the list for the next one.</p>
-    <div class="flags">
-      <div class="flag red"><span class="dot red"></span>Steam Machine 512GB</div>
-      <div class="flag gold"><span class="dot gold"></span>NERDS Challenger Build</div>
-    </div>
+    <div class="eyebrow">The Console Market in 2026</div>
+    <h1 class="hero-h">Consoles keep<br>getting <span class="accent">more expensive.</span><br>Your PC doesn't have to.</h1>
+    <p class="sub">PlayStation is <b>killing physical discs</b> in January 2028. Xbox just announced <b>another price hike</b> starting August 1. Both consoles now cost more than they did at launch. Starting at <b>$1,200</b>, we build all-AMD gaming PCs in Dalton that outperform both of them and handle everything from video editing to streaming to office work. No subscriptions required. No walled garden. You own it.</p>
   </div>
 </header>
 
-<section class="corners">
+<!-- ========== THREE-WAY CARDS ========== -->
+<section class="matchup">
   <div class="wrap">
-    <div class="corner-grid">
-      <div class="corner red-corner">
-        <div class="corner-tag">Red Corner &middot; The Reigning Champ</div>
-        <h3>Steam Machine</h3>
-        <div class="subtitle">Valve, 512GB configuration</div>
-        <div class="price-tag">$1,049</div>
-        <div class="price-note">If your reservation gets drawn. Waitlist runs into 2027.</div>
+    <div class="three-grid">
+
+      <div class="console-card ps">
+        <span class="card-badge ps-badge">No disc drive</span>
+        <div class="card-tag">PlayStation</div>
+        <h3>PS5 Pro</h3>
+        <div class="subtitle">Digital only. Disc drive sold separately ($80) if you can find one.</div>
+        <div class="price-tag">$899</div>
+        <div class="price-note">Up $200 since launch. Add $80 for a disc drive, $70/yr for PS Plus.</div>
         <ul class="mini-specs">
-          <li>CPU <b>AMD Zen 4, 6C/12T</b></li>
-          <li>GPU / VRAM <b>RDNA 3, 28 CU / 8GB</b></li>
-          <li>System RAM <b>16GB</b></li>
-          <li>Storage <b>512GB</b></li>
-          <li>OS <b>SteamOS only</b></li>
-          <li>Upgrade path <b>Sealed</b></li>
+          <li>CPU <b>Zen 2 (2019 architecture)</b></li>
+          <li>GPU <b>RDNA 3, 16.7 TFLOPS</b></li>
+          <li>VRAM <b>Shared 16GB pool</b></li>
+          <li>Storage <b>2TB SSD (proprietary)</b></li>
+          <li>Online play <b>$70/year (PS Plus)</b></li>
+          <li>Disc support <b>Ending Jan 2028</b></li>
+          <li>Does more than gaming <b>No</b></li>
         </ul>
       </div>
-      <div class="corner gold-corner">
-        <div class="corner-tag">Gold Corner &middot; The Challenger</div>
-        <h3>NERDS Build</h3>
-        <div class="subtitle">Custom tower, 512GB configuration</div>
-        <div class="price-tag">$1,199</div>
-        <div class="price-note">Launch price for a limited batch. First run sold out in 3 days, pricing has changed since, get on the list for the next build.</div>
+
+      <div class="console-card xb">
+        <span class="card-badge xb-badge">Price hike Aug 1</span>
+        <div class="card-tag">Xbox</div>
+        <h3>Series X 1TB</h3>
+        <div class="subtitle">Disc model. Price going up August 1.</div>
+        <div class="price-was">$650</div>
+        <div class="price-tag">$800</div>
+        <div class="price-note">Effective Aug 1, 2026. Up from $500 at launch. Plus $60+/yr for Game Pass Core.</div>
         <ul class="mini-specs">
-          <li>CPU <b>Ryzen 5 7500X3D, 3D V-Cache</b></li>
-          <li>GPU / VRAM <b>RX 9060 XT / 16GB</b></li>
-          <li>System RAM <b>16GB DDR5-6000</b></li>
-          <li>Storage <b>512GB NVMe</b></li>
-          <li>OS <b>Bazzite (SteamOS), open platform</b></li>
-          <li>Upgrade path <b>Standard PC parts</b></li>
+          <li>CPU <b>Zen 2 (2019 architecture)</b></li>
+          <li>GPU <b>RDNA 2, 12 TFLOPS</b></li>
+          <li>VRAM <b>Shared 16GB pool</b></li>
+          <li>Storage <b>1TB SSD (proprietary card)</b></li>
+          <li>Online play <b>$60+/year (Game Pass)</b></li>
+          <li>Expansion <b>$190 for 1TB card</b></li>
+          <li>Does more than gaming <b>No</b></li>
         </ul>
+      </div>
+
+      <div class="console-card nerds">
+        <span class="card-badge nerds-badge">Built this week</span>
+        <div class="card-tag">NERDS PC</div>
+        <h3>All-AMD Build</h3>
+        <div class="subtitle">Full gaming PC. Plays everything, does everything, yours forever.</div>
+        <div class="price-tag">Builds start at $1,200</div>
+        <div class="price-note">All AMD. All standard parts. We spec each build to your needs and budget.</div>
+        <ul class="mini-specs">
+          <li>Platform <b>100% AMD, current generation</b></li>
+          <li>Online play <b>Free. Always.</b></li>
+          <li>Upgrade path <b>Standard, off-the-shelf parts</b></li>
+          <li>Does more than gaming <b>Yes, everything</b></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========== NOT JUST GAMING ========== -->
+<section class="beyond">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">More Than a Gaming Machine</div>
+      <h2>Consoles play games. This PC runs your life.</h2>
+      <p class="section-sub">A PS5 Pro or Xbox sits under your TV and does one thing. This build sits on your desk (or under your TV, your call) and replaces half the devices in your house.</p>
+    </div>
+    <div class="use-grid">
+      <div class="use-card">
+        <div class="use-icon">🎮</div>
+        <h4>Gaming</h4>
+        <p>Steam, Epic, GOG, emulators. Thousands of games, constant sales, mods, and free online multiplayer.</p>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">🎬</div>
+        <h4>Video Editing</h4>
+        <p>DaVinci Resolve runs natively on AMD GPUs. Edit 4K footage without buying a separate workstation.</p>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">📡</div>
+        <h4>Streaming</h4>
+        <p>OBS, Twitch, YouTube. Stream your gameplay or go live for your business. No capture card needed.</p>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">💼</div>
+        <h4>Office &amp; Productivity</h4>
+        <p>Word, Excel, Google Workspace, email, web browsing, taxes. It is a full computer, after all.</p>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">🤖</div>
+        <h4>AI &amp; Local Models</h4>
+        <p>16GB of VRAM lets you run local AI models, image generators, and chatbots right on your hardware.</p>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">🖨️</div>
+        <h4>3D Printing &amp; Design</h4>
+        <p>Blender, Fusion 360, slicers. Design and prep prints without fighting for GPU memory.</p>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ========== SPEC TABLE ========== -->
 <section class="tape">
   <div class="wrap">
     <div class="section-head">
       <div class="eyebrow">The Breakdown</div>
-      <h2>Stat for stat</h2>
+      <h2>Spec for Spec</h2>
     </div>
+    <div style="overflow-x:auto;">
     <table class="tape-table">
       <thead>
         <tr>
           <th>Category</th>
-          <th>Steam Machine</th>
-          <th>NERDS Challenger</th>
+          <th>PS5 Pro</th>
+          <th>Xbox Series X</th>
+          <th>NERDS Build</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td class="row-label">CPU</td>
-          <td class="stat-cell">Zen 4, no 3D cache</td>
-          <td class="stat-cell win">7500X3D<span class="win-tag">Challenger wins</span></td>
+          <td class="row-label">CPU Architecture</td>
+          <td class="stat-cell">Zen 2 (2019)</td>
+          <td class="stat-cell">Zen 2 (2019)</td>
+          <td class="stat-cell win">Current generation AMD<br><span class="tag-sm tag-win">NERDS wins</span></td>
         </tr>
         <tr>
-          <td class="row-label">Graphics VRAM</td>
-          <td class="stat-cell">8GB</td>
-          <td class="stat-cell win">16GB<span class="win-tag">Challenger wins</span></td>
+          <td class="row-label">Dedicated GPU Memory</td>
+          <td class="stat-cell">Shared pool</td>
+          <td class="stat-cell">Shared pool</td>
+          <td class="stat-cell win">Dedicated VRAM<br><span class="tag-sm tag-win">NERDS wins</span></td>
         </tr>
         <tr>
-          <td class="row-label">System memory</td>
-          <td class="stat-cell">16GB</td>
-          <td class="stat-cell win">16GB DDR5-6000<span class="win-tag">Challenger wins</span></td>
+          <td class="row-label">System RAM</td>
+          <td class="stat-cell">16GB shared</td>
+          <td class="stat-cell">16GB shared</td>
+          <td class="stat-cell win">Dedicated DDR5 (separate from GPU)<br><span class="tag-sm tag-win">NERDS wins</span></td>
         </tr>
         <tr>
           <td class="row-label">Storage</td>
-          <td class="stat-cell">512GB</td>
-          <td class="stat-cell">512GB NVMe<span class="tie-tag">Tie</span></td>
+          <td class="stat-cell">2TB (proprietary)</td>
+          <td class="stat-cell">1TB (proprietary)</td>
+          <td class="stat-cell">NVMe SSD (standard)<br><span class="tag-sm tag-tie">Expandable with any off-the-shelf drive</span></td>
         </tr>
         <tr>
-          <td class="row-label">Operating system</td>
-          <td class="stat-cell">SteamOS, locked to Valve</td>
-          <td class="stat-cell win">Bazzite, open platform<span class="win-tag">Challenger wins</span></td>
+          <td class="row-label">Storage expansion</td>
+          <td class="stat-cell">M.2 slot, Sony spec</td>
+          <td class="stat-cell">$190 for 1TB card</td>
+          <td class="stat-cell win">Any NVMe SSD, any brand<br><span class="tag-sm tag-win">NERDS wins</span></td>
         </tr>
         <tr>
-          <td class="row-label">Upgradeable later</td>
+          <td class="row-label">Ray tracing</td>
+          <td class="stat-cell">RDNA 3 RT</td>
+          <td class="stat-cell">RDNA 2 RT</td>
+          <td class="stat-cell win">Current generation AMD<br><span class="tag-sm tag-win">NERDS wins</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">Upscaling</td>
+          <td class="stat-cell">PSSR</td>
+          <td class="stat-cell">None built in</td>
+          <td class="stat-cell">AMD FSR<br><span class="tag-sm tag-tie">Game dependent</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">Online multiplayer</td>
+          <td class="stat-cell">$70/year</td>
+          <td class="stat-cell">$60+/year</td>
+          <td class="stat-cell win">Free<br><span class="tag-sm tag-win">Always free</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">Game prices</td>
+          <td class="stat-cell">$70 new, locked store</td>
+          <td class="stat-cell">$70 new, locked store</td>
+          <td class="stat-cell win">Steam sales, bundles, free-to-play<br><span class="tag-sm tag-win">NERDS wins</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">Productivity</td>
           <td class="stat-cell">No</td>
-          <td class="stat-cell win">Yes<span class="win-tag">Challenger wins</span></td>
+          <td class="stat-cell">No</td>
+          <td class="stat-cell win">Full Windows/Linux PC<br><span class="tag-sm tag-win">NERDS wins</span></td>
         </tr>
         <tr>
-          <td class="row-label">Availability</td>
-          <td class="stat-cell">Reservation lottery</td>
-          <td class="stat-cell win">Sold out in 3 days, next list open now<span class="win-tag">Sold out fast</span></td>
+          <td class="row-label">Upgradeable</td>
+          <td class="stat-cell">No</td>
+          <td class="stat-cell">No</td>
+          <td class="stat-cell win">Every component<br><span class="tag-sm tag-win">NERDS wins</span></td>
         </tr>
         <tr>
-          <td class="row-label">Warranty &amp; support</td>
-          <td class="stat-cell">Valve ticket queue</td>
-          <td class="stat-cell win">Local, in person<span class="win-tag">Challenger wins</span></td>
+          <td class="row-label">Disc drive</td>
+          <td class="stat-cell">$80 add-on, ending 2028</td>
+          <td class="stat-cell">Yes (for now)</td>
+          <td class="stat-cell">Optional Blu-ray drive<br><span class="tag-sm tag-tie">Add one if you want</span></td>
         </tr>
         <tr>
-          <td class="row-label">Wireless &amp; Networking</td>
-          <td class="stat-cell win">WiFi 6E, BT 5.3, dedicated radio<span class="win-tag">Champ wins</span></td>
-          <td class="stat-cell">WiFi 6, BT, Gigabit LAN<span class="tie-tag">One gen behind</span></td>
-        </tr>
-        <tr>
-          <td class="row-label">Price</td>
-          <td class="stat-cell win">$1,049</td>
-          <td class="stat-cell">$1,199<span class="lose-tag">Champ wins on price</span></td>
+          <td class="row-label">Warranty</td>
+          <td class="stat-cell">Sony ticket queue</td>
+          <td class="stat-cell">Microsoft ticket queue</td>
+          <td class="stat-cell win">Local, in person, Dalton<br><span class="tag-sm tag-win">NERDS wins</span></td>
         </tr>
       </tbody>
     </table>
-  </div>
-</section>
-
-<section class="parts">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">The Challenger's Corner</div>
-      <h2>What's inside</h2>
-    </div>
-    <div class="parts-grid">
-      <div class="part-card">
-        <div class="part-role">Processor</div>
-        <div class="part-name">AMD Ryzen 5 7500X3D</div>
-      </div>
-      <div class="part-card">
-        <div class="part-role">Motherboard</div>
-        <div class="part-name">ASRock B850M-C AM5</div>
-      </div>
-      <div class="part-card">
-        <div class="part-role">Memory</div>
-        <div class="part-name">G.Skill Flare X5 16GB DDR5-6000</div>
-      </div>
-      <div class="part-card">
-        <div class="part-role">Graphics</div>
-        <div class="part-name">ASRock Radeon RX 9060 XT Challenger OC 16GB</div>
-      </div>
-      <div class="part-card">
-        <div class="part-role">Cooling</div>
-        <div class="part-name">Thermalright SI-100 Air Cooler</div>
-      </div>
-      <div class="part-card">
-        <div class="part-role">Power Supply</div>
-        <div class="part-name">Montech Century II 850W 80+ Gold</div>
-      </div>
-      <div class="part-card">
-        <div class="part-role">Storage</div>
-        <div class="part-name">Inland TN320 512GB NVMe SSD</div>
-      </div>
-      <div class="part-card">
-        <div class="part-role">Case</div>
-        <div class="part-name">Montech TEN Micro ATX, 360mm radiator ready</div>
-      </div>
-      <div class="part-card">
-        <div class="part-role">Assembly</div>
-        <div class="part-name">Built, cabled, and stress tested in Dalton</div>
-      </div>
     </div>
   </div>
 </section>
 
-<section class="loadout">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">What The First Run Cost</div>
-      <h2>Same fighter, more tank</h2>
-    </div>
-    <div class="loadout-grid">
-      <div class="loadout-card">
-        <h4>512GB</h4>
-        <div class="loadout-price">$1,199</div>
-        <div class="loadout-note">Matches the Steam Machine base tier</div>
-      </div>
-      <div class="loadout-card featured">
-        <div class="loadout-badge">Most Storage per Dollar</div>
-        <h4>1TB</h4>
-        <div class="loadout-price">$1,320</div>
-        <div class="loadout-note">Double the base storage</div>
-      </div>
-      <div class="loadout-card">
-        <h4>2TB</h4>
-        <div class="loadout-price">$1,463</div>
-        <div class="loadout-note">Matches the Steam Machine's top tier</div>
-      </div>
-    </div>
-    <div class="price-note" style="text-align:center;margin-top:22px;">32GB RAM instead of 16GB added $494 to any tier above. These were launch-batch prices for a limited run, parts cost and availability have changed since. Get on the list below for current pricing on the next build.</div>
-  </div>
-</section>
-
+<!-- ========== CTA ========== -->
 <section class="bell" id="bell">
   <div class="wrap">
     <div class="bell-card">
-      <div class="eyebrow" style="justify-content:center;">Sold Out</div>
-      <h2>NERDS Challenger Build</h2>
-      <div class="price-note" style="color:var(--gold);font-weight:600;font-size:15px;">First run sold out in 3 days. Those parts were priced and sourced for a limited batch, and pricing and availability have changed since.</div>
+      <div class="eyebrow" style="justify-content:center;">Ready When You Are</div>
+      <h2>NERDS All-AMD Gaming Builds</h2>
+      <div class="bell-price" style="font-size:clamp(28px,5vw,48px);line-height:1.2;">Builds start at <sup>$</sup>1,200</div>
+      <div class="price-note">Every build is specced to your needs. All AMD. All standard parts. Ready this week.</div>
       <ul class="bell-included">
         <li>Full assembly and cable management</li>
-        <li>Bazzite (SteamOS) installed and configured</li>
+        <li>Windows 11 or Linux, your choice</li>
         <li>Latest drivers and BIOS updates</li>
         <li>Burn-in and stress test before pickup</li>
         <li>Local warranty and hands-on support</li>
         <li>Free local pickup, Dalton and Chattanooga</li>
+        <li>Upgrade-ready platform, standard parts</li>
+        <li>No subscriptions, no walled garden</li>
       </ul>
-      <div class="price-note" style="margin-top:4px;">Want the next one? Get on the list and we will reach out with current pricing once the next batch is ready to build.</div>
       <div class="cta-row">
         <a class="btn primary" href="tel:4235215694">Call or Text 423-521-5694</a>
         <a class="btn ghost" href="mailto:info@chattnerds.com">Email info@chattnerds.com</a>
@@ -526,7 +463,7 @@
       <span>NERDS Custom Computers &middot; Dalton, GA</span>
       <a href="https://chattnerds.com">chattnerds.com</a>
     </div>
-    <div class="fine">Pricing and configuration current as of build date and subject to component availability. Steam Machine specs and pricing sourced from Valve's official announcement, June 2026, for comparison purposes only. Steam Machine is a trademark of Valve Corporation.</div>
+    <div class="fine">Pricing and configuration current as of July 2026 and subject to component availability. Console prices sourced from official PlayStation Blog (April 2, 2026) and Xbox Wire (June 25, 2026) announcements. PlayStation disc discontinuation per PlayStation Blog, July 1, 2026. Three-year cost estimates use published subscription rates and average Steam sale pricing. PlayStation, PS5, and PS5 Pro are trademarks of Sony Interactive Entertainment. Xbox and Xbox Series X are trademarks of Microsoft Corporation. AMD, Ryzen, and Radeon are trademarks of Advanced Micro Devices, Inc.</div>
   </div>
 </footer>
 
