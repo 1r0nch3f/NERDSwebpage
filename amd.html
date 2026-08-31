@@ -8,11 +8,29 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--red:#e53935;--bg:#0d0d0d;--card:#161616;--line:#2a2a2a;--txt:#f2f2f2;--mut:#9a9a9a}
 body{background:var(--bg);color:var(--txt);font-family:'Open Sans',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* ===== NAV ===== */
+.nav{background:#111;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1180px;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;height:54px}
+.nav-brand{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:2px;color:#fff;text-decoration:none}
+.nav-brand span{color:var(--red)}
+.nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nav-links a{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);text-decoration:none;padding:6px 10px;border-radius:6px;transition:color .15s,background .15s;white-space:nowrap}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(229,57,53,.15)}
+.nav-links a.active{color:var(--red)}
+.nav-toggle{display:none;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:6px}
+@media(max-width:768px){
+.nav-links{display:none;position:absolute;top:54px;left:0;right:0;background:#111;border-bottom:1px solid var(--line);flex-direction:column;padding:12px 22px;gap:2px}
+.nav-links.open{display:flex}
+.nav-links a{padding:10px 12px;font-size:14px}
+.nav-toggle{display:block}
+}
+
+/* ===== PAGE ===== */
 .wrap{max-width:1180px;margin:0 auto;padding:48px 22px 70px}
 h1{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(38px,7vw,68px);text-transform:uppercase;letter-spacing:1px;line-height:.98}
 h1 .dot{color:var(--red)}
 .lede{color:var(--mut);max-width:680px;margin:16px 0 6px;font-size:16px}
-.note-top{display:inline-block;margin-top:14px;font-size:13px;color:var(--mut);border-left:3px solid var(--red);padding:6px 12px;background:#141414}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-top:34px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;transition:transform .18s ease,border-color .18s ease}
 .card:hover{transform:translateY(-4px);border-color:var(--red)}
@@ -20,14 +38,12 @@ h1 .dot{color:var(--red)}
 .name{font-family:'Oswald',sans-serif;font-size:27px;font-weight:600;text-transform:uppercase;margin:2px 0 12px;line-height:1.05}
 .price{font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;color:#fff;line-height:1}
 .price small{font-size:14px;color:var(--mut);font-weight:400;display:block;margin-top:4px;font-family:'Open Sans',sans-serif}
-.psu-badge{display:inline-block;margin:12px 0 4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#cfe;background:#10312f;border:1px solid #1d5a55;border-radius:20px;padding:4px 11px}
+.inc-badge{display:inline-block;margin:12px 0 4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#b8d4ff;background:#0f1e3a;border:1px solid #1e3a6e;border-radius:20px;padding:4px 11px}
 .specs{list-style:none;margin:14px 0 18px;border-top:1px solid var(--line);padding-top:14px}
 .specs li{font-size:14px;padding:5px 0;color:#d6d6d6;display:flex;gap:9px}
 .specs li b{color:var(--mut);font-weight:600;min-width:62px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding-top:1px}
 .btn{margin-top:auto;display:block;text-align:center;background:var(--red);color:#fff;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:13px;border-radius:8px;font-size:15px;transition:background .15s}
 .btn:hover{background:#c62828}
-.subhead{font-family:'Oswald',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:1px;margin:42px 0 4px;color:#fff;border-left:4px solid var(--red);padding-left:12px}
-.subhead span{color:var(--mut);font-size:13px;letter-spacing:.5px;display:block;font-family:'Open Sans',sans-serif;text-transform:none;padding-top:3px}
 .upsell{margin-top:30px;background:#141414;border:1px dashed var(--line);border-radius:10px;padding:18px 22px;font-size:14px;color:#d6d6d6}
 .upsell b{color:var(--red)}
 .brands{margin-top:54px;border-top:1px solid var(--line);padding-top:30px}
@@ -43,71 +59,113 @@ h1 .dot{color:var(--red)}
 .disclaim{text-align:center;color:var(--mut);font-size:12px;margin-top:26px}
 @media(max-width:520px){.wrap{padding:32px 16px 50px}}
 </style></head>
-<body><div class="wrap"><h1>AMD<span class="dot">.</span> Builds</h1><p class="lede">Custom AMD Ryzen systems, built to order. Every build below is a starting configuration with the power supply included. Pick your graphics card and storage when we quote it.</p><span class="note-top">Singularity (9900X) and The Chronomancer (9800X3D) sit at the same price &mdash; one is the top gaming chip, the other the multitasking workhorse. Pick by what you do most.</span><div class="grid"><div class="card">
-<div class="tier">8-Bit Beginner</div>
-<div class="name">Ryzen 5 9600X</div>
-<div class="price">$639<small>Starting price &mdash; No GPU</small></div>
-<div class="psu-badge">&#10003; Power supply included</div>
-<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 5 9600X 3.90GHz</span></li><li><b>Board</b><span>Gigabyte X870 Gaming WiFi6 AM5</span></li><li><b>Memory</b><span>G.Skill Flare X5 16GB DDR5</span></li><li><b>Power</b><span>850W 80+ Gold</span></li></ul>
-<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
-</div><div class="card">
-<div class="tier">XP Grinder</div>
-<div class="name">Ryzen 7 9700X</div>
-<div class="price">$839<small>Starting price &mdash; No GPU</small></div>
-<div class="psu-badge">&#10003; Power supply included</div>
-<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 7 9700X 3.80GHz</span></li><li><b>Board</b><span>Gigabyte B650 Gaming X AX v2</span></li><li><b>Memory</b><span>Corsair Vengeance RGB 32GB DDR5-6000</span></li><li><b>Power</b><span>850W 80+ Gold</span></li></ul>
-<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
-</div><div class="card">
-<div class="tier">The Chronomancer</div>
-<div class="name">Ryzen 7 9800X3D</div>
-<div class="price">$1,099<small>Starting price &mdash; No GPU</small></div>
-<div class="psu-badge">&#10003; Power supply included</div>
-<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 7 9800X3D</span></li><li><b>Board</b><span>Gigabyte B850 Gaming X WiFi6E AM5</span></li><li><b>Memory</b><span>Corsair Vengeance RGB 32GB DDR5-6000</span></li><li><b>Power</b><span>1050W 80+ Gold</span></li></ul>
-<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
-</div><div class="card">
-<div class="tier">Singularity</div>
-<div class="name">Ryzen 9 9900X</div>
-<div class="price">$1,099<small>Starting price &mdash; No GPU</small></div>
-<div class="psu-badge">&#10003; Power supply included</div>
-<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 9 9900X 4.40GHz</span></li><li><b>Board</b><span>MSI X870E-P Pro WiFi DDR5</span></li><li><b>Memory</b><span>Corsair Vengeance RGB 32GB DDR5-6000</span></li><li><b>Power</b><span>1050W 80+ Gold</span></li></ul>
-<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
-</div><div class="card">
-<div class="tier">Blackhole</div>
-<div class="name">Ryzen 9 9950X3D</div>
-<div class="price">$1,499<small>Starting price &mdash; No GPU</small></div>
-<div class="psu-badge">&#10003; Power supply included</div>
-<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 9 9950X3D 4.30GHz</span></li><li><b>Board</b><span>Gigabyte X870 Gaming WiFi6 AM5</span></li><li><b>Memory</b><span>Corsair Vengeance RGB 32GB DDR5-6000</span></li><li><b>Power</b><span>1050W 80+ Gold</span></li></ul>
-<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
-</div><div class="card">
-<div class="tier">Event Horizon</div>
-<div class="name">Ryzen 9 9950X3D</div>
-<div class="price">$1,799<small>Starting price &mdash; No GPU</small></div>
-<div class="psu-badge">&#10003; Power supply included</div>
-<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 9 9950X3D</span></li><li><b>Board</b><span>Gigabyte X870E AORUS Elite WiFi7 ICE</span></li><li><b>Memory</b><span>Corsair Vengeance RGB 32GB DDR5-6000</span></li><li><b>Power</b><span>1050W 80+ Gold</span></li></ul>
-<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a>
-</div></div><div class="upsell"><b>Power supply upgrade:</b> Step up to a 1200W 80+ Gold unit on any build for extra headroom for high-end GPUs and future upgrades. Ask for a quote.</div><div class="climate"><b>Heads up on pricing:</b> Memory and storage prices are running high right now because of AI-driven demand on RAM and NAND. <b>All prices are starting points and subject to change</b> with component availability and market pricing. Listed brands and components may be substituted with another of equal or greater value. Want more RAM, a bigger drive, or a different config? Reach out and I will put together a current quote.</div><div class="brands"><h3>Brands We Build With</h3><div class="brow"><div class="bgroup"><span class="lab">Processors</span><span class="vals">AMD, Intel</span></div><div class="bgroup"><span class="lab">Motherboards</span><span class="vals">Gigabyte, ASUS, MSI</span></div><div class="bgroup"><span class="lab">Memory</span><span class="vals">Corsair, G.Skill, Crucial, TEAMGROUP</span></div><div class="bgroup"><span class="lab">Cases</span><span class="vals">Montech, Corsair, HYTE</span></div><div class="bgroup"><span class="lab">Power</span><span class="vals">Montech</span></div><div class="bgroup"><span class="lab">Cooling</span><span class="vals">Thermalright</span></div></div></div><div class="foot-cta"><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a></div><p class="disclaim">Prices are starting points and subject to change with component availability and market pricing. Contact us for current pricing before finalizing a build.</p></div>
-<!-- NERDS MERCH SHOP FOOTER -->
-<div style="background:#000;border-top:1px solid #2a2c31;padding:24px 16px;text-align:center;">
-  <a href="https://nerds-vzh-shop.fourthwall.com" target="_blank" rel="noopener"
-     style="display:inline-block;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:.6px;text-transform:uppercase;color:#0D0D0D;background:#E67E22;padding:12px 30px;border-radius:6px;text-decoration:none;">
-    &#128722; Shop NERDS Merch
-  </a>
-  <div style="margin-top:10px;font-family:'Open Sans',sans-serif;font-size:12px;color:#8a8a8a;letter-spacing:.3px;">
-    Shirts, hoodies &amp; more &middot; nerds-vzh-shop.fourthwall.com
-  </div>
+<body>
+
+<nav class="nav">
+<div class="nav-inner">
+<a class="nav-brand" href="welcome.html">NERDS<span>.</span></a>
+<button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+<div class="nav-links">
+<a href="welcome.html">Home</a>
+<a href="amd.html" class="active">AMD Builds</a>
+<a href="intel.html">Intel Builds</a>
+<a href="gpu.html">GPUs</a>
+<a href="parts.html">Parts</a>
+<a href="storage.html">Storage</a>
+<a href="coolers.html">Coolers</a>
+<a href="build-service.html">Build Service</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
 </div>
-<!-- NERDS-TAWK-CHAT -->
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a64b64a1320a91d46342627/1jucmg4ch';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
-</body></html>
+</div>
+</nav>
+
+<div class="wrap"><h1>AMD<span class="dot">.</span> Builds</h1><p class="lede">Custom AMD Ryzen systems, built to order. Every build below includes the CPU, motherboard, and RAM. GPU, cooler, storage, case, and power supply are priced separately so you can tailor the build to exactly what you need.</p><div class="grid">
+
+<div class="card">
+<div class="tier">Ryzen 5</div>
+<div class="name">Ryzen 5 7600X</div>
+<div class="price">$559<small>CPU + Board + RAM</small></div>
+<div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 5 7600X 4.7GHz</span></li><li><b>Board</b><span>MSI B850 Gaming Pro WiFi6E AM5</span></li><li><b>Memory</b><span>G.Skill Flare X5 16GB DDR5</span></li></ul>
+<a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+</div>
+
+<div class="card">
+<div class="tier">Ryzen 7</div>
+<div class="name">Ryzen 7 9700X</div>
+<div class="price">$910<small>CPU + Board + RAM</small></div>
+<div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 7 9700X 3.80GHz</span></li><li><b>Board</b><span>Gigabyte B650 Gaming X AX V2 AM5</span></li><li><b>Memory</b><span>G.Skill Flare X5 32GB DDR5-6000</span></li></ul>
+<a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+</div>
+
+<div class="card">
+<div class="tier">Ryzen 7 / 3D V-Cache</div>
+<div class="name">Ryzen 7 7800X3D</div>
+<div class="price">$975<small>CPU + Board + RAM</small></div>
+<div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 7 7800X3D</span></li><li><b>Board</b><span>ASUS B650E MAX Gaming WiFi AM5</span></li><li><b>Memory</b><span>G.Skill Flare X5 32GB DDR5-6000</span></li></ul>
+<a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+</div>
+
+<div class="card">
+<div class="tier">Ryzen 7 / 3D V-Cache</div>
+<div class="name">Ryzen 7 9800X3D</div>
+<div class="price">$1,170<small>CPU + Board + RAM</small></div>
+<div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 7 9800X3D</span></li><li><b>Board</b><span>MSI B850 Gaming Pro WiFi6E AM5</span></li><li><b>Memory</b><span>G.Skill Flare X5 32GB DDR5-6000</span></li></ul>
+<a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+</div>
+
+<div class="card">
+<div class="tier">Ryzen 7 / 3D V-Cache</div>
+<div class="name">Ryzen 7 9850X3D</div>
+<div class="price">$1,196<small>CPU + Board + RAM</small></div>
+<div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 7 9850X3D</span></li><li><b>Board</b><span>ASUS B850-E TUF Gaming WiFi AM5</span></li><li><b>Memory</b><span>G.Skill Flare X5 32GB DDR5-6000</span></li></ul>
+<a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+</div>
+
+<div class="card">
+<div class="tier">Ryzen 9</div>
+<div class="name">Ryzen 9 9950X</div>
+<div class="price">$1,300<small>CPU + Board + RAM</small></div>
+<div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 9 9950X</span></li><li><b>Board</b><span>ASUS B850 Creator ProArt WiFi AM5</span></li><li><b>Memory</b><span>G.Skill Flare X5 32GB DDR5-6000</span></li></ul>
+<a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+</div>
+
+<div class="card">
+<div class="tier">Ryzen 9 / 3D V-Cache</div>
+<div class="name">Ryzen 9 9950X3D</div>
+<div class="price">$1,365<small>CPU + Board + RAM</small></div>
+<div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 9 9950X3D 4.30GHz</span></li><li><b>Board</b><span>Gigabyte X870 Gaming WiFi6 AM5</span></li><li><b>Memory</b><span>G.Skill Flare X5 32GB DDR5-6000</span></li></ul>
+<a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+</div>
+
+<div class="card">
+<div class="tier">Ryzen 9 / 3D V-Cache</div>
+<div class="name">Ryzen 9 9950X3D2</div>
+<div class="price">$1,755<small>CPU + Board + RAM</small></div>
+<div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+<ul class="specs"><li><b>CPU</b><span>AMD Ryzen 9 9950X3D2</span></li><li><b>Board</b><span>MSI X870E-P PRO WiFi AM5</span></li><li><b>Memory</b><span>G.Skill Flare X5 32GB DDR5-6000</span></li></ul>
+<a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+</div>
+
+</div>
+
+<div class="upsell"><b>Everything else is your choice:</b> GPU, CPU cooler, storage, case, and power supply are all quoted separately based on what you need. Tell us your budget and what you play or work on, and we will put together the right combination.</div>
+
+<div class="climate"><b>Heads up on pricing:</b> Memory and storage prices are running high right now because of AI-driven demand on RAM and NAND. <b>All prices are starting points and subject to change</b> with component availability and market pricing. Listed brands and components may be substituted with another of equal or greater value. Want more RAM, a bigger drive, or a different config? Reach out and we will put together a current quote.</div>
+
+<div class="brands"><h3>Brands We Build With</h3><div class="brow"><div class="bgroup"><span class="lab">Processors</span><span class="vals">AMD, Intel</span></div><div class="bgroup"><span class="lab">Motherboards</span><span class="vals">Gigabyte, ASUS, MSI</span></div><div class="bgroup"><span class="lab">Memory</span><span class="vals">G.Skill, Corsair, Crucial, TEAMGROUP</span></div><div class="bgroup"><span class="lab">Cases</span><span class="vals">Montech, Corsair, HYTE</span></div><div class="bgroup"><span class="lab">Power</span><span class="vals">Montech</span></div><div class="bgroup"><span class="lab">Cooling</span><span class="vals">Thermalright</span></div></div></div>
+
+<div class="foot-cta" style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap">
+<a class="btn" href="sms:4235215694" style="display:inline-block;padding:14px 34px">Text Us</a>
+<a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;" style="display:inline-block;padding:14px 34px">Submit a Request</a>
+</div>
+<div style="text-align:center;margin-top:16px;font-family:'Oswald',sans-serif;font-size:17px;color:var(--mut)">Or call direct: <a href="tel:4235215694" style="color:#18C0D8;text-decoration:none">423-521-5694</a></div>
+<p style="text-align:center;color:var(--mut);font-size:13px;margin-top:10px">Texting is the fastest way to get a quote and keeps a record of your conversation.</p>
+<p class="disclaim">Prices are starting points and subject to change with component availability and market pricing. Contact us for current pricing before finalizing a build.</p></div></body></html>

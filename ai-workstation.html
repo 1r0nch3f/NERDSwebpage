@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Custom AI Workstation Build - NERDS PC</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
@@ -52,6 +52,22 @@
   }
   .price-block .price { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px; }
   .price-block .note { font-size: 15px; color: #aaa; }
+
+  /* ===== WORKSTATION BUILD CARDS ===== */
+  .ws-builds{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;margin:24px 0 32px}
+  .ws-card{background:#17181b;border:1px solid #2a2c31;border-radius:10px;padding:24px;display:flex;flex-direction:column;transition:transform .18s ease,border-color .18s ease}
+  .ws-card:hover{transform:translateY(-4px);border-color:#e53935}
+  .ws-card .platform{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#e53935;font-weight:600}
+  .ws-card .ws-name{font-family:'Oswald',sans-serif;font-size:24px;font-weight:600;text-transform:uppercase;margin:2px 0 12px;line-height:1.05;color:#fff}
+  .ws-card .ws-price{font-family:'Oswald',sans-serif;font-size:36px;font-weight:700;color:#fff;line-height:1}
+  .ws-card .ws-price small{font-size:14px;color:#aaa;font-weight:400;display:block;margin-top:4px;font-family:'Open Sans',sans-serif}
+  .ws-card .inc-badge{display:inline-block;margin:12px 0 4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#b8d4ff;background:#0f1e3a;border:1px solid #1e3a6e;border-radius:20px;padding:4px 11px}
+  .ws-card .specs{list-style:none;margin:14px 0 18px;border-top:1px solid #2a2c31;padding-top:14px}
+  .ws-card .specs li{font-size:14px;padding:5px 0;color:#d6d6d6;display:flex;gap:9px}
+  .ws-card .specs li b{color:#9a9a9a;font-weight:600;min-width:62px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding-top:1px}
+  .ws-card .btn{margin-top:auto;display:block;text-align:center;background:#e53935;color:#fff;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:13px;border-radius:8px;font-size:15px;transition:background .15s}
+  .ws-card .btn:hover{background:#c62828}
+
   .cta-box {
     text-align: center; padding: 24px; background: #17181b;
     border-radius: 8px; border: 1px solid #2a2c31; margin-top: 32px;
@@ -61,11 +77,12 @@
   .cta-btn {
     display: inline-block; background: #e53935; color: #fff;
     padding: 12px 32px; border-radius: 4px; font-size: 16px;
-    font-weight: 700; text-decoration: none;
+    font-weight: 700; text-decoration: none; margin: 0 6px 10px;
   }
   .cta-btn:hover { background: #c62f2c; }
   @media (max-width: 600px) {
     .compare-grid { grid-template-columns: 1fr; }
+    .ws-builds{grid-template-columns:1fr}
   }
 
   .ai-nav { margin-top: 40px; padding-top: 28px; border-top: 1px solid #2a2c31; }
@@ -79,6 +96,7 @@
   .ai-nav-back a.primary:hover { background: #c62f2c; }
   .ai-nav-back a.ghost { background: transparent; border: 1px solid #2a2c31; color: #cfcfcf; }
   .ai-nav-back a.ghost:hover { border-color: #8fcdf0; color: #fff; }
+  .disclaim{text-align:center;color:#9a9a9a;font-size:12px;margin-top:16px}
 </style>
 </head>
 <body>
@@ -87,6 +105,32 @@
   <p>Some AI workloads do not belong in the cloud. If you need fast local inference, you are processing sensitive data that cannot leave your network, or you are tired of paying monthly cloud compute fees, a purpose-built AI workstation is the answer.</p>
 
   <p style="margin-bottom: 32px;">This is what NERDS was built on. We have been building custom computers for years. AI workstations are the same discipline with different specs: more GPU, more VRAM, more memory, optimized cooling, and the right software stack to make it all work.</p>
+
+  <h2 class="section-heading">Workstation Builds</h2>
+
+  <p style="font-size:15px;color:#cfcfcf;margin-bottom:6px;">Each build includes the CPU, motherboard, and RAM. GPU, cooler, storage, case, and power supply are quoted separately based on your workload.</p>
+
+  <div class="ws-builds">
+
+    <div class="ws-card">
+      <div class="platform">Intel Xeon</div>
+      <div class="ws-name">Xeon 658X</div>
+      <div class="ws-price">$7,540<small>CPU + Board + RAM</small></div>
+      <div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+      <ul class="specs"><li><b>CPU</b><span>Intel Xeon 658X</span></li><li><b>Board</b><span>ASUS Pro WS W890-E Sage SE 4710-2</span></li><li><b>Memory</b><span>Kingston Fury Renegade Pro 128GB DDR5-5600</span></li></ul>
+      <a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+    </div>
+
+    <div class="ws-card">
+      <div class="platform">AMD Threadripper</div>
+      <div class="ws-name">Threadripper PRO 9975WX</div>
+      <div class="ws-price">$9,490<small>CPU + Board + RAM</small></div>
+      <div class="inc-badge">&#10003; CPU + Motherboard + RAM included</div>
+      <ul class="specs"><li><b>CPU</b><span>AMD Ryzen Threadripper PRO 9975WX</span></li><li><b>Board</b><span>ASUS WRX90E Sage Pro WS SE sTR5</span></li><li><b>Memory</b><span>Kingston Fury Renegade Pro 128GB DDR5-5600 ECC</span></li></ul>
+      <a class="btn" href="sms:4235215694">Text Us for a Quote</a>
+    </div>
+
+  </div>
 
   <h2 class="section-heading">What We Build</h2>
 
@@ -161,16 +205,21 @@
 
   <p>Entry-level local inference machines start at $2,500. High-end multi-GPU builds for heavy workloads can run $8,000 to $15,000 or more depending on specs.</p>
 
-  <p>I will spec it out, show you exactly what you are getting and why, and give you a firm price before we order a single part.</p>
+  <p>We will spec it out, show you exactly what you are getting and why, and give you a firm price before we order a single part.</p>
 
   <p>Build time is typically 1 to 2 weeks after parts arrive.</p>
 
   <div class="cta-box">
     <h3>Need a machine built for AI?</h3>
-    <p>Tell me what you need it to do and I will spec the right build.</p>
-    <a href="https://www.chattnerds.com/contact" class="cta-btn" onclick="window.open(this.href,'_blank');return false;">Request a Build Quote</a>
+    <p>Tell us what you need it to do and we will spec the right build.</p>
+    <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap">
+      <a class="cta-btn" href="sms:4235215694">Text Us</a>
+      <a class="cta-btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Submit a Request</a>
+    </div>
+    <div style="margin-top:14px;font-family:'Oswald',sans-serif;font-size:17px;color:#9a9a9a">Or call direct: <a href="tel:4235215694" style="color:#18C0D8;text-decoration:none">423-521-5694</a></div>
+    <p style="color:#9a9a9a;font-size:13px;margin-top:8px">Texting is the fastest way to get a quote and keeps a record of your conversation.</p>
   </div>
-
+  <p class="disclaim">Prices are starting points and subject to change with component availability and market pricing. Contact us for current pricing before finalizing a build.</p>
 
   <div class="ai-nav">
     <div class="ai-nav-title">More AI Services</div>
@@ -181,35 +230,10 @@
     <a href="https://1r0nch3f.github.io/NERDSwebpage/ai-retainer.html" onclick="window.open(this.href,'_blank');return false;">AI Strategy Retainer</a>
     </div>
     <div class="ai-nav-back">
-      <a class="primary" href="https://www.chattnerds.com/ai-services" onclick="window.open(this.href,'_blank');return false;">All AI Services</a>
-      <a class="ghost" href="https://www.chattnerds.com/contact" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
+      <a class="primary" href="https://1r0nch3f.github.io/NERDSwebpage/ai-services.html" onclick="window.open(this.href,'_blank');return false;">All AI Services</a>
+      <a class="ghost" href="https://1r0nch3f.github.io/NERDSwebpage/contact.html" onclick="window.open(this.href,'_blank');return false;">Contact Us</a>
     </div>
   </div>
 </div>
-
-<!-- NERDS MERCH SHOP FOOTER -->
-<div style="background:#000;border-top:1px solid #2a2c31;padding:24px 16px;text-align:center;">
-  <a href="https://nerds-vzh-shop.fourthwall.com" target="_blank" rel="noopener"
-     style="display:inline-block;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:.6px;text-transform:uppercase;color:#0D0D0D;background:#E67E22;padding:12px 30px;border-radius:6px;text-decoration:none;">
-    &#128722; Shop NERDS Merch
-  </a>
-  <div style="margin-top:10px;font-family:'Open Sans',sans-serif;font-size:12px;color:#8a8a8a;letter-spacing:.3px;">
-    Shirts, hoodies &amp; more &middot; nerds-vzh-shop.fourthwall.com
-  </div>
-</div>
-<!-- NERDS-TAWK-CHAT -->
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a64b64a1320a91d46342627/1jucmg4ch';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
 </body>
 </html>
