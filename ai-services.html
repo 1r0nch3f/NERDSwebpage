@@ -35,9 +35,50 @@
   .foot a { display: inline-block; background: #e53935; color: #fff; padding: 11px 30px; border-radius: 4px; font-size: 15px; font-weight: 700; text-decoration: none; }
   .foot a:hover { background: #c62f2c; }
   @media (max-width: 700px) { .svc-grid { grid-template-columns: 1fr; } }
+
+/* ===== NAV ===== */
+.nav{background:#111;border-bottom:1px solid #2a2a2a;border-bottom:1px solid var(--line,#2a2a2a);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1180px;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;height:54px}
+.nav-brand{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:2px;color:#fff;text-decoration:none}
+.nav-brand span{color:#e53935;color:var(--red,#e53935)}
+.nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nav-links a{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:#9a9a9a;text-decoration:none;padding:6px 10px;border-radius:6px;transition:color .15s,background .15s;white-space:nowrap}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(229,57,53,.15)}
+.nav-links a.active{color:#e53935;color:var(--red,#e53935)}
+.nav-toggle{display:none;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:6px}
+@media(max-width:768px){
+.nav-links{display:none;position:absolute;top:54px;left:0;right:0;background:#111;border-bottom:1px solid #2a2a2a;border-bottom:1px solid var(--line,#2a2a2a);flex-direction:column;padding:12px 22px;gap:2px}
+.nav-links.open{display:flex}
+.nav-links a{padding:10px 12px;font-size:14px}
+.nav-toggle{display:block}
+}
+
+.btn{display:inline-block;text-align:center;background:#e53935;color:#fff;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:13px;border-radius:8px;font-size:15px;transition:background .15s}
+.btn:hover{background:#c62828}
 </style>
 </head>
 <body>
+
+<nav class="nav">
+<div class="nav-inner">
+<a class="nav-brand" href="welcome.html">NERDS<span>.</span></a>
+<button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+<div class="nav-links">
+<a href="welcome.html">Home</a>
+<a href="amd.html">AMD Builds</a>
+<a href="intel.html">Intel Builds</a>
+<a href="gpu.html">GPUs</a>
+<a href="parts.html">Parts</a>
+<a href="storage.html">Storage</a>
+<a href="coolers.html">Coolers</a>
+<a href="build-service.html">Build Service</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+</div>
+</div>
+</nav>
+
+
 <div class="container">
 
   <div class="intro">
@@ -47,31 +88,31 @@
   <h2 class="section-heading">What I Offer</h2>
 
   <div class="svc-grid">
-    <a class="svc-card" href="https://1r0nch3f.github.io/NERDSwebpage/assessment.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#e53935">
+    <a class="svc-card" href="assessment.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#e53935">
       <div class="svc-tag" style="color:#e53935">Starting at $500</div>
       <h3>AI Readiness Assessment</h3>
       <p>I come on-site, look at how you actually work, and hand you a plain-English report on where AI saves you time and money. The fee credits back if you move forward.</p>
       <span class="svc-go">View details &rsaquo;</span>
     </a>
-    <a class="svc-card" href="https://1r0nch3f.github.io/NERDSwebpage/starter-setup.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#3da4e0">
+    <a class="svc-card" href="starter-setup.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#3da4e0">
       <div class="svc-tag" style="color:#3da4e0">Get up and running</div>
       <h3>Starter AI Setup</h3>
       <p>The core AI tools picked, installed, and configured for your business, with your team trained on how to use them day to day.</p>
       <span class="svc-go">View details &rsaquo;</span>
     </a>
-    <a class="svc-card" href="https://1r0nch3f.github.io/NERDSwebpage/business-automation.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#34b56a">
+    <a class="svc-card" href="business-automation.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#34b56a">
       <div class="svc-tag" style="color:#34b56a">Set up and tested</div>
       <h3>Business Automation</h3>
       <p>We automate the repetitive work across your departments end to end, so your people spend time on the things that need a human.</p>
       <span class="svc-go">View details &rsaquo;</span>
     </a>
-    <a class="svc-card" href="https://1r0nch3f.github.io/NERDSwebpage/ai-retainer.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#e6932e">
+    <a class="svc-card" href="ai-retainer.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#e6932e">
       <div class="svc-tag" style="color:#e6932e">Ongoing support</div>
       <h3>AI Strategy Retainer</h3>
       <p>Regular guidance and quarterly check-ins so you stay ahead of the curve instead of scrambling to catch up later.</p>
       <span class="svc-go">View details &rsaquo;</span>
     </a>
-    <a class="svc-card" href="https://1r0nch3f.github.io/NERDSwebpage/ai-workstation.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#8e6fd6">
+    <a class="svc-card" href="ai-workstation.html" onclick="window.open(this.href,'_blank');return false;" style="border-top-color:#8e6fd6">
       <div class="svc-tag" style="color:#8e6fd6">Built local</div>
       <h3>Custom AI Workstation</h3>
       <p>Hardware built to run AI models in house. Private, fast, and fully yours, no monthly cloud bill and no data leaving your shop.</p>
@@ -82,34 +123,9 @@
   <div class="foot">
     <h3>Not Sure Where to Start?</h3>
     <p>Tell me what your business does and I will point you to the right first step. No pressure.</p>
-    <a href="https://www.chattnerds.com/contact" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
+    <a href="contact.html" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
   </div>
 
 </div>
-
-<!-- NERDS MERCH SHOP FOOTER -->
-<div style="background:#000;border-top:1px solid #2a2c31;padding:24px 16px;text-align:center;">
-  <a href="https://nerds-vzh-shop.fourthwall.com" target="_blank" rel="noopener"
-     style="display:inline-block;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:.6px;text-transform:uppercase;color:#0D0D0D;background:#E67E22;padding:12px 30px;border-radius:6px;text-decoration:none;">
-    &#128722; Shop NERDS Merch
-  </a>
-  <div style="margin-top:10px;font-family:'Open Sans',sans-serif;font-size:12px;color:#8a8a8a;letter-spacing:.3px;">
-    Shirts, hoodies &amp; more &middot; nerds-vzh-shop.fourthwall.com
-  </div>
-</div>
-<!-- NERDS-TAWK-CHAT -->
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a64b64a1320a91d46342627/1jucmg4ch';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
 </body>
 </html>
