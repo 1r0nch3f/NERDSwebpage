@@ -4,12 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Welcome - NERDS PC</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root{--red:#e53935;--bg:#0d0d0d;--card:#161616;--line:#2a2a2a;--txt:#f2f2f2;--mut:#9a9a9a}
   body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
   .container { max-width: 960px; margin: 0 auto; padding: 20px 24px 40px; }
   p { font-size: 17px; margin-bottom: 16px; }
+
+  /* ===== NAV ===== */
+  .nav{background:#111;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:100}
+  .nav-inner{max-width:1180px;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;height:54px}
+  .nav-brand{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:2px;color:#fff;text-decoration:none}
+  .nav-brand span{color:var(--red)}
+  .nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .nav-links a{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);text-decoration:none;padding:6px 10px;border-radius:6px;transition:color .15s,background .15s;white-space:nowrap}
+  .nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(229,57,53,.15)}
+  .nav-links a.active{color:var(--red)}
+  .nav-toggle{display:none;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:6px}
+  @media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:54px;left:0;right:0;background:#111;border-bottom:1px solid var(--line);flex-direction:column;padding:12px 22px;gap:2px}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:10px 12px;font-size:14px}
+  .nav-toggle{display:block}
+  }
 
   /* Tagline area */
   .tagline {
@@ -31,7 +49,7 @@
   .pillar {
     text-align: center; padding: 28px 20px; border-radius: 10px;
     transition: transform 0.2s; cursor: pointer;
-    background: #17181b; border: 2px solid #2a2c31;
+    background: #17181b; border: 2px solid #2a2c31; text-decoration: none; color: inherit; display: block;
   }
   .pillar:hover { transform: translateY(-4px); border-color: #e53935; }
   .pillar-icon { font-size: 40px; margin-bottom: 10px; }
@@ -63,6 +81,7 @@
     background: #17181b; border: 2px solid #2a2c31; border-radius: 8px;
     padding: 20px 16px; text-align: center;
     transition: transform 0.2s, border-color 0.2s; cursor: pointer;
+    text-decoration: none; color: inherit; display: block;
   }
   .budget-card:hover { transform: translateY(-3px); border-color: #e53935; }
   .budget-card .tier {
@@ -201,6 +220,26 @@
 </style>
 </head>
 <body>
+
+<nav class="nav">
+<div class="nav-inner">
+<a class="nav-brand" href="welcome.html">NERDS<span>.</span></a>
+<button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+<div class="nav-links">
+<a href="welcome.html" class="active">Home</a>
+<a href="amd.html">AMD Builds</a>
+<a href="intel.html">Intel Builds</a>
+<a href="gpu.html">GPUs</a>
+<a href="parts.html">Parts</a>
+<a href="storage.html">Storage</a>
+<a href="coolers.html">Coolers</a>
+<a href="build-service.html">Build Service</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+</div>
+</div>
+</nav>
+
 <div class="container">
 
   <!-- TAGLINE -->
@@ -211,21 +250,21 @@
 
   <!-- THREE PILLARS -->
   <div class="pillars">
-    <div class="pillar" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform','_blank')">
+    <a class="pillar" href="amd.html">
       <div class="pillar-icon">&#128421;</div>
       <h3>PC Services</h3>
       <p>Custom builds, repair, diagnostics, networking, upgrades, and remote support. From gaming rigs to office workstations.</p>
-    </div>
-    <div class="pillar" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/assessment.html','_blank')">
+    </a>
+    <a class="pillar" href="ai-services.html">
       <div class="pillar-icon">&#129302;</div>
       <h3>AI Services</h3>
       <p>AI readiness assessments, local deployment, business automation, strategy retainers, and custom AI workstation builds.</p>
-    </div>
-    <div class="pillar" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/3d-printing.html','_blank')">
+    </a>
+    <a class="pillar" href="3d-printing.html">
       <div class="pillar-icon">&#9881;</div>
       <h3>3D Printing</h3>
       <p>Custom prints, prototypes, replacement parts, and multi-color designs. If you can think it, we can print it.</p>
-    </div>
+    </a>
   </div>
 
   <!-- OWNER INTRO -->
@@ -233,37 +272,47 @@
     <p>NERDS PC runs on word-of-mouth referrals. No advertising, no call centers, no ticket queues. When you call, you get me or one of my guys. That's it. We've built this business on doing good work for people who tell other people, and that's how we plan to keep it. Whether you need a PC fixed, a custom machine built, AI integrated into your workflow, or a one-off part printed, the person you talk to is the person doing the work.</p>
   </div>
 
+  <!-- STEAM MACHINE CALLOUT -->
+  <div class="featured">
+    <h4>We Can Build It Better</h4>
+    <div class="featured-tagline">Looking at the Steam Machine? Talk to us first.</div>
+    <p>We build couch-ready SteamOS gaming PCs with better specs, full upgradeability, and zero waitlist. No lottery, no sealed box. Just a better machine, built for you this week.</p>
+    <a class="featured-btn" href="steam-machine.html">Learn More</a>
+  </div>
+
   <!-- PC BUILD BUDGET -->
   <div class="budget-section">
     <div class="section-heading">Custom PC Build Budget</div>
     <div class="budget-grid">
-      <div class="budget-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">
+      <a class="budget-card" href="amd.html">
         <div class="tier">Entry</div>
-        <div class="price">$639</div>
+        <div class="price">$559</div>
         <div class="desc">Everyday use, light gaming, office work</div>
-      </div>
-      <div class="budget-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">
+      </a>
+      <a class="budget-card" href="amd.html">
         <div class="tier">Mid-Range</div>
-        <div class="price">$799 <span>- $899</span></div>
+        <div class="price">$650 <span>- $975</span></div>
         <div class="desc">Solid 1080p/1440p gaming, streaming, content work</div>
-      </div>
-      <div class="budget-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">
+      </a>
+      <a class="budget-card" href="amd.html">
         <div class="tier">High-End</div>
-        <div class="price">$1,099 <span>- $1,149</span></div>
+        <div class="price">$1,105 <span>- $1,300</span></div>
         <div class="desc">High-refresh gaming, creative workloads, multitasking</div>
-      </div>
-      <div class="budget-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">
+      </a>
+      <a class="budget-card" href="amd.html">
         <div class="tier">Enthusiast</div>
-        <div class="price">$1,499 <span>- $1,799</span></div>
+        <div class="price">$1,365 <span>- $1,755</span></div>
         <div class="desc">4K gaming, heavy production, no compromises</div>
-      </div>
+      </a>
     </div>
-    <p class="budget-note">All builds include PSU. GPU, cooler, storage, and case priced separately. Prices subject to change.</p>
+    <p class="budget-note">Builds include CPU, motherboard, and RAM. GPU, cooler, storage, case, and PSU priced separately. Prices subject to change.</p>
     <div class="budget-links">
-      <a class="budget-link" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/amd.html','_blank')">AMD Builds</a>
-      <a class="budget-link" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/intel.html','_blank')">Intel Builds</a>
-      <a class="budget-link" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/coolers.html','_blank')">CPU Coolers</a>
-      <a class="budget-link" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/storage.html','_blank')">Storage</a>
+      <a class="budget-link" href="amd.html">AMD Builds</a>
+      <a class="budget-link" href="intel.html">Intel Builds</a>
+      <a class="budget-link" href="gpu.html">GPUs</a>
+      <a class="budget-link" href="coolers.html">CPU Coolers</a>
+      <a class="budget-link" href="storage.html">Storage</a>
+      <a class="budget-link" href="parts.html">Parts</a>
     </div>
   </div>
 
@@ -273,7 +322,7 @@
     <div class="services-grid">
       <div class="service-item">
         <span class="service-icon">&#128421;</span>
-        <span>Custom PC builds — gaming, workstation, office, AI</span>
+        <span>Custom PC builds: gaming, workstation, office, AI</span>
       </div>
       <div class="service-item">
         <span class="service-icon">&#128295;</span>
@@ -281,27 +330,27 @@
       </div>
       <div class="service-item">
         <span class="service-icon">&#127760;</span>
-        <span>Networking — wired, wireless, VLANs, firewalls</span>
+        <span>Networking: wired, wireless, VLANs, firewalls</span>
       </div>
       <div class="service-item">
         <span class="service-icon">&#128187;</span>
-        <span>Remote support — we can fix it without a house call</span>
+        <span>Remote support: we can fix it without a house call</span>
       </div>
       <div class="service-item">
         <span class="service-icon">&#9881;</span>
-        <span>3D printing — custom parts, prototypes, replacements</span>
+        <span>3D printing: custom parts, prototypes, replacements</span>
       </div>
       <div class="service-item">
         <span class="service-icon">&#128200;</span>
-        <span>Hardware upgrades — RAM, storage, GPU, cooling</span>
+        <span>Hardware upgrades: RAM, storage, GPU, cooling</span>
       </div>
       <div class="service-item">
         <span class="service-icon">&#129302;</span>
-        <span>AI integration — local deployment, automation, strategy</span>
+        <span>AI integration: local deployment, automation, strategy</span>
       </div>
       <div class="service-item">
         <span class="service-icon">&#128230;</span>
-        <span>Bring your own parts — we'll build it, you save money</span>
+        <span>Bring your own parts: we build it, you save money</span>
       </div>
     </div>
   </div>
@@ -316,16 +365,16 @@
       <h4>Legacy PC Modernization</h4>
       <div class="featured-tagline">Old enough to know how things used to work. Modern enough to keep them working.</div>
       <p>If your production floor still runs on a Windows 95 or Windows 7 PC and the software vendor closed years ago, you're one dead hard drive away from a real problem. We clone your system, move it to modern hardware, and keep your fallback ready on the shelf. Zero risk to your production.</p>
-      <a class="featured-btn" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/legacy.html','_blank')">Learn More</a>
+      <a class="featured-btn" href="legacy.html">Learn More</a>
     </div>
 
     <div class="pro-grid">
-      <a class="pro-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/assessment.html','_blank')">
+      <a class="pro-card" href="assessment.html">
         <h4>AI Consultation</h4>
         <p>Not sure where AI fits in your business? We assess your workflows, identify where automation saves real time and money, and build a plan that makes sense for your size and budget. No hype, just practical answers.</p>
         <span class="tag tag-consult">Consultation</span>
       </a>
-      <a class="pro-card" onclick="window.open('https://1r0nch3f.github.io/NERDSwebpage/business-automation.html','_blank')">
+      <a class="pro-card" href="business-automation.html">
         <h4>Business Automation</h4>
         <p>Email triage, scheduling, customer intake, document processing. We set up local AI tools that handle the repetitive work so your people can focus on the work that actually needs a human.</p>
         <span class="tag tag-new">AI Powered</span>
@@ -337,35 +386,14 @@
   <div class="bottom-cta">
     <h3>Let's talk about what you need</h3>
     <p>Whether it's a personal PC, a business project, or something you're not even sure how to describe yet, reach out. No pressure, no upsell. Just a straight conversation about what makes sense.</p>
-    <a class="cta-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform','_blank')">Get A Quote</a>
+    <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap">
+      <a class="cta-btn" href="sms:4235215694">Text Us</a>
+      <a class="cta-btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Submit a Request</a>
+    </div>
     <div class="cta-phone">Or call direct: <a href="tel:4235215694">423-521-5694</a></div>
+    <p style="font-size:13px;color:#888;margin-top:8px;margin-bottom:0">Texting is the fastest way to get a quote and keeps a record of your conversation.</p>
   </div>
 
 </div>
-
-<!-- NERDS MERCH SHOP FOOTER -->
-<div style="background:#000;border-top:1px solid #2a2c31;padding:24px 16px;text-align:center;">
-  <a href="https://nerds-vzh-shop.fourthwall.com" target="_blank" rel="noopener"
-     style="display:inline-block;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:.6px;text-transform:uppercase;color:#0D0D0D;background:#E67E22;padding:12px 30px;border-radius:6px;text-decoration:none;">
-    &#128722; Shop NERDS Merch
-  </a>
-  <div style="margin-top:10px;font-family:'Open Sans',sans-serif;font-size:12px;color:#8a8a8a;letter-spacing:.3px;">
-    Shirts, hoodies &amp; more &middot; nerds-vzh-shop.fourthwall.com
-  </div>
-</div>
-<!-- NERDS-TAWK-CHAT -->
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a64b64a1320a91d46342627/1jucmg4ch';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
 </body>
 </html>
