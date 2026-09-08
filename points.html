@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NERDS Channel Point Leaderboard</title>
+<meta name="description" content="Channel point standings for the NERDS custom PC builds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070a0f;
+    --panel: #101722;
+    --panel-2: #16202e;
+    --line: #22303f;
+    --cyan: #00e5ff;
+    --cyan-dim: #0d7f8c;
+    --text: #e8f1f8;
+    --muted: #7d93a8;
+    --gold: #ffc94a;
+    --silver: #c8d6e2;
+    --bronze: #e08b4c;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 520px at 50% -10%, rgba(0,229,255,.13), transparent 62%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding: 22px 16px 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 720px; margin: 0 auto; }
+
+  /* ---- header ---- */
+  header { text-align: center; margin-bottom: 22px; }
+
+  .brand {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(26px, 7vw, 40px);
+    font-weight: 700;
+    letter-spacing: .18em;
+    color: var(--cyan);
+    text-shadow: 0 0 22px rgba(0,229,255,.45);
+    margin: 0;
+    line-height: 1;
+  }
+
+  .subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 9px;
+  }
+
+  .build-name {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 7px 18px;
+    border: 1px solid var(--cyan-dim);
+    border-radius: 999px;
+    background: rgba(0,229,255,.07);
+    font-family: 'Oswald', sans-serif;
+    font-size: 15px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--cyan);
+  }
+
+  /* ---- stats ---- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 20px 0 18px;
+  }
+
+  .stat {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 13px 8px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(19px, 5.5vw, 27px);
+    font-weight: 600;
+    color: var(--cyan);
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  /* ---- tabs ---- */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 11px 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    color: var(--muted);
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .16s ease;
+  }
+
+  .tab:hover { color: var(--text); border-color: var(--cyan-dim); }
+
+  .tab[aria-selected="true"] {
+    background: rgba(0,229,255,.12);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 16px rgba(0,229,255,.18) inset;
+  }
+
+  /* ---- rows ---- */
+  .board { display: flex; flex-direction: column; gap: 7px; }
+
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    align-items: center;
+    gap: 11px;
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    overflow: hidden;
+  }
+
+  .row .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: linear-gradient(90deg, rgba(0,229,255,.17) 0%, rgba(0,229,255,.06) 62%, rgba(0,229,255,0) 100%);
+    z-index: 0;
+    transition: width .5s ease;
+  }
+
+  .row > * { position: relative; z-index: 1; }
+
+  .rank {
+    font-family: 'Oswald', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .row.top1 { border-color: rgba(255,201,74,.55); }
+  .row.top1 .rank { color: var(--gold); }
+  .row.top2 { border-color: rgba(200,214,226,.4); }
+  .row.top2 .rank { color: var(--silver); }
+  .row.top3 { border-color: rgba(224,139,76,.45); }
+  .row.top3 .rank { color: var(--bronze); }
+
+  .who { min-width: 0; }
+
+  .name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .redeems {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .points {
+    font-family: 'Oswald', sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--cyan);
+    white-space: nowrap;
+  }
+
+  .points span {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9.5px;
+    color: var(--muted);
+    display: block;
+    text-align: right;
+    letter-spacing: .12em;
+    margin-top: 1px;
+  }
+
+  /* ---- misc ---- */
+  .empty, .error {
+    background: var(--panel);
+    border: 1px dashed var(--line);
+    border-radius: 9px;
+    padding: 34px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .error { border-color: #6b2a2a; color: #d99; }
+
+  .past {
+    margin-top: 30px;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+
+  .past h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 11px;
+  }
+
+  .past-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 13px;
+    background: var(--panel-2);
+    border-radius: 7px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+
+  .past-row .pb { color: var(--muted); font-family: 'Share Tech Mono', monospace; font-size: 11px; }
+  .past-row .pw { font-weight: 700; }
+  .past-row .pw b { color: var(--gold); }
+
+  footer {
+    margin-top: 28px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: .13em;
+    color: #4c5f72;
+    line-height: 1.9;
+  }
+
+  footer a { color: var(--cyan-dim); text-decoration: none; }
+  footer a:hover { color: var(--cyan); }
+
+  @media (max-width: 380px) {
+    .row { grid-template-columns: 34px 1fr auto; gap: 8px; padding: 10px; }
+    .name { font-size: 15px; }
+    .points { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1 class="brand">NERDS</h1>
+    <div class="subtitle">Channel Point Leaderboard</div>
+    <div class="build-name" id="buildName">Loading</div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-value" id="sPoints">—</div><div class="stat-label">Points Spent</div></div>
+    <div class="stat"><div class="stat-value" id="sViewers">—</div><div class="stat-label">Viewers</div></div>
+    <div class="stat"><div class="stat-value" id="sRedeems">—</div><div class="stat-label">Redemptions</div></div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tabBuild" aria-selected="true" data-board="build">This Build</button>
+    <button class="tab" role="tab" id="tabAll" aria-selected="false" data-board="alltime">All Time</button>
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div class="past" id="past" hidden>
+    <h2>Previous Builds</h2>
+    <div id="pastRows"></div>
+  </div>
+
+  <footer>
+    <div id="updated">—</div>
+    <div>If a geek can't fix it, call a NERD</div>
+    <div><a id="chLink" href="https://twitch.tv/nerdsllc">twitch.tv/nerdsllc</a></div>
+  </footer>
+
+</div>
+
+<script>
+  // Generated by build-pages-copy.js. Edit public/panel.html, not this file.
+  window.NERDS_API_BASE = "https://tutor-enable-landscape.ngrok-free.dev";
+</script>
+<script>
+(function () {
+  'use strict';
+
+  // Where the leaderboard API lives.
+  //
+  // Served by the leaderboard container itself  -> leave this empty.
+  // Hosted anywhere else (GitHub Pages, your own -> set the absolute base URL,
+  // site) and reading the API across origins        no trailing slash, e.g.
+  //                                                 'https://xxx.ngrok-free.dev'
+  var API_BASE = String(window.NERDS_API_BASE || '').replace(/\/+$/, '');
+
+  function apiUrl(p) { return API_BASE ? API_BASE + '/' + p : p; }
+
+  var current = 'build';
+  var data = null;
+
+  var el = {
+    buildName: document.getElementById('buildName'),
+    sPoints:   document.getElementById('sPoints'),
+    sViewers:  document.getElementById('sViewers'),
+    sRedeems:  document.getElementById('sRedeems'),
+    board:     document.getElementById('board'),
+    past:      document.getElementById('past'),
+    pastRows:  document.getElementById('pastRows'),
+    updated:   document.getElementById('updated'),
+    chLink:    document.getElementById('chLink')
+  };
+
+  function num(n) { return (n || 0).toLocaleString('en-US'); }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function renderBoard() {
+    if (!data) return;
+
+    var rows = (data.boards && data.boards[current]) || [];
+    var t = current === 'alltime' ? data.allTimeTotals : data.build.totals;
+
+    el.sPoints.textContent  = num(t.points);
+    el.sViewers.textContent = num(t.viewers);
+    el.sRedeems.textContent = num(t.redemptions);
+
+    if (!rows.length) {
+      el.board.innerHTML =
+        '<div class="empty">No channel points spent yet.<br>Redeem something and claim the top spot.</div>';
+      return;
+    }
+
+    var max = rows[0].points || 1;
+
+    el.board.innerHTML = rows.map(function (r) {
+      var cls = r.rank <= 3 ? ' top' + r.rank : '';
+      var pct = Math.max(2, Math.round((r.points / max) * 100));
+      return '' +
+        '<div class="row' + cls + '">' +
+          '<div class="fill" style="width:' + pct + '%"></div>' +
+          '<div class="rank">' + r.rank + '</div>' +
+          '<div class="who">' +
+            '<div class="name">' + esc(r.userName) + '</div>' +
+            '<div class="redeems">' + num(r.redemptions) + ' redemption' + (r.redemptions === 1 ? '' : 's') + '</div>' +
+          '</div>' +
+          '<div class="points">' + num(r.points) + '<span>points</span></div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderPast() {
+    var list = (data && data.pastBuilds) || [];
+    if (!list.length) { el.past.hidden = true; return; }
+    el.past.hidden = false;
+    el.pastRows.innerHTML = list.map(function (b) {
+      var when = b.endedAt ? new Date(b.endedAt).toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric'
+      }) : '';
+      var winner = b.winner
+        ? 'Winner <b>' + esc(b.winner) + '</b>'
+        : 'No redemptions';
+      return '<div class="past-row">' +
+        '<span class="pb">' + esc(b.name) + ' &middot; ' + when + '</span>' +
+        '<span class="pw">' + winner + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  function render() {
+    el.buildName.textContent = data.build.name;
+    if (data.channelUrl) {
+      el.chLink.href = data.channelUrl;
+      el.chLink.textContent = data.channelUrl.replace(/^https?:\/\//, '');
+    }
+    renderBoard();
+    renderPast();
+    el.updated.textContent = 'Updated ' + new Date().toLocaleTimeString('en-US');
+  }
+
+  function load() {
+    fetch(apiUrl('api/summary'), {
+      cache: 'no-store',
+      // Any value works. Stops a free ngrok tunnel serving its warning page
+      // instead of JSON. Harmless when the API is served locally.
+      headers: { 'ngrok-skip-browser-warning': 'nerds' }
+    })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (j) { data = j; render(); })
+      .catch(function (e) {
+        el.board.innerHTML =
+          '<div class="error">Could not reach the leaderboard service.<br>' + esc(e.message) + '</div>';
+      });
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (btn) {
+    btn.addEventListener('click', function () {
+      current = btn.dataset.board;
+      Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (b) {
+        b.setAttribute('aria-selected', String(b === btn));
+      });
+      renderBoard();
+    });
+  });
+
+  load();
+  setInterval(load, 30000);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) load();
+  });
+})();
+</script>
+</body>
+</html>
