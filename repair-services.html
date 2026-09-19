@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repair Services - NERDS PC</title>
+<meta name="description" content="PC and laptop repair in Dalton, GA. Tune-ups, virus removal, upgrades, and fixes with straight pricing. Most repairs back in under 24 hours.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
+  .banner { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%); padding: 54px 24px; text-align: center; margin-bottom: 30px; position: relative; overflow: hidden; }
+  .banner::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 25% 50%, rgba(229,57,53,0.12) 0%, transparent 60%), radial-gradient(circle at 75% 50%, rgba(229,57,53,0.08) 0%, transparent 50%); }
+  .banner h1 { font-family: 'Oswald', sans-serif; font-size: 46px; font-weight: 500; text-transform: uppercase; color: #fff; letter-spacing: 2px; position: relative; z-index: 1; margin-bottom: 12px; }
+  .banner p { position: relative; z-index: 1; color: #cfcfcf; font-size: 17px; max-width: 640px; margin: 0 auto 16px; }
+  .banner-line { width: 120px; height: 4px; margin: 0 auto; background: #e53935; border-radius: 2px; position: relative; z-index: 1; }
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px 44px; }
+  .intro { font-size: 17px; color: #d6d6d6; margin-bottom: 8px; }
+  .note { font-size: 14px; color: #9a9a9a; margin-top: 14px; font-style: italic; }
+  .section-heading { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 400; text-transform: uppercase; color: #fff; margin: 34px 0 18px; padding-bottom: 8px; border-bottom: 3px solid #e53935; }
+  .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .price-card { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; padding: 20px 24px; }
+  .price-card h3 { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 18px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+  .price-card .price { font-family: 'Oswald', sans-serif; font-size: 30px; font-weight: 500; color: #e53935; margin-bottom: 6px; }
+  .price-card .price small { font-size: 14px; color: #9a9a9a; font-family: 'Open Sans', Arial, sans-serif; font-weight: 400; }
+  .price-card p { font-size: 14px; color: #cfcfcf; }
+  .speed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .speed-box { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; padding: 22px 24px; }
+  .speed-standard { border-top: 3px solid #34b56a; }
+  .speed-priority { border-top: 3px solid #e53935; }
+  .speed-box h3 { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 18px; font-weight: 400; color: #fff; margin-bottom: 8px; }
+  .speed-box p { font-size: 14px; color: #cfcfcf; margin-bottom: 8px; }
+  .speed-box p:last-child { margin-bottom: 0; }
+  .lead { background: #17181b; border: 1px solid #2a2c31; border-left: 4px solid #e53935; border-radius: 10px; padding: 22px 26px; margin-bottom: 8px; }
+  .lead p { font-size: 15px; color: #cfcfcf; margin-bottom: 12px; }
+  .lead p:last-child { margin-bottom: 0; }
+  .foot { text-align: center; padding: 28px; background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; margin-top: 36px; }
+  .foot h3 { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 400; text-transform: uppercase; color: #fff; margin-bottom: 8px; }
+  .foot p { font-size: 15px; color: #a8a8a8; margin-bottom: 16px; }
+  .foot a { display: inline-block; padding: 11px 28px; border-radius: 4px; font-size: 15px; font-weight: 700; text-decoration: none; margin: 4px; }
+  .foot a.primary { background: #e53935; color: #fff; }
+  .foot a.primary:hover { background: #c62f2c; }
+  .foot a.ghost { background: transparent; border: 1px solid #2a2c31; color: #cfcfcf; }
+  .foot a.ghost:hover { border-color: #e53935; color: #fff; }
+  @media (max-width: 700px) { .banner h1 { font-size: 32px; } .price-grid, .speed-grid { grid-template-columns: 1fr; } }
+
+/* ===== NAV ===== */
+.nav{background:#111;border-bottom:1px solid #2a2a2a;border-bottom:1px solid var(--line,#2a2a2a);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1180px;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;height:54px}
+.nav-brand{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:2px;color:#fff;text-decoration:none}
+.nav-brand span{color:#e53935;color:var(--red,#e53935)}
+.nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nav-links a{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:#9a9a9a;text-decoration:none;padding:6px 10px;border-radius:6px;transition:color .15s,background .15s;white-space:nowrap}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(229,57,53,.15)}
+.nav-links a.active{color:#e53935;color:var(--red,#e53935)}
+.nav-toggle{display:none;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:6px}
+@media(max-width:768px){
+.nav-links{display:none;position:absolute;top:54px;left:0;right:0;background:#111;border-bottom:1px solid #2a2a2a;border-bottom:1px solid var(--line,#2a2a2a);flex-direction:column;padding:12px 22px;gap:2px}
+.nav-links.open{display:flex}
+.nav-links a{padding:10px 12px;font-size:14px}
+.nav-toggle{display:block}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="nav-inner">
+<a class="nav-brand" href="welcome.html">NERDS<span>.</span></a>
+<button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+<div class="nav-links">
+<a href="welcome.html">Home</a>
+<a href="amd.html">AMD Builds</a>
+<a href="intel.html">Intel Builds</a>
+<a href="gpu.html">GPUs</a>
+<a href="parts.html">Parts</a>
+<a href="storage.html">Storage</a>
+<a href="coolers.html">Coolers</a>
+<a href="build-service.html">Build Service</a>
+<a class="active" href="repair-services.html">Repair</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+</div>
+</div>
+</nav>
+
+<div class="banner">
+  <h1>Repair Services</h1>
+  <p>Parts prices are high right now. Before you replace a slow or broken PC, let me look at it. Most of the time the fix costs a fraction of a new machine.</p>
+  <div class="banner-line"></div>
+</div>
+
+<div class="container">
+  <p class="intro">Straight pricing, posted up front. Consultation is always free, and I give you the number before I touch anything.</p>
+
+  <h2 class="section-heading">Pricing</h2>
+  <div class="price-grid">
+    <div class="price-card"><h3>Consultation</h3><div class="price">Free</div><p>I look over your device, tell you what is going on, and lay out your options.</p></div>
+    <div class="price-card"><h3>Gaming PC Health Check</h3><div class="price">Free</div><p>Temps, dust, drive health, drivers, and updates. You get a straight answer on what needs fixing and what does not.</p></div>
+    <div class="price-card"><h3>Tune-Up and Cleanup</h3><div class="price">$59</div><p>Startup and background cleanup, updates, and a dust-out. For the PC that used to be fast.</p></div>
+    <div class="price-card"><h3>Virus and Malware Removal</h3><div class="price">$99</div><p>Full removal and a security cleanup, so it stays gone.</p></div>
+    <div class="price-card"><h3>Windows Reinstall</h3><div class="price">$89</div><p>Fresh install with all updates done. Windows license not included unless you need one.</p></div>
+    <div class="price-card"><h3>Data Backup or Transfer</h3><div class="price">$79</div><p>Your files moved to a new drive or a new machine, or backed up before a repair.</p></div>
+    <div class="price-card"><h3>Hardware Install</h3><div class="price">$40 <small>labor</small></div><p>SSD, RAM, GPU, and similar upgrades. Parts are extra.</p></div>
+    <div class="price-card"><h3>Laptop Screen Replacement</h3><div class="price">$79 <small>labor</small></div><p>Parts extra. I quote the screen for your exact model first.</p></div>
+    <div class="price-card"><h3>Anything Else</h3><div class="price">$65 <small>per hour</small></div><p>Custom problems get an estimate up front, not a surprise afterward.</p></div>
+    <div class="price-card"><h3>Diagnostic, Gaming or Custom PC</h3><div class="price">$40</div><p>Free when you go ahead with the repair. Standard PCs are free to diagnose.</p></div>
+  </div>
+  <p class="note">Replacement parts are priced separately from labor. If a part has to be ordered, I tell you the cost before I order it.</p>
+
+  <h2 class="section-heading">Turnaround</h2>
+  <div class="speed-grid">
+    <div class="speed-box speed-standard">
+      <h3>Standard</h3>
+      <p>Most repairs are back to you in under 24 hours.</p>
+      <p>Jobs that need a part ordered, or a machine that has hit the limit of its hardware, take longer. I tell you that up front and keep you posted.</p>
+    </div>
+    <div class="speed-box speed-priority">
+      <h3>Priority: +$60</h3>
+      <p>Front of the line. Done in a few hours, or while you wait when the job allows it.</p>
+      <p>Priority covers my time, not parts shipping. If a part is not on hand, priority cannot make it appear.</p>
+    </div>
+  </div>
+
+  <h2 class="section-heading">How It Works</h2>
+  <div class="lead">
+    <p><strong>Drop off, remote, or house call.</strong> I do not have a storefront, so everything runs by appointment. A lot of software problems can be fixed remotely without you hauling anything anywhere.</p>
+    <p><strong>House calls:</strong> +$25 trip fee in Dalton and the surrounding area. Good for home networks, business setups, and anything that is a pain to move.</p>
+    <p><strong>Payments</strong> run through Wave.</p>
+  </div>
+
+  <div class="foot">
+    <h3>Get It Fixed</h3>
+    <p>Call or text and we will set a time. Same day when I can.</p>
+    <a class="primary" href="tel:4235215694">Call or Text 423-521-5694</a>
+    <a class="ghost" href="contact.html" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
+  </div>
+</div>
+</body></html>
