@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>C &amp; S Auto | Mobile Auto Repair</title>
+<meta name="description" content="C &amp; S Auto: mobile auto repair in Georgia. We come to you and fix it on the spot.">
+<style>
+  :root {
+    --ink:#101319; --ink2:#1b212b; --muted:#5a6473; --bg:#f4f5f8; --card:#fff; --line:#e3e6ec;
+    --brand:#d4142f; --brand2:#a30e23; --gold:#f5b301; --ok:#12925a;
+    --r:14px; --shadow:0 10px 30px rgba(16,19,25,.08);
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; scroll-padding-top:76px; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color:var(--ink); background:var(--bg); line-height:1.55; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  img,svg { display:block; }
+  .wrap { max-width:1120px; margin:0 auto; padding:0 20px; }
+  .ico { width:1.25em; height:1.25em; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+
+  /* preview ribbon */
+  .ribbon { background:var(--gold); color:#20180a; text-align:center; font-size:.85rem; font-weight:700; padding:7px 12px; letter-spacing:.02em; }
+
+  /* header */
+  header { background:rgba(16,19,25,.96); backdrop-filter:blur(8px); color:#fff; position:sticky; top:0; z-index:50; }
+  header .wrap { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:68px; }
+  .logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.2rem; letter-spacing:.03em; text-decoration:none; }
+  .logo .mark { width:36px; height:36px; border-radius:9px; background:var(--brand); display:grid; place-items:center; font-size:.95rem; }
+  nav { display:flex; gap:22px; align-items:center; }
+  nav a { text-decoration:none; font-size:.95rem; color:#d9dde5; }
+  nav a:hover { color:#fff; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff !important; padding:13px 24px; border-radius:10px; font-weight:700; text-decoration:none; border:0; cursor:pointer; font-size:1rem; font-family:inherit; transition:transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { background:var(--brand2); transform:translateY(-1px); box-shadow:0 8px 20px rgba(212,20,47,.35); }
+  .btn.ghost { background:transparent; border:2px solid rgba(255,255,255,.7); }
+  .btn.ghost:hover { background:rgba(255,255,255,.12); box-shadow:none; }
+  .btn.dark { background:var(--ink); }
+  .btn.dark:hover { background:#000; box-shadow:none; }
+  .btn.sm { padding:9px 16px; font-size:.92rem; }
+  .burger { display:none; background:none; border:0; color:#fff; cursor:pointer; padding:6px; }
+  .burger .ico { width:28px; height:28px; }
+
+  /* hero */
+  .hero { position:relative; overflow:hidden; background:radial-gradient(1200px 500px at 85% -10%, #3a1520 0%, transparent 60%), linear-gradient(135deg,#0c0f14 0%,#1c2330 100%); color:#fff; padding:76px 0 0; }
+  .hero::after { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px); background-size:44px 44px; mask-image:linear-gradient(180deg,#000 0%,transparent 80%); pointer-events:none; }
+  .hero .wrap { position:relative; z-index:1; display:grid; grid-template-columns:1.15fr .85fr; gap:40px; align-items:center; }
+  .status { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); padding:6px 14px; border-radius:99px; font-size:.88rem; margin-bottom:18px; }
+  .dot { width:9px; height:9px; border-radius:50%; background:#8a93a3; }
+  .dot.open { background:#2ee59d; box-shadow:0 0 0 0 rgba(46,229,157,.6); animation:pulse 2s infinite; }
+  @keyframes pulse { 70% { box-shadow:0 0 0 9px rgba(46,229,157,0); } 100% { box-shadow:0 0 0 0 rgba(46,229,157,0); } }
+  .hero h1 { font-size:clamp(2.3rem,5.4vw,3.9rem); line-height:1.03; margin:0 0 16px; letter-spacing:-.02em; }
+  .hero h1 em { font-style:normal; color:var(--brand); }
+  .hero p.sub { font-size:1.15rem; color:#ccd2dc; max-width:33em; margin:0 0 26px; }
+  .hero .cta { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:26px; }
+  .ticks { display:flex; gap:20px; flex-wrap:wrap; color:#c3cad6; font-size:.93rem; padding-bottom:64px; }
+  .ticks span { display:inline-flex; gap:8px; align-items:center; }
+  .ticks .ico { color:#2ee59d; }
+
+  /* hero visual: van card */
+  .van-card { background:linear-gradient(160deg,#1f2733,#141a23); border:1px solid rgba(255,255,255,.1); border-radius:20px; padding:22px; box-shadow:0 30px 60px rgba(0,0,0,.4); margin-bottom:-38px; }
+  .van-card svg.van { width:100%; height:auto; }
+  .eta { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,.1); font-size:.9rem; color:#c3cad6; }
+  .eta b { color:#fff; display:block; font-size:1.05rem; }
+  .road { animation:drive 6s linear infinite; }
+  @keyframes drive { from { transform:translateX(0); } to { transform:translateX(-80px); } }
+
+  /* stats strip */
+  .stats { position:relative; z-index:2; background:var(--card); border-radius:var(--r); box-shadow:var(--shadow); margin-top:0; }
+  .stats .in { display:grid; grid-template-columns:repeat(4,1fr); }
+  .stat { padding:26px 22px; text-align:center; border-right:1px solid var(--line); }
+  .stat:last-child { border:0; }
+  .stat b { display:block; font-size:1.7rem; letter-spacing:-.02em; }
+  .stat span { color:var(--muted); font-size:.9rem; }
+
+  section { padding:84px 0; }
+  .eyebrow { color:var(--brand); font-weight:800; font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; margin-bottom:8px; }
+  h2 { font-size:clamp(1.7rem,3.4vw,2.4rem); line-height:1.12; margin:0 0 12px; letter-spacing:-.015em; }
+  .lead { color:var(--muted); margin:0 0 36px; max-width:40em; font-size:1.05rem; }
+  .head-c { text-align:center; } .head-c .lead { margin-left:auto; margin-right:auto; }
+
+  /* services */
+  .svc { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .svc article { background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:26px; transition:transform .2s, box-shadow .2s, border-color .2s; position:relative; }
+  .svc article:hover { transform:translateY(-4px); box-shadow:var(--shadow); border-color:#d1d5de; }
+  .svc .ic { width:48px; height:48px; border-radius:12px; background:#fdeceb; color:var(--brand); display:grid; place-items:center; margin-bottom:14px; }
+  .svc .ic .ico { width:26px; height:26px; }
+  .svc h3 { margin:0 0 6px; font-size:1.15rem; }
+  .svc p { margin:0 0 12px; color:var(--muted); font-size:.97rem; }
+  .svc ul { margin:0; padding:0; list-style:none; font-size:.9rem; color:#39424f; }
+  .svc li { padding:3px 0 3px 22px; position:relative; }
+  .svc li::before { content:""; position:absolute; left:2px; top:.72em; width:10px; height:6px; border-left:2px solid var(--ok); border-bottom:2px solid var(--ok); transform:rotate(-45deg) translateY(-50%); }
+
+  /* how it works */
+  .dark-sec { background:var(--ink); color:#fff; }
+  .dark-sec .lead { color:#b5bcc8; }
+  .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:22px; counter-reset:s; position:relative; }
+  .step { position:relative; padding-top:6px; }
+  .step .n { width:46px; height:46px; border-radius:50%; background:var(--brand); display:grid; place-items:center; font-weight:800; font-size:1.1rem; margin-bottom:14px; position:relative; z-index:1; }
+  .step::before { content:""; position:absolute; top:29px; left:46px; right:-22px; height:2px; background:repeating-linear-gradient(90deg,#3a4353 0 8px,transparent 8px 16px); }
+  .step:last-child::before { display:none; }
+  .step h3 { margin:0 0 6px; }
+  .step p { margin:0; color:#b5bcc8; font-size:.96rem; }
+
+  /* booking */
+  .book-grid { display:grid; grid-template-columns:.8fr 1.2fr; gap:38px; align-items:start; }
+  .book-side ul { list-style:none; padding:0; margin:22px 0 0; display:grid; gap:14px; }
+  .book-side li { display:flex; gap:12px; align-items:flex-start; color:#39424f; }
+  .book-side li .ico { color:var(--ok); margin-top:3px; }
+  .demo-tag { display:inline-block; background:#fff3cd; color:#7a5a00; border:1px solid #f0d98a; border-radius:6px; font-size:.75rem; font-weight:700; padding:2px 8px; margin-left:8px; vertical-align:middle; }
+  .widget { background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); overflow:hidden; }
+  .w-head { display:flex; align-items:center; justify-content:space-between; padding:16px 22px; border-bottom:1px solid var(--line); background:#fafbfc; }
+  .w-head b { font-size:1.02rem; }
+  .prog { display:flex; gap:6px; }
+  .prog i { width:34px; height:5px; border-radius:3px; background:#dfe3ea; }
+  .prog i.on { background:var(--brand); }
+  .w-body { padding:22px; min-height:360px; }
+  .pane { display:none; animation:fade .25s; } .pane.on { display:block; }
+  @keyframes fade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .pane h4 { margin:0 0 14px; font-size:1.1rem; }
+  .opts { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .opt { border:2px solid var(--line); border-radius:12px; padding:14px; cursor:pointer; background:#fff; text-align:left; font:inherit; color:inherit; display:flex; gap:12px; align-items:center; transition:border-color .15s, background .15s; }
+  .opt:hover { border-color:#b9bfcb; }
+  .opt.sel { border-color:var(--brand); background:#fff6f6; }
+  .opt .ico { color:var(--brand); }
+  .opt small { display:block; color:var(--muted); font-size:.8rem; }
+  .fld { display:grid; gap:6px; margin-bottom:12px; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  label { font-size:.85rem; font-weight:700; }
+  input, select, textarea { width:100%; padding:12px; border:1.5px solid var(--line); border-radius:10px; font:inherit; background:#fff; color:inherit; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(212,20,47,.12); }
+  textarea { min-height:84px; resize:vertical; }
+  .days { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:16px; }
+  .day { border:2px solid var(--line); border-radius:10px; padding:8px 2px; text-align:center; cursor:pointer; background:#fff; font:inherit; color:inherit; }
+  .day small { display:block; font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+  .day b { font-size:1.05rem; }
+  .day.sel { border-color:var(--brand); background:#fff6f6; }
+  .day[disabled] { opacity:.35; cursor:not-allowed; }
+  .slots { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .slot { border:2px solid var(--line); border-radius:10px; padding:10px 4px; text-align:center; font-weight:700; font-size:.92rem; cursor:pointer; background:#fff; font-family:inherit; color:inherit; }
+  .slot.sel { border-color:var(--brand); background:var(--brand); color:#fff; }
+  .slot[disabled] { text-decoration:line-through; opacity:.4; cursor:not-allowed; }
+  .w-foot { display:flex; justify-content:space-between; gap:10px; padding:16px 22px; border-top:1px solid var(--line); background:#fafbfc; }
+  .w-foot .back { background:none; border:0; color:var(--muted); font-weight:700; cursor:pointer; font-family:inherit; font-size:.95rem; }
+  .w-foot .btn[disabled] { opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
+  .summary { background:#f4f6f9; border-radius:12px; padding:16px; display:grid; gap:8px; font-size:.95rem; }
+  .summary div { display:flex; justify-content:space-between; gap:12px; }
+  .summary span { color:var(--muted); }
+  .done { text-align:center; padding:26px 8px; }
+  .done .chk { width:64px; height:64px; border-radius:50%; background:var(--ok); color:#fff; display:grid; place-items:center; margin:0 auto 14px; }
+  .done .chk .ico { width:32px; height:32px; stroke-width:2.6; }
+
+  /* area */
+  .area-grid { display:grid; grid-template-columns:1fr 1fr; gap:38px; align-items:center; }
+  .radar { position:relative; aspect-ratio:1; max-width:440px; margin:0 auto; width:100%; border-radius:50%; background:radial-gradient(circle,#1e2733 0%,#121821 100%); border:1px solid #2a3342; overflow:hidden; }
+  .radar .ring { position:absolute; inset:0; margin:auto; border:1px dashed rgba(255,255,255,.18); border-radius:50%; }
+  .radar .r1 { width:36%; height:36%; } .radar .r2 { width:68%; height:68%; } .radar .r3 { width:98%; height:98%; }
+  .radar .sweep { position:absolute; inset:0; background:conic-gradient(from 0deg, rgba(46,229,157,.35), transparent 22%); animation:spin 5s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .radar .pin { position:absolute; transform:translate(-50%,-50%); display:flex; align-items:center; gap:6px; color:#fff; font-size:.72rem; font-weight:700; white-space:nowrap; }
+  .radar .pin::before { content:""; width:9px; height:9px; border-radius:50%; background:#2ee59d; box-shadow:0 0 0 4px rgba(46,229,157,.25); }
+  .radar .home { left:50%; top:50%; } .radar .home::before { background:var(--brand); box-shadow:0 0 0 5px rgba(212,20,47,.3); width:12px; height:12px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .chip { background:var(--card); border:1px solid var(--line); border-radius:99px; padding:7px 14px; font-size:.9rem; font-weight:600; }
+  .todo { background:#fff6d6; border:1px dashed #d7a800; border-radius:6px; padding:1px 6px; font-size:.85em; font-weight:600; color:#6b5300; }
+
+  /* gallery */
+  .gal { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .ph { aspect-ratio:4/3; border-radius:12px; display:grid; place-items:center; text-align:center; color:#fff; font-weight:700; font-size:.9rem; padding:10px; background:linear-gradient(135deg,#2b3442,#151a22); position:relative; overflow:hidden; }
+  .ph:nth-child(2) { background:linear-gradient(135deg,#5b1520,#20090d); }
+  .ph:nth-child(3) { background:linear-gradient(135deg,#1d4a3a,#0d1f19); }
+  .ph:nth-child(4) { background:linear-gradient(135deg,#3b3466,#171331); }
+  .ph small { display:block; font-weight:500; opacity:.7; margin-top:2px; }
+  .ph::after { content:""; position:absolute; inset:0; background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.08) 50%,transparent 60%); transform:translateX(-100%); animation:shine 4s infinite; }
+  @keyframes shine { to { transform:translateX(100%); } }
+
+  /* payments / invoice */
+  .pay-grid { display:grid; grid-template-columns:1fr 1fr; gap:38px; align-items:center; }
+  .invoice { background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:24px; max-width:420px; margin:0 auto; width:100%; }
+  .invoice .top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+  .invoice .top b { font-size:1.05rem; } .invoice .top span { color:var(--muted); font-size:.85rem; display:block; }
+  .invoice .badge { background:#e7f7ef; color:var(--ok); font-weight:800; font-size:.72rem; padding:4px 10px; border-radius:99px; letter-spacing:.06em; }
+  .invoice .ln { display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:.95rem; }
+  .invoice .tot { display:flex; justify-content:space-between; font-weight:800; font-size:1.2rem; padding:14px 0 16px; }
+  .invoice .btn { width:100%; }
+  .invoice .methods { display:flex; gap:8px; justify-content:center; margin-top:12px; flex-wrap:wrap; }
+  .invoice .methods span { font-size:.72rem; font-weight:700; color:var(--muted); border:1px solid var(--line); border-radius:6px; padding:3px 8px; }
+
+  /* reviews */
+  .revs { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .rev { background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:24px; }
+  .stars { color:var(--gold); letter-spacing:2px; font-size:1.1rem; margin-bottom:8px; }
+  .rev p { margin:0 0 14px; color:#39424f; }
+  .rev .who { font-weight:700; font-size:.9rem; }
+  .rev .who span { color:var(--muted); font-weight:500; }
+
+  /* faq */
+  .faq { max-width:780px; margin:0 auto; display:grid; gap:10px; }
+  details { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0 20px; }
+  summary { cursor:pointer; font-weight:700; padding:18px 0; list-style:none; display:flex; justify-content:space-between; gap:14px; }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { content:"+"; font-size:1.4rem; line-height:1; color:var(--brand); }
+  details[open] summary::after { content:"\2212"; }
+  details p { margin:0 0 18px; color:var(--muted); }
+
+  /* cta band */
+  .band { background:linear-gradient(120deg,var(--brand),#8f0b1f); color:#fff; padding:64px 0; text-align:center; }
+  .band h2 { color:#fff; } .band p { margin:0 0 24px; opacity:.92; font-size:1.1rem; }
+  .band .btn { background:#fff; color:var(--brand) !important; } .band .btn:hover { background:#f2f2f2; box-shadow:none; }
+  .band .btn.ghost { background:transparent; color:#fff !important; border-color:#fff; }
+  .band .cta { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+  /* contact */
+  .contact { display:grid; grid-template-columns:1fr 1fr; gap:38px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:26px; }
+  .info .row { display:flex; gap:14px; align-items:flex-start; margin-bottom:18px; }
+  .info .row .ic { width:42px; height:42px; border-radius:10px; background:#fdeceb; color:var(--brand); display:grid; place-items:center; flex:none; }
+  .info .row b { display:block; } .info .row span, .info .row a { color:var(--muted); text-decoration:none; }
+  .info .big { font-size:1.5rem; font-weight:800; color:var(--ink) !important; }
+  .hours { width:100%; border-collapse:collapse; font-size:.95rem; margin-top:4px; }
+  .hours td { padding:5px 0; border-bottom:1px solid var(--line); } .hours td:last-child { text-align:right; color:var(--muted); }
+  .hours tr.today td { font-weight:800; color:var(--ink); }
+  .sent { display:none; background:#e7f7ef; color:#0b6b42; border-radius:10px; padding:12px 14px; font-weight:600; margin-top:12px; }
+
+  footer { background:var(--ink); color:#aab1bd; padding:34px 0 90px; font-size:.9rem; }
+  footer .wrap { display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+
+  /* mobile call bar */
+  .callbar { display:none; position:fixed; left:0; right:0; bottom:0; z-index:60; background:var(--ink); padding:10px 12px; gap:10px; box-shadow:0 -8px 24px rgba(0,0,0,.25); }
+  .callbar a { flex:1; }
+
+  /* reveal */
+  .rv { opacity:0; transform:translateY(18px); transition:opacity .6s, transform .6s; }
+  .rv.in { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .rv { opacity:1; transform:none; transition:none; } .road,.radar .sweep,.ph::after,.dot.open { animation:none; } html { scroll-behavior:auto; } }
+
+  .hero .wrap > *, .book-grid > *, .area-grid > *, .pay-grid > *, .contact > * { min-width:0; }
+  body { overflow-x:hidden; }
+  @media (max-width:900px) {
+    .hero .wrap, .book-grid, .area-grid, .pay-grid, .contact { grid-template-columns:minmax(0,1fr); }
+    .van-card { margin-bottom:0; }
+    .svc, .revs { grid-template-columns:1fr 1fr; }
+    .steps { grid-template-columns:1fr 1fr; } .step::before { display:none; }
+    .gal { grid-template-columns:1fr 1fr; }
+    .stats .in { grid-template-columns:1fr 1fr; } .stat:nth-child(2) { border-right:0; } .stat:nth-child(-n+2) { border-bottom:1px solid var(--line); }
+    .ticks { padding-bottom:40px; }
+  }
+  @media (max-width:640px) {
+    nav { display:none; position:absolute; top:100%; left:0; right:0; background:var(--ink); flex-direction:column; align-items:stretch; padding:14px 20px 20px; gap:14px; border-top:1px solid #2a3342; }
+    nav.open { display:flex; } .burger { display:block; }
+    section { padding:56px 0; }
+    .svc, .revs, .steps { grid-template-columns:1fr; }
+    .opts, .row2 { grid-template-columns:1fr; }
+    .slots { grid-template-columns:repeat(3,1fr); }
+    .callbar { display:flex; }
+    .hero { padding-top:48px; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3 17.7 6.3 21l6.3-6.3a4 4 0 0 0 5.1-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></symbol>
+    <symbol id="i-brake" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2"/></symbol>
+    <symbol id="i-oil" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></symbol>
+    <symbol id="i-diag" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M7 21h10M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-susp" viewBox="0 0 24 24"><path d="M8 3h8M12 3v3M9 6c-2 1-2 3 0 4s2 3 0 4-2 3 0 4M15 6c2 1 2 3 0 4s-2 3 0 4-2 3 0 4"/></symbol>
+    <symbol id="i-batt" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="11" rx="2"/><path d="M7 8V5h3v3M14 8V5h3v3M8 13.5h3M14 13.5h3M15.5 12v3"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  </defs>
+</svg>
+
+<div class="ribbon">DESIGN PREVIEW: a sample of what your website could look like. Text, hours, and photos are placeholders.</div>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#top"><span class="mark">C&amp;S</span><span>C &amp; S AUTO</span></a>
+    <button class="burger" aria-label="Menu" onclick="document.getElementById('nav').classList.toggle('open')"><svg class="ico"><use href="#i-menu"/></svg></button>
+    <nav id="nav" onclick="this.classList.remove('open')">
+      <a href="#services">Services</a>
+      <a href="#how">How it works</a>
+      <a href="#area">Service area</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn sm" href="#book">Book Now</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <div class="status"><span class="dot" id="dot"></span><span id="statusText">Checking availability</span></div>
+      <h1>Mobile auto repair. <em>We come to you.</em></h1>
+      <p class="sub">Skip the tow truck and the shop waiting room. We fix it on the spot at your home or work, with straight answers and prices you approve first.</p>
+      <div class="cta">
+        <a class="btn" href="#book">Book an appointment</a>
+        <a class="btn ghost" href="tel:+17622017677"><svg class="ico"><use href="#i-phone"/></svg> 762-201-7677</a>
+      </div>
+    </div>
+    <div class="van-card">
+      <svg class="van" viewBox="0 0 400 190" role="img" aria-label="Service van driving to a customer">
+        <rect width="400" height="190" rx="10" fill="#161d27"/>
+        <g class="road"><g fill="#2b3442"><rect x="0" y="150" width="520" height="4"/></g>
+          <g fill="#5b6472"><rect x="0" y="168" width="40" height="4"/><rect x="80" y="168" width="40" height="4"/><rect x="160" y="168" width="40" height="4"/><rect x="240" y="168" width="40" height="4"/><rect x="320" y="168" width="40" height="4"/><rect x="400" y="168" width="40" height="4"/><rect x="480" y="168" width="40" height="4"/></g></g>
+        <g transform="translate(70,58)">
+          <rect x="0" y="10" width="170" height="72" rx="10" fill="#e9edf3"/>
+          <path d="M170 30h34l24 26v26h-58z" fill="#d7dce5"/>
+          <path d="M178 36h22l16 18h-38z" fill="#7fb8e6"/>
+          <rect x="0" y="52" width="170" height="14" fill="#d4142f"/>
+          <text x="85" y="62.5" text-anchor="middle" font-family="Arial" font-weight="800" font-size="10" fill="#fff" letter-spacing="1.5">C &amp; S AUTO</text>
+          <circle cx="42" cy="86" r="14" fill="#10141b"/><circle cx="42" cy="86" r="6" fill="#8a93a3"/>
+          <circle cx="184" cy="86" r="14" fill="#10141b"/><circle cx="184" cy="86" r="6" fill="#8a93a3"/>
+        </g>
+        <g transform="translate(330,50)"><path d="M0 0c-9 0-16 7-16 16 0 12 16 30 16 30s16-18 16-30c0-9-7-16-16-16z" fill="#2ee59d"/><circle cx="0" cy="16" r="6" fill="#161d27"/></g>
+      </svg>
+      <div class="eta"><div><span>Typical response</span><b>Same or next day</b></div><div style="text-align:right"><span>Service</span><b>At your location</b></div></div>
+    </div>
+  </div>
+  <div class="wrap"><div class="ticks">
+    <span><svg class="ico"><use href="#i-check"/></svg>Written estimate before work</span>
+    <span><svg class="ico"><use href="#i-check"/></svg>Pay by card, Apple Pay, or cash</span>
+    <span><svg class="ico"><use href="#i-check"/></svg>Text updates</span>
+  </div></div>
+</div>
+
+<div class="wrap">
+  <div class="stats rv"><div class="in">
+    <div class="stat"><b>0</b><span>Tow trucks needed</span></div>
+    <div class="stat"><b>1 visit</b><span>Most repairs done on site</span></div>
+    <div class="stat"><b>Upfront</b><span>Price approved before we start</span></div>
+    <div class="stat"><b>7 days</b><span>Online booking, always open</span></div>
+  </div></div>
+</div>
+
+<section id="services">
+  <div class="wrap">
+    <div class="head-c rv"><div class="eyebrow">Services</div><h2>Repairs done in your driveway</h2>
+    <p class="lead">Common repair and maintenance work, brought to you. <span class="todo">Confirm final service list with owner</span></p></div>
+    <div class="svc">
+      <article class="rv"><div class="ic"><svg class="ico"><use href="#i-brake"/></svg></div><h3>Brakes</h3><p>Stop safely. Squeal, grind, or soft pedal, we handle it.</p><ul><li>Pads and rotors</li><li>Calipers and lines</li><li>Brake inspection</li></ul></article>
+      <article class="rv"><div class="ic"><svg class="ico"><use href="#i-oil"/></svg></div><h3>Oil and fluids</h3><p>Routine service without giving up your afternoon.</p><ul><li>Oil and filter</li><li>Coolant and brake fluid</li><li>Belts and hoses</li></ul></article>
+      <article class="rv"><div class="ic"><svg class="ico"><use href="#i-diag"/></svg></div><h3>Diagnostics</h3><p>Know what is wrong before you spend a dollar.</p><ul><li>Check engine light</li><li>Warning light diagnosis</li><li>No-start troubleshooting</li></ul></article>
+      <article class="rv"><div class="ic"><svg class="ico"><use href="#i-susp"/></svg></div><h3>Suspension and steering</h3><p>Fix the shake, the pull, and the clunk.</p><ul><li>Shocks and struts</li><li>Tie rods and ball joints</li><li>Control arms</li></ul></article>
+      <article class="rv"><div class="ic"><svg class="ico"><use href="#i-batt"/></svg></div><h3>Battery and electrical</h3><p>Stranded? We can be there.</p><ul><li>Battery test and replacement</li><li>Starters and alternators</li><li>Lights and fuses</li></ul></article>
+      <article class="rv"><div class="ic"><svg class="ico"><use href="#i-wrench"/></svg></div><h3>Not sure what it needs?</h3><p>Describe the symptoms and we will point you the right way.</p><ul><li>Pre-purchase inspections</li><li>Second opinions</li><li>General repair</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="dark-sec">
+  <div class="wrap">
+    <div class="rv"><div class="eyebrow">How it works</div><h2>Four steps, zero shop visits</h2>
+    <p class="lead">From the first tap to a paid invoice, it all happens on your phone.</p></div>
+    <div class="steps">
+      <div class="step rv"><div class="n">1</div><h3>Book online</h3><p>Pick a service, a time, and tell us where the vehicle is.</p></div>
+      <div class="step rv"><div class="n">2</div><h3>Get a quote</h3><p>We confirm the details and send a written estimate for your approval.</p></div>
+      <div class="step rv"><div class="n">3</div><h3>We come to you</h3><p>We show up at your home or work and do the repair on the spot.</p></div>
+      <div class="step rv"><div class="n">4</div><h3>Pay from a link</h3><p>A digital invoice hits your phone. Pay by card when the work is done.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="book">
+  <div class="wrap book-grid">
+    <div class="book-side rv">
+      <div class="eyebrow">Book online<span class="demo-tag">Working demo</span></div>
+      <h2>Pick a time in under a minute</h2>
+      <p class="lead">Try it. This is how customers would book. On the real site this connects to your Square calendar, so appointments land on your phone.</p>
+      <ul>
+        <li><svg class="ico"><use href="#i-check"/></svg><span>Customers see only the times you are open</span></li>
+        <li><svg class="ico"><use href="#i-check"/></svg><span>You get the vehicle, the problem, and the address up front</span></li>
+        <li><svg class="ico"><use href="#i-check"/></svg><span>Automatic text reminders cut down on no-shows</span></li>
+      </ul>
+    </div>
+    <div class="widget rv" id="widget">
+      <div class="w-head"><b id="wTitle">Book a visit</b><div class="prog" id="prog"><i class="on"></i><i></i><i></i><i></i></div></div>
+      <div class="w-body">
+        <div class="pane on" data-p="0">
+          <h4>What do you need done?</h4>
+          <div class="opts" id="svcOpts"></div>
+        </div>
+        <div class="pane" data-p="1">
+          <h4>Tell us about the vehicle</h4>
+          <div class="row2">
+            <div class="fld"><label for="vy">Year</label><select id="vy"></select></div>
+            <div class="fld"><label for="vm">Make</label><input id="vm" placeholder="Ford, Toyota, Chevy"></div>
+          </div>
+          <div class="fld"><label for="vmod">Model</label><input id="vmod" placeholder="F-150, Camry, Silverado"></div>
+          <div class="fld"><label for="vn">What is going on? (optional)</label><textarea id="vn" placeholder="Grinding noise when I brake, worse at low speed"></textarea></div>
+        </div>
+        <div class="pane" data-p="2">
+          <h4>Pick a day and time</h4>
+          <div class="days" id="days"></div>
+          <div class="slots" id="slots"></div>
+        </div>
+        <div class="pane" data-p="3">
+          <h4>Where should we meet you?</h4>
+          <div class="fld"><label for="cn">Name</label><input id="cn" autocomplete="name"></div>
+          <div class="row2">
+            <div class="fld"><label for="cp">Phone</label><input id="cp" type="tel" autocomplete="tel"></div>
+            <div class="fld"><label for="ct">Town</label><input id="ct" placeholder="Dalton"></div>
+          </div>
+          <div class="fld"><label for="ca">Street address</label><input id="ca" autocomplete="street-address"></div>
+          <div class="summary" id="sum"></div>
+        </div>
+        <div class="pane" data-p="4">
+          <div class="done">
+            <div class="chk"><svg class="ico"><use href="#i-check"/></svg></div>
+            <h4 style="font-size:1.4rem;margin:0 0 6px">You are booked (demo)</h4>
+            <p style="color:var(--muted);margin:0 0 16px" id="doneMsg"></p>
+            <p style="color:var(--muted);font-size:.85rem;margin:0">Demo only. Nothing was sent or saved.</p>
+          </div>
+        </div>
+      </div>
+      <div class="w-foot" id="wFoot"><button class="back" id="bBack" style="visibility:hidden">Back</button><button class="btn" id="bNext" disabled>Continue</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="area" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap area-grid">
+    <div class="rv">
+      <div class="eyebrow">Service area</div>
+      <h2>We drive to you across northwest Georgia</h2>
+      <p class="lead">No shop visit, no tow. If you are in the area, we are on the way. <span class="todo">Replace with their real towns and radius</span></p>
+      <div class="chips">
+        <span class="chip">Dalton</span><span class="chip">Tunnel Hill</span><span class="chip">Varnell</span><span class="chip">Cohutta</span><span class="chip">Rocky Face</span><span class="chip">Chatsworth</span><span class="chip">Ringgold</span>
+      </div>
+      <p style="color:var(--muted);margin:18px 0 0;font-size:.95rem">Not on the list? Call or text. If it is close, we will likely make it work.</p>
+    </div>
+    <div class="radar rv" aria-hidden="true">
+      <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="sweep"></div>
+      <div class="pin home">Home base</div>
+      <div class="pin" style="left:28%;top:30%">Varnell</div>
+      <div class="pin" style="left:70%;top:24%">Cohutta</div>
+      <div class="pin" style="left:80%;top:56%">Ringgold</div>
+      <div class="pin" style="left:32%;top:72%">Chatsworth</div>
+      <div class="pin" style="left:60%;top:76%">Rocky Face</div>
+      <div class="pin" style="left:22%;top:50%">Tunnel Hill</div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="head-c rv"><div class="eyebrow">Recent work</div><h2>Show off the jobs you are proud of</h2>
+    <p class="lead">Photos from the driveway make trust easy. <span class="todo">Placeholder tiles, your real photos go here</span></p></div>
+    <div class="gal">
+      <div class="ph rv"><div>Brake job<small>Your photo here</small></div></div>
+      <div class="ph rv"><div>Before and after<small>Your photo here</small></div></div>
+      <div class="ph rv"><div>Suspension repair<small>Your photo here</small></div></div>
+      <div class="ph rv"><div>On-site service<small>Your photo here</small></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-sec" id="pay">
+  <div class="wrap pay-grid">
+    <div class="rv">
+      <div class="eyebrow">Easy payment</div>
+      <h2>Estimates and invoices on the customer's phone</h2>
+      <p class="lead">Send a clean estimate, get approval, then send the invoice. Customers pay by card from the link the moment the work is done. No chasing cash, no paper.</p>
+      <div style="display:grid;gap:12px;color:#d0d5de">
+        <span style="display:flex;gap:10px;align-items:center"><svg class="ico" style="color:#2ee59d"><use href="#i-card"/></svg>Card, Apple Pay, and Google Pay</span>
+        <span style="display:flex;gap:10px;align-items:center"><svg class="ico" style="color:#2ee59d"><use href="#i-shield"/></svg>Secure checkout run by Square</span>
+        <span style="display:flex;gap:10px;align-items:center"><svg class="ico" style="color:#2ee59d"><use href="#i-msg"/></svg>Receipts texted or emailed automatically</span>
+      </div>
+    </div>
+    <div class="invoice rv">
+      <div class="top"><div><b>Invoice #1042</b><span>Sample, for illustration</span></div><span class="badge">READY TO PAY</span></div>
+      <div class="ln"><span>Front brake pads and rotors</span><b>$000.00</b></div>
+      <div class="ln"><span>Labor, on site</span><b>$000.00</b></div>
+      <div class="ln"><span>Tax</span><b>$00.00</b></div>
+      <div class="tot"><span>Total</span><span>$000.00</span></div>
+      <button class="btn" type="button" onclick="this.textContent='Demo only, no payment taken'">Pay invoice</button>
+      <div class="methods"><span>VISA</span><span>MASTERCARD</span><span>APPLE PAY</span><span>GOOGLE PAY</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="wrap">
+    <div class="head-c rv"><div class="eyebrow">Reviews</div><h2>Let your customers do the talking</h2>
+    <p class="lead">On the live site, real Google reviews show here. <span class="todo">Sample layout only, not real reviews</span></p></div>
+    <div class="revs">
+      <div class="rev rv"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>Sample review text goes here. Your real customer feedback pulled from your Google Business Profile.</p><div class="who">Customer name <span>Town, GA</span></div></div>
+      <div class="rev rv"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>Sample review text goes here. Short, honest praise from someone you fixed a car for.</p><div class="who">Customer name <span>Town, GA</span></div></div>
+      <div class="rev rv"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>Sample review text goes here. Reviews build trust faster than any ad.</p><div class="who">Customer name <span>Town, GA</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head-c rv"><div class="eyebrow">FAQ</div><h2>Quick answers</h2></div>
+    <div class="faq rv">
+      <details><summary>Do you really come to me?</summary><p>Yes. We work at your home, workplace, or wherever the vehicle is parked within the service area. You do not need to tow it or wait at a shop.</p></details>
+      <details><summary>How do I know the price before you start?</summary><p>You get a written estimate and approve it before any work begins. If we find something else, we ask first. <span class="todo">Confirm policy with owner</span></p></details>
+      <details><summary>What can be done on site?</summary><p>Most common repairs like brakes, batteries, fluids, and diagnostics. If a job needs a full shop, we will tell you up front instead of guessing.</p></details>
+      <details><summary>How do I pay?</summary><p>Card, Apple Pay, or Google Pay from an invoice link on your phone, or cash. <span class="todo">Confirm accepted methods with owner</span></p></details>
+      <details><summary>What areas do you cover?</summary><p>Northwest Georgia. See the service area section above, or call or text if you are near the edge.</p></details>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap rv">
+    <h2>Ready when your car is broken and you are busy</h2>
+    <p>Book online in a minute, or call and talk to a real person.</p>
+    <div class="cta"><a class="btn" href="#book">Book an appointment</a><a class="btn ghost" href="tel:+17622017677">Call 762-201-7677</a></div>
+  </div>
+</div>
+
+<section id="contact">
+  <div class="wrap contact">
+    <div class="info rv">
+      <div class="eyebrow">Contact</div><h2>Talk to us</h2>
+      <p class="lead">Questions or a quote request? Send a message or call. Tell us where the vehicle is.</p>
+      <div class="row"><div class="ic"><svg class="ico"><use href="#i-phone"/></svg></div><div><b>Call or text</b><a class="big" href="tel:+17622017677">762-201-7677</a></div></div>
+      <div class="row"><div class="ic"><svg class="ico"><use href="#i-mail"/></svg></div><div><b>Email</b><a href="mailto:candsauto26@gmail.com">candsauto26@gmail.com</a></div></div>
+      <div class="row"><div class="ic"><svg class="ico"><use href="#i-pin"/></svg></div><div><b>Mobile service</b><span>We come to you across northwest Georgia</span></div></div>
+      <div class="row"><div class="ic"><svg class="ico"><use href="#i-clock"/></svg></div><div style="flex:1"><b>Hours <span class="todo">placeholder</span></b>
+        <table class="hours" id="hours"></table></div></div>
+    </div>
+    <div class="card rv">
+      <form id="cform" onsubmit="event.preventDefault();document.getElementById('sent').style.display='block';this.reset();">
+        <div class="fld"><label for="fn">Name</label><input id="fn" required autocomplete="name"></div>
+        <div class="row2">
+          <div class="fld"><label for="fp">Phone</label><input id="fp" type="tel" required autocomplete="tel"></div>
+          <div class="fld"><label for="fl">Town</label><input id="fl"></div>
+        </div>
+        <div class="fld"><label for="fm">What do you need done?</label><textarea id="fm"></textarea></div>
+        <button class="btn" type="submit" style="width:100%">Send message</button>
+        <div class="sent" id="sent">Demo only. This form is not connected yet.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap"><span>&copy; 2026 C &amp; S Auto. All rights reserved.</span><span>Design preview by NERDS Computer Repair</span></div>
+</footer>
+
+<div class="callbar"><a class="btn" href="tel:+17622017677"><svg class="ico"><use href="#i-phone"/></svg>Call</a><a class="btn dark" href="#book" style="border:1px solid #3a4353">Book Now</a></div>
+
+<script>
+(function(){
+  // placeholder hours: Mon-Sat 8:00-17:00, Sunday closed
+  var H = [[0,null],[1,[8,17]],[2,[8,17]],[3,[8,17]],[4,[8,17]],[5,[8,17]],[6,[8,17]]];
+  var names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  function fmt(h){ var s=h>=12?'PM':'AM'; var x=h%12||12; return x+':00 '+s; }
+  var now = new Date(), d = now.getDay(), hr = now.getHours()+now.getMinutes()/60;
+  var open = H[d][1] && hr>=H[d][1][0] && hr<H[d][1][1];
+  document.getElementById('dot').className = 'dot'+(open?' open':'');
+  document.getElementById('statusText').textContent = open ? 'Open now, booking today' : 'Closed now, book for the next opening';
+  var t = document.getElementById('hours'), rows='';
+  for (var i=1;i<=7;i++){ var k=i%7; rows += '<tr'+(k===d?' class="today"':'')+'><td>'+names[k]+'</td><td>'+(H[k][1]?fmt(H[k][1][0])+' to '+fmt(H[k][1][1]):'Closed')+'</td></tr>'; }
+  t.innerHTML = rows;
+
+  // scroll reveal
+  var els = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12});
+    els.forEach(function(e){ io.observe(e); });
+  } else { els.forEach(function(e){ e.classList.add('in'); }); }
+
+  // booking demo
+  var services = [
+    ['Brakes','Pads, rotors, noise','i-brake'], ['Oil and fluids','Routine service','i-oil'],
+    ['Diagnostics','Warning lights, no-start','i-diag'], ['Suspension','Shake, pull, clunk','i-susp'],
+    ['Battery and electrical','Dead battery, starter','i-batt'], ['Not sure','Describe it, we will help','i-wrench']
+  ];
+  var st = {step:0, svc:null, day:null, time:null};
+  var titles = ['Book a visit','Your vehicle','Date and time','Your details','Confirmed'];
+  var opts = document.getElementById('svcOpts');
+  services.forEach(function(s,i){
+    var b = document.createElement('button'); b.type='button'; b.className='opt';
+    b.innerHTML = '<svg class="ico"><use href="#'+s[2]+'"/></svg><span><b>'+s[0]+'</b><small>'+s[1]+'</small></span>';
+    b.onclick = function(){ st.svc = s[0]; [].forEach.call(opts.children,function(c){c.classList.remove('sel');}); b.classList.add('sel'); sync(); };
+    opts.appendChild(b);
+  });
+  var vy = document.getElementById('vy'), y = now.getFullYear()+1, o='<option value="">Select</option>';
+  for (var yy=y; yy>=1995; yy--) o += '<option>'+yy+'</option>';
+  vy.innerHTML = o;
+
+  var days = document.getElementById('days'), slots = document.getElementById('slots');
+  var ds = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var list = [];
+  for (var k=0; list.length<7 && k<21; k++){ var dt = new Date(now.getFullYear(), now.getMonth(), now.getDate()+k); if (H[dt.getDay()][1]) list.push(dt); }
+  list.forEach(function(dt){
+    var b = document.createElement('button'); b.type='button'; b.className='day';
+    b.innerHTML = '<small>'+ds[dt.getDay()]+'</small><b>'+dt.getDate()+'</b>';
+    b.onclick = function(){ st.day = dt; st.time = null; [].forEach.call(days.children,function(c){c.classList.remove('sel');}); b.classList.add('sel'); drawSlots(dt); sync(); };
+    days.appendChild(b);
+  });
+  function drawSlots(dt){
+    slots.innerHTML = '';
+    var isToday = dt.toDateString()===now.toDateString();
+    [8,9,10,11,12,13,14,15].forEach(function(h){
+      var b = document.createElement('button'); b.type='button'; b.className='slot'; b.textContent = fmt(h).replace(':00','');
+      var taken = ((dt.getDate()*7 + h*3) % 5 === 0) || (isToday && h <= hr);
+      if (taken) b.disabled = true;
+      b.onclick = function(){ st.time = h; [].forEach.call(slots.children,function(c){c.classList.remove('sel');}); b.classList.add('sel'); sync(); };
+      slots.appendChild(b);
+    });
+  }
+  var panes = document.querySelectorAll('.pane'), prog = document.getElementById('prog').children;
+  var bN = document.getElementById('bNext'), bB = document.getElementById('bBack');
+  function val(id){ return document.getElementById(id).value.trim(); }
+  function ok(){
+    if (st.step===0) return !!st.svc;
+    if (st.step===1) return !!(val('vy') && val('vm') && val('vmod'));
+    if (st.step===2) return !!(st.day && st.time!==null);
+    if (st.step===3) return !!(val('cn') && val('cp') && val('ct'));
+    return true;
+  }
+  function sync(){
+    [].forEach.call(panes,function(p,i){ p.classList.toggle('on', i===st.step); });
+    [].forEach.call(prog,function(p,i){ p.classList.toggle('on', i<=Math.min(st.step,3)); });
+    document.getElementById('wTitle').textContent = titles[st.step];
+    bB.style.visibility = (st.step>0 && st.step<4) ? 'visible' : 'hidden';
+    bN.textContent = st.step===3 ? 'Confirm booking' : (st.step===4 ? 'Start over' : 'Continue');
+    bN.disabled = !ok();
+    if (st.step===3){
+      var when = st.day ? ds[st.day.getDay()]+', '+mo[st.day.getMonth()]+' '+st.day.getDate()+' at '+fmt(st.time).replace(':00','') : '';
+      document.getElementById('sum').innerHTML =
+        '<div><span>Service</span><b>'+st.svc+'</b></div><div><span>Vehicle</span><b>'+val('vy')+' '+esc(val('vm'))+' '+esc(val('vmod'))+'</b></div><div><span>When</span><b>'+when+'</b></div>';
+    }
+  }
+  function esc(s){ return s.replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  bN.onclick = function(){
+    if (st.step===4){ st = {step:0,svc:null,day:null,time:null}; [].forEach.call(document.querySelectorAll('#widget .sel'),function(c){c.classList.remove('sel');}); slots.innerHTML=''; ['vy','vm','vmod','vn','cn','cp','ct','ca'].forEach(function(i){document.getElementById(i).value='';}); sync(); return; }
+    if (!ok()) return;
+    if (st.step===3){
+      document.getElementById('doneMsg').textContent = 'We would see you '+ds[st.day.getDay()]+', '+mo[st.day.getMonth()]+' '+st.day.getDate()+' at '+fmt(st.time).replace(':00','')+' in '+val('ct')+'. A text confirmation goes to '+val('cp')+'.';
+    }
+    st.step++; sync();
+  };
+  bB.onclick = function(){ if (st.step>0){ st.step--; sync(); } };
+  document.getElementById('widget').addEventListener('input', sync);
+  sync();
+})();
+</script>
+</body>
+</html>
