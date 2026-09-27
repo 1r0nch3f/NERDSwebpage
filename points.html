@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NERDS Stream Leaderboard | Watch Time and Channel Points</title>
-<meta name="description" content="Live leaderboard for the NERDSLLC Twitch stream: top viewers by watch time, channel points, and parts installed in the community PC build. From NERDS Custom Computers in Dalton, GA.">
+<title>NERDS Stream Leaderboard | Watch Time, Channel Points and Robot Fights</title>
+<meta name="description" content="Live leaderboard for the NERDSLLC Twitch stream: top viewers by watch time, channel points, parts installed in the community PC build, and Robot Fight records. From NERDS Custom Computers in Dalton, GA.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -254,6 +254,10 @@
   }
 
   .tab:hover { color: var(--text); border-color: var(--cyan-dim); }
+  @media (max-width: 600px) {
+    .tabs { flex-wrap: wrap; }
+    .tab { flex: 1 1 30%; min-width: 0; }
+  }
 
   .tab[aria-selected="true"] {
     background: rgba(0,229,255,.12);
@@ -439,6 +443,7 @@
     <button class="tab" role="tab" aria-selected="false" data-board="parts">Parts</button>
     <button class="tab" role="tab" aria-selected="false" data-board="alltime">All Time</button>
     <button class="tab" role="tab" aria-selected="false" data-board="watch">Watch Time</button>
+    <button class="tab" role="tab" aria-selected="false" data-board="fights">Fights</button>
   </div>
 
   <div class="subtabs" id="subtabs" hidden>
@@ -585,10 +590,40 @@
     el.pips.innerHTML = html;
   }
 
+  function renderFights() {
+    var rows = (data.boards && data.boards.fights) || [];
+    var total = rows.reduce(function (t, r) { return t + r.wins; }, 0);
+    var kos = rows.reduce(function (t, r) { return t + r.kos; }, 0);
+    setLabels('Fights', 'Fighters', 'Knockouts');
+    el.sPoints.textContent = num(total);
+    el.sViewers.textContent = num(rows.length);
+    el.sRedeems.textContent = num(kos);
+    if (!rows.length) {
+      el.board.innerHTML = '<div class="empty">No Robot Fights yet.<br>Redeem Robot Fight and call someone out with @name.</div>';
+      return;
+    }
+    var max = rows[0].wins || 1;
+    el.board.innerHTML = rows.map(function (r) {
+      var cls = r.rank <= 3 ? ' top' + r.rank : '';
+      var pct = Math.max(2, Math.round((r.wins / max) * 100));
+      return '' +
+        '<div class="row' + cls + '">' +
+          '<div class="fill" style="width:' + pct + '%"></div>' +
+          '<div class="rank">' + r.rank + '</div>' +
+          '<div class="who">' +
+            '<div class="name">' + esc(r.userName) + '</div>' +
+            '<div class="redeems">' + num(r.losses) + ' loss' + (r.losses === 1 ? '' : 'es') + ' &middot; ' + num(r.kos) + ' KO' + (r.kos === 1 ? '' : 's') + '</div>' +
+          '</div>' +
+          '<div class="points">' + num(r.wins) + '<span>win' + (r.wins === 1 ? '' : 's') + '</span></div>' +
+        '</div>';
+    }).join('');
+  }
+
   function renderBoard() {
     if (!data) return;
     el.subtabs.hidden = current !== 'watch';
     if (current === 'watch') return renderWatch();
+    if (current === 'fights') return renderFights();
     setLabels('Points Spent', 'Viewers', 'Redemptions');
 
     var rows = (data.boards && data.boards[current]) || [];
@@ -706,6 +741,10 @@
     });
   });
 
+  if (location.hash === '#fights') {
+    var fb = document.querySelector('.tab[data-board="fights"]');
+    if (fb) fb.click();
+  }
   if (location.hash === '#watch') {
     var wb = document.querySelector('.tab[data-board="watch"]');
     if (wb) wb.click();
