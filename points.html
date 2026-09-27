@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NERDS Channel Point Leaderboard</title>
-<meta name="description" content="Channel point standings for the NERDS custom PC builds.">
+<title>NERDS Stream Leaderboard | Watch Time and Channel Points</title>
+<meta name="description" content="Live leaderboard for the NERDSLLC Twitch stream: top viewers by watch time, channel points, and parts installed in the community PC build. From NERDS Custom Computers in Dalton, GA.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -109,6 +109,127 @@
     margin-top: 5px;
   }
 
+  /* ---- build progress ---- */
+  .progress {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+
+  .progress-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .progress-head b { color: var(--cyan); font-size: 13px; letter-spacing: .06em; }
+
+  .pips { display: flex; gap: 5px; }
+
+  .pip {
+    flex: 1;
+    height: 8px;
+    border-radius: 3px;
+    background: #1b2735;
+    border: 1px solid var(--line);
+    transition: background .3s ease, box-shadow .3s ease;
+  }
+
+  .pip.on {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 9px rgba(0,229,255,.55);
+  }
+
+  .progress.done .pip.on {
+    background: #39ff88;
+    border-color: #39ff88;
+    box-shadow: 0 0 9px rgba(57,255,136,.55);
+  }
+
+  .progress.done .progress-head b { color: #39ff88; }
+
+  /* ---- site bar (website copy only) ---- */
+  .sitebar { max-width: 720px; margin: 0 auto 14px; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px;
+    font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+  .sitebar a { color: var(--muted); text-decoration: none; }
+  .sitebar a:hover { color: var(--cyan); }
+
+  /* ---- live button ---- */
+  .live-btn {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    background: #9146ff;
+    color: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-size: 15px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 0 18px rgba(145,70,255,.45);
+  }
+  .live-btn:hover { background: #a970ff; }
+
+  /* ---- watch time month / all time switch ---- */
+  .subtabs { display: flex; justify-content: center; gap: 8px; margin: -4px 0 12px; }
+  .subtabs[hidden] { display: none; }
+  .subtab {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+  .subtab[aria-selected="true"] { color: var(--cyan); border-color: var(--cyan-dim); background: rgba(0,229,255,.07); }
+
+  /* ---- NERDS business callout ---- */
+  .biz {
+    margin: 26px 0 10px;
+    padding: 18px 16px;
+    border: 1px solid var(--cyan-dim);
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0,229,255,.08), rgba(0,229,255,.02));
+    text-align: center;
+  }
+  .biz h2 {
+    margin: 0 0 6px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 21px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .biz p { margin: 0 0 14px; color: var(--muted); font-size: 16px; }
+  .biz a {
+    display: inline-block;
+    margin: 4px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--cyan-dim);
+    color: var(--cyan);
+    text-decoration: none;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-size: 14px;
+  }
+  .biz a.primary { background: var(--cyan); color: #06121a; border-color: var(--cyan); }
+
   /* ---- tabs ---- */
   .tabs {
     display: flex;
@@ -118,17 +239,18 @@
 
   .tab {
     flex: 1;
-    padding: 11px 8px;
+    padding: 11px 6px;
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 9px;
     color: var(--muted);
     font-family: 'Oswald', sans-serif;
-    font-size: 13px;
-    letter-spacing: .12em;
+    font-size: 12px;
+    letter-spacing: .08em;
     text-transform: uppercase;
     cursor: pointer;
     transition: all .16s ease;
+    white-space: nowrap;
   }
 
   .tab:hover { color: var(--text); border-color: var(--cyan-dim); }
@@ -282,23 +404,46 @@
 </style>
 </head>
 <body>
+<nav class="sitebar">
+  <a href="welcome.html">Home</a>
+  <a href="repair-services.html">Repair</a>
+  <a href="build-service.html">Build Service</a>
+  <a href="builds.html">Builds</a>
+  <a href="links.html">All Links</a>
+</nav>
 <div class="wrap">
 
   <header>
     <h1 class="brand">NERDS</h1>
-    <div class="subtitle">Channel Point Leaderboard</div>
+    <div class="subtitle">Stream Leaderboard</div>
     <div class="build-name" id="buildName">Loading</div>
+    <div><a class="live-btn" href="https://twitch.tv/nerdsllc" target="_blank" rel="noopener">Watch live on Twitch</a></div>
   </header>
 
   <div class="stats">
-    <div class="stat"><div class="stat-value" id="sPoints">—</div><div class="stat-label">Points Spent</div></div>
-    <div class="stat"><div class="stat-value" id="sViewers">—</div><div class="stat-label">Viewers</div></div>
-    <div class="stat"><div class="stat-value" id="sRedeems">—</div><div class="stat-label">Redemptions</div></div>
+    <div class="stat"><div class="stat-value" id="sPoints">—</div><div class="stat-label" id="lPoints">Points Spent</div></div>
+    <div class="stat"><div class="stat-value" id="sViewers">—</div><div class="stat-label" id="lViewers">Viewers</div></div>
+    <div class="stat"><div class="stat-value" id="sRedeems">—</div><div class="stat-label" id="lRedeems">Redemptions</div></div>
+  </div>
+
+  <div class="progress" id="progress" hidden>
+    <div class="progress-head">
+      <span id="progLabel">Build Progress</span>
+      <b id="progCount">0/7</b>
+    </div>
+    <div class="pips" id="pips"></div>
   </div>
 
   <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tabBuild" aria-selected="true" data-board="build">This Build</button>
-    <button class="tab" role="tab" id="tabAll" aria-selected="false" data-board="alltime">All Time</button>
+    <button class="tab" role="tab" aria-selected="true"  data-board="build">Points</button>
+    <button class="tab" role="tab" aria-selected="false" data-board="parts">Parts</button>
+    <button class="tab" role="tab" aria-selected="false" data-board="alltime">All Time</button>
+    <button class="tab" role="tab" aria-selected="false" data-board="watch">Watch Time</button>
+  </div>
+
+  <div class="subtabs" id="subtabs" hidden>
+    <button class="subtab" aria-selected="true" data-span="month">This Month</button>
+    <button class="subtab" aria-selected="false" data-span="alltime">All Time</button>
   </div>
 
   <div class="board" id="board"></div>
@@ -306,6 +451,14 @@
   <div class="past" id="past" hidden>
     <h2>Previous Builds</h2>
     <div id="pastRows"></div>
+  </div>
+
+  <div class="biz">
+    <h2>Need a PC fixed or built?</h2>
+    <p>NERDS Custom Computers in Dalton, GA. Repairs, upgrades, and custom builds, done right and explained straight.</p>
+    <a class="primary" href="https://www.chattnerds.com/repair-services.html">PC Repair</a>
+    <a href="https://www.chattnerds.com/build-service.html">Custom Builds</a>
+    <a href="https://www.chattnerds.com/quote.html">Get a Quote</a>
   </div>
 
   <footer>
@@ -335,6 +488,54 @@
   function apiUrl(p) { return API_BASE ? API_BASE + '/' + p : p; }
 
   var current = 'build';
+  var watchSpan = 'month';
+
+  function hrs(min) {
+    min = min || 0;
+    var h = Math.floor(min / 60), m = min % 60;
+    return h ? h + 'h ' + m + 'm' : m + 'm';
+  }
+
+  function monthName(key) {
+    if (!key) return 'This month';
+    var parts = key.split('-');
+    return new Date(Number(parts[0]), Number(parts[1]) - 1, 1)
+      .toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+
+  function setLabels(a, b, c) {
+    el.lPoints.textContent = a; el.lViewers.textContent = b; el.lRedeems.textContent = c;
+  }
+
+  function renderWatch() {
+    var w = data.watch || {};
+    var month = watchSpan === 'month';
+    var rows = (data.boards && data.boards[month ? 'watch-month' : 'watch-alltime']) || [];
+    var t = (month ? w.monthTotals : w.allTimeTotals) || { minutes: 0, viewers: 0 };
+    setLabels('Hours Watched', 'Viewers', month ? 'Month' : 'Board');
+    el.sPoints.textContent = num(Math.floor(t.minutes / 60));
+    el.sViewers.textContent = num(t.viewers);
+    el.sRedeems.textContent = month ? monthName(w.month).split(' ')[0] : 'All Time';
+    if (!rows.length) {
+      el.board.innerHTML = '<div class="empty">No watch time logged yet.<br>Hang out in chat while the stream is live and it adds up every 5 minutes.</div>';
+      return;
+    }
+    var max = rows[0].minutes || 1;
+    el.board.innerHTML = rows.map(function (r) {
+      var cls = r.rank <= 3 ? ' top' + r.rank : '';
+      var pct = Math.max(2, Math.round((r.minutes / max) * 100));
+      return '' +
+        '<div class="row' + cls + '">' +
+          '<div class="fill" style="width:' + pct + '%"></div>' +
+          '<div class="rank">' + r.rank + '</div>' +
+          '<div class="who">' +
+            '<div class="name">' + esc(r.userName) + '</div>' +
+            '<div class="redeems">' + (month ? monthName(w.month) : 'all time') + '</div>' +
+          '</div>' +
+          '<div class="points">' + hrs(r.minutes) + '<span>watched</span></div>' +
+        '</div>';
+    }).join('');
+  }
   var data = null;
 
   var el = {
@@ -342,7 +543,15 @@
     sPoints:   document.getElementById('sPoints'),
     sViewers:  document.getElementById('sViewers'),
     sRedeems:  document.getElementById('sRedeems'),
+    lPoints:   document.getElementById('lPoints'),
+    lViewers:  document.getElementById('lViewers'),
+    lRedeems:  document.getElementById('lRedeems'),
+    subtabs:   document.getElementById('subtabs'),
     board:     document.getElementById('board'),
+    progress:  document.getElementById('progress'),
+    progLabel: document.getElementById('progLabel'),
+    progCount: document.getElementById('progCount'),
+    pips:      document.getElementById('pips'),
     past:      document.getElementById('past'),
     pastRows:  document.getElementById('pastRows'),
     updated:   document.getElementById('updated'),
@@ -357,36 +566,72 @@
     });
   }
 
+  function renderProgress() {
+    var b = data.build || {};
+    var total = b.partsPerBuild || 0;
+    if (!total) { el.progress.hidden = true; return; }
+
+    var done = b.partsInstalled || 0;
+    el.progress.hidden = false;
+    el.progress.className = 'progress' + (b.complete ? ' done' : '');
+    el.progLabel.textContent = b.complete ? 'Build Complete' : 'Parts Installed';
+    el.progCount.textContent = done + '/' + total;
+
+    var html = '';
+    for (var i = 0; i < total; i++) {
+      html += '<div class="pip' + (i < done ? ' on' : '') + '"></div>';
+    }
+    el.pips.innerHTML = html;
+  }
+
   function renderBoard() {
     if (!data) return;
+    el.subtabs.hidden = current !== 'watch';
+    if (current === 'watch') return renderWatch();
+    setLabels('Points Spent', 'Viewers', 'Redemptions');
 
     var rows = (data.boards && data.boards[current]) || [];
-    var t = current === 'alltime' ? data.allTimeTotals : data.build.totals;
+    var byParts = current === 'parts';
+    var allTime = current === 'alltime';
+    var t = allTime ? data.allTimeTotals : data.build.totals;
+
+    if (byParts) rows = rows.filter(function (r) { return r.parts > 0; });
 
     el.sPoints.textContent  = num(t.points);
     el.sViewers.textContent = num(t.viewers);
     el.sRedeems.textContent = num(t.redemptions);
 
     if (!rows.length) {
-      el.board.innerHTML =
-        '<div class="empty">No channel points spent yet.<br>Redeem something and claim the top spot.</div>';
+      el.board.innerHTML = byParts
+        ? '<div class="empty">No parts installed yet.<br>Redeem a part to get on the board.</div>'
+        : '<div class="empty">No channel points spent yet.<br>Redeem something and claim the top spot.</div>';
       return;
     }
 
-    var max = rows[0].points || 1;
+    var metric = byParts
+      ? function (r) { return r.parts; }
+      : function (r) { return r.points; };
+    var max = metric(rows[0]) || 1;
 
     el.board.innerHTML = rows.map(function (r) {
       var cls = r.rank <= 3 ? ' top' + r.rank : '';
-      var pct = Math.max(2, Math.round((r.points / max) * 100));
+      var pct = Math.max(2, Math.round((metric(r) / max) * 100));
+      var sub = byParts
+        ? num(r.points) + ' points spent'
+        : num(r.redemptions) + ' redemption' + (r.redemptions === 1 ? '' : 's') +
+          (r.parts ? ' &middot; ' + num(r.parts) + ' part' + (r.parts === 1 ? '' : 's') : '');
+      var big = byParts
+        ? num(r.parts) + '<span>part' + (r.parts === 1 ? '' : 's') + '</span>'
+        : num(r.points) + '<span>points</span>';
       return '' +
         '<div class="row' + cls + '">' +
           '<div class="fill" style="width:' + pct + '%"></div>' +
           '<div class="rank">' + r.rank + '</div>' +
           '<div class="who">' +
             '<div class="name">' + esc(r.userName) + '</div>' +
-            '<div class="redeems">' + num(r.redemptions) + ' redemption' + (r.redemptions === 1 ? '' : 's') + '</div>' +
+            '<div class="redeems">' + sub + '</div>' +
           '</div>' +
-          '<div class="points">' + num(r.points) + '<span>points</span></div>' +
+          '<div class="points">' + big + '</div>' +
         '</div>';
     }).join('');
   }
@@ -400,7 +645,8 @@
         month: 'short', day: 'numeric', year: 'numeric'
       }) : '';
       var winner = b.winner
-        ? 'Winner <b>' + esc(b.winner) + '</b>'
+        ? 'Winner <b>' + esc(b.winner) + '</b>' +
+          (b.topBuilder ? ' &middot; ' + esc(b.topBuilder.userName) + ' built ' + b.topBuilder.parts : '')
         : 'No redemptions';
       return '<div class="past-row">' +
         '<span class="pb">' + esc(b.name) + ' &middot; ' + when + '</span>' +
@@ -415,6 +661,7 @@
       el.chLink.href = data.channelUrl;
       el.chLink.textContent = data.channelUrl.replace(/^https?:\/\//, '');
     }
+    renderProgress();
     renderBoard();
     renderPast();
     el.updated.textContent = 'Updated ' + new Date().toLocaleTimeString('en-US');
@@ -447,6 +694,21 @@
       renderBoard();
     });
   });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.subtab'), function (btn) {
+    btn.addEventListener('click', function () {
+      watchSpan = btn.dataset.span;
+      Array.prototype.forEach.call(document.querySelectorAll('.subtab'), function (b) {
+        b.setAttribute('aria-selected', String(b === btn));
+      });
+      renderBoard();
+    });
+  });
+
+  if (location.hash === '#watch') {
+    var wb = document.querySelector('.tab[data-board="watch"]');
+    if (wb) wb.click();
+  }
 
   load();
   setInterval(load, 30000);
