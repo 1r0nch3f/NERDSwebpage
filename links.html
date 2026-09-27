@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Links - NERDS Custom Computers</title>
+<meta name="description" content="Every NERDS link in one place: repairs, custom PC builds, quotes, and all of our channels. NERDS Custom Computers, Dalton, GA.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.6; background: #0e0e10; }
+  a { color: #e53935; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 36px 20px 56px; text-align: center; }
+  .logo { width: 132px; height: 132px; object-fit: contain; margin-bottom: 10px; }
+  h1 { font-family: 'Oswald', sans-serif; font-size: 38px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #fff; }
+  .tag { color: #cfcfcf; font-size: 15px; margin: 4px 0 14px; }
+  .line { width: 100px; height: 4px; margin: 0 auto 26px; background: #e53935; border-radius: 2px; }
+  .group { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: 3px; color: #8a8a8a; margin: 26px 0 12px; }
+  .btn { display: flex; align-items: center; gap: 14px; text-align: left; text-decoration: none; background: #17171a; border: 1px solid #2a2a2a; border-left: 5px solid var(--c, #e53935); border-radius: 10px; padding: 14px 18px; margin-bottom: 12px; transition: transform .12s, background .12s, border-color .12s; }
+  .btn:hover, .btn:focus-visible { background: #1f1f23; border-color: var(--c, #e53935); transform: translateY(-2px); outline: none; }
+  .btn .t { display: block; font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
+  .btn .s { display: block; font-size: 13.5px; color: #a8a8a8; }
+  .btn .arrow { margin-left: auto; color: var(--c, #e53935); font-family: 'Oswald', sans-serif; font-size: 22px; }
+  .btn.primary { background: #e53935; border-color: #e53935; }
+  .btn.primary .s { color: #ffe3e2; }
+  .btn.primary .arrow { color: #fff; }
+  .btn.primary:hover { background: #f04440; }
+  .foot { margin-top: 30px; font-size: 13px; color: #8a8a8a; }
+  @media (max-width: 480px) { h1 { font-size: 30px; } .btn .t { font-size: 18px; } }
+
+/* ===== NAV ===== */
+.nav{background:#111;border-bottom:1px solid #2a2a2a;border-bottom:1px solid var(--line,#2a2a2a);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1180px;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;height:54px}
+.nav-brand{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:2px;color:#fff;text-decoration:none}
+.nav-brand span{color:#e53935;color:var(--red,#e53935)}
+.nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nav-links a{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:#9a9a9a;text-decoration:none;padding:6px 10px;border-radius:6px;transition:color .15s,background .15s;white-space:nowrap}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(229,57,53,.15)}
+.nav-links a.active{color:#e53935;color:var(--red,#e53935)}
+.nav-toggle{display:none;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:6px}
+@media(max-width:768px){
+.nav-links{display:none;position:absolute;top:54px;left:0;right:0;background:#111;border-bottom:1px solid #2a2a2a;border-bottom:1px solid var(--line,#2a2a2a);flex-direction:column;padding:12px 22px;gap:2px}
+.nav-links.open{display:flex}
+.nav-links a{padding:10px 12px;font-size:14px}
+.nav-toggle{display:block}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="nav-inner">
+<a class="nav-brand" href="welcome.html">NERDS<span>.</span></a>
+<button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+<div class="nav-links">
+<a href="welcome.html">Home</a>
+<a href="amd.html">AMD Builds</a>
+<a href="intel.html">Intel Builds</a>
+<a href="gpu.html">GPUs</a>
+<a href="parts.html">Parts</a>
+<a href="storage.html">Storage</a>
+<a href="coolers.html">Coolers</a>
+<a href="build-service.html">Build Service</a>
+<a href="builds.html">Builds</a>
+<a href="repair-services.html">Repair</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+</div>
+</div>
+</nav>
+
+<div class="wrap">
+  <img class="logo" src="NERDS_logo-removebg-preview%20(2023_03_27%2001_29_11%20UTC).png" alt="NERDS mascot logo">
+  <h1>NERDS</h1>
+  <p class="tag">If a GEEK can't fix it, call a NERD. Custom PCs and computer repair in Dalton, GA.</p>
+  <div class="line"></div>
+
+  <div class="group">Work with us</div>
+  <a class="btn primary" href="tel:4235215694"><span><span class="t">Call or Text</span><span class="s">423-521-5694</span></span><span class="arrow">&rsaquo;</span></a>
+  <a class="btn" href="quote.html"><span><span class="t">Get a Quote</span><span class="s">Custom PC builds and upgrades</span></span><span class="arrow">&rsaquo;</span></a>
+  <a class="btn" href="repair-services.html"><span><span class="t">Computer Repair</span><span class="s">Diagnostics, repairs, cleanups and upgrades</span></span><span class="arrow">&rsaquo;</span></a>
+  <a class="btn" href="builds.html"><span><span class="t">Builds</span><span class="s">Recent builds and pre-owned PCs in stock</span></span><span class="arrow">&rsaquo;</span></a>
+  <a class="btn" href="https://g.page/r/Cd9quwK_GrF0EAI/review" target="_blank" rel="noopener"><span><span class="t">Leave a Google Review</span><span class="s">It helps a small shop more than you know</span></span><span class="arrow">&rsaquo;</span></a>
+
+  <div class="group">Follow along</div>
+  <a class="btn" style="--c:#A970FF" href="https://www.twitch.tv/nerdsllc" target="_blank" rel="noopener"><span><span class="t">Twitch</span><span class="s">twitch.tv/nerdsllc</span></span><span class="arrow">&rsaquo;</span></a>
+  <a class="btn" style="--c:#FF3B3B" href="https://www.youtube.com/@NERDSLLC" target="_blank" rel="noopener"><span><span class="t">YouTube</span><span class="s">Build videos, clips and highlights</span></span><span class="arrow">&rsaquo;</span></a>
+  <a class="btn" style="--c:#53FC18" href="https://kick.com/chattnerds" target="_blank" rel="noopener"><span><span class="t">Kick</span><span class="s">kick.com/chattnerds</span></span><span class="arrow">&rsaquo;</span></a>
+  <a class="btn" style="--c:#4C8DFF" href="https://www.facebook.com/chattnerds/" target="_blank" rel="noopener"><span><span class="t">Facebook</span><span class="s">Shop news and builds</span></span><span class="arrow">&rsaquo;</span></a>
+  <a class="btn" style="--c:#3FA9FF" href="https://bsky.app/profile/chattnerds.bsky.social" target="_blank" rel="noopener"><span><span class="t">Bluesky</span><span class="s">@chattnerds.bsky.social</span></span><span class="arrow">&rsaquo;</span></a>
+  <a class="btn" style="--c:#FFC23D" href="https://ko-fi.com/chattnerds" target="_blank" rel="noopener"><span><span class="t">Ko-fi</span><span class="s">Help fund the community PC giveaway build</span></span><span class="arrow">&rsaquo;</span></a>
+
+  <p class="foot">NERDS Custom Computers, Dalton, GA &middot; <a href="mailto:info@chattnerds.com">info@chattnerds.com</a></p>
+</div>
+<!-- NERDS-TAWK-CHAT -->
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a64b64a1320a91d46342627/1jucmg4ch';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body></html>
