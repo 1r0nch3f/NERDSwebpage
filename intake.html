@@ -57,6 +57,9 @@
   .done .tk { font-family: 'Oswald', sans-serif; font-size: 34px; color: #e53935; margin: 8px 0 14px; }
   .done p { color: #cfcfcf; margin-bottom: 14px; }
   .note { font-size: 13px; color: #9a9a9a; margin-top: 8px; }
+  #queue { display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #2a2210; border: 1px solid #8a6d1e; color: #f3d98b; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 15px; }
+  #queue.show { display: flex; }
+  #queue .btn-small { color: #f3d98b; border-color: #8a6d1e; }
   @media (max-width: 640px) { .banner h1 { font-size: 30px; } .grid { grid-template-columns: 1fr; } }
 
 /* ===== NAV ===== */
@@ -108,6 +111,7 @@
 </div>
 
 <div class="container">
+<div id="queue"><span id="queueText"></span><button type="button" class="btn-small" id="queueSend">Upload now</button></div>
 <form id="form" novalidate>
   <div class="card">
     <h2>You</h2>
@@ -167,7 +171,7 @@
   <h2>Got it. Thanks.</h2>
   <div>Your ticket number</div>
   <div class="tk" id="doneTicket"></div>
-  <p>We have your device info and your signed agreement. We will reach out the way you asked before any paid work starts.</p>
+  <p id="doneText">We have your device info and your signed agreement. We will reach out the way you asked before any paid work starts.</p>
   <button type="button" class="btn-small" id="another">Start another form</button>
 </div>
 </div>
@@ -177,12 +181,35 @@
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbzqGCV-UyLkc7i21g9asXxy0IEkttDMIxyvRsW34JCUlV_E6hOeNYk_3IPpu1hkyCRxRA/exec";
 const $ = id => document.getElementById(id);
 let version = null;
+const AKEY = "nerds-intake-agreement", QKEY = "nerds-intake-queue";
+const get = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+const put = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } };
 
-// agreement text comes from the backend, so the page and the signed PDF always match
-fetch(ENDPOINT).then(r => r.json()).then(a => {
-  version = a.version;
-  $("agreementBody").innerHTML = a.agreement.map(t => `<p><b>${t[0]}:</b> ${t[1]}</p>`).join("") + `<p><b>Authorization:</b> ${a.authorization}</p>`;
-}).catch(() => { $("agreementBody").innerHTML = "<p>Could not load the agreement. Check your connection and reload, or call or text 423-521-5694.</p>"; });
+// agreement text comes from the backend, so the page and the signed PDF always match.
+// The last copy is kept on the device so the form still works with no internet.
+function showAgreement(a){ version = a.version;
+  $("agreementBody").innerHTML = a.agreement.map(t => `<p><b>${t[0]}:</b> ${t[1]}</p>`).join("") + `<p><b>Authorization:</b> ${a.authorization}</p>`; }
+const saved = get(AKEY); if (saved) showAgreement(saved);
+fetch(ENDPOINT).then(r => r.json()).then(a => { put(AKEY, a); showAgreement(a); })
+  .catch(() => { if (!saved) $("agreementBody").innerHTML = "<p>Could not load the agreement. Connect to the internet once and reload, or call or text 423-521-5694.</p>"; });
+
+// offline queue: jobs signed with no internet wait on this device and upload on their own
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("intake-sw.js", { scope: "./intake" }).catch(() => {});
+const queue = () => get(QKEY) || [];
+function showQueue(){ const q = queue(), errs = q.filter(x => x.error).length;
+  $("queueText").textContent = q.length ? `${q.length} signed job${q.length > 1 ? "s" : ""} saved on this device, waiting to upload.` + (errs ? ` ${errs} had a problem: ${q.find(x => x.error).error}` : "") : "";
+  $("queue").classList.toggle("show", q.length > 0); }
+async function send(data){ const r = await fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) }); return r.json(); }
+let flushing = false;
+async function flush(){ if (flushing || !queue().length) return; flushing = true;
+  try { for (const item of queue()) {
+    let out; try { out = await send(item.data); } catch (e) { break; }   // still offline: try again later
+    const q = queue(), i = q.findIndex(x => x.data.clientId === item.data.clientId);
+    if (out.ok) { if (i >= 0) q.splice(i, 1); } else if (i >= 0) q[i].error = out.error;
+    put(QKEY, q); showQueue();
+  } } finally { flushing = false; showQueue(); } }
+$("queueSend").onclick = flush;
+window.addEventListener("online", flush); setInterval(flush, 60000); showQueue(); flush();
 
 // chips (one choice per group)
 document.querySelectorAll(".chips").forEach(g => g.addEventListener("click", e => {
@@ -226,22 +253,35 @@ $("form").addEventListener("submit", async e => {
   if (bad.length) { bad[0].scrollIntoView({ behavior: "smooth", block: "center" }); return status("Fill in the highlighted items first.", true); }
   if (!version) return status("The agreement has not loaded yet. Check your connection and reload the page.", true);
 
-  const data = { name: $("name").value.trim(), phone: $("phone").value.trim(), email: $("email").value.trim(), contact: chip("contact"),
+  const signed = new Date(), z = n => String(n).padStart(2, "0");
+  const localTicket = `${String(signed.getFullYear()).slice(2)}${z(signed.getMonth() + 1)}${z(signed.getDate())}-${z(signed.getHours())}${z(signed.getMinutes())}`;
+  const data = { signedAt: signed.toISOString(), clientId: (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(36).slice(2)), name: $("name").value.trim(), phone: $("phone").value.trim(), email: $("email").value.trim(), contact: chip("contact"),
     type: chip("type"), model: $("model").value.trim(), working: chip("working"), conditionNotes: $("conditionNotes").value.trim(),
     work: $("work").value.trim(), extra: $("extra").value.trim(), signedName: $("signedName").value.trim(),
     agree: true, version: version, signature: sigImage(), website: $("website").value };
   $("submit").disabled = true; status("Sending...");
+  const done = (ticket, text) => { $("form").style.display = "none"; $("doneTicket").textContent = ticket; if (text) $("doneText").textContent = text;
+    $("done").style.display = ""; window.scrollTo(0, 0); };
+  let out = null;
+  try { out = await send(data); } catch (err) { out = null; }
   try {
-    const r = await fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) });
-    const out = await r.json();
+    if (!out) {   // no connection: keep the signed job on this device, it uploads by itself later
+      const q = queue(); q.push({ data: data, localTicket: localTicket });
+      if (!put(QKEY, q)) throw new Error("No internet, and this device could not save the form. Call or text 423-521-5694.");
+      showQueue();
+      return done(localTicket, "No internet right now, so your signed form is saved on this device. It uploads automatically as soon as the connection is back. Nothing else you need to do.");
+    }
     if (!out.ok) throw new Error(out.error || "Something went wrong.");
-    $("form").style.display = "none"; $("doneTicket").textContent = out.ticket; $("done").style.display = ""; window.scrollTo(0, 0);
+    done(out.ticket);
   } catch (err) {
-    status((err.message && err.message !== "Failed to fetch" ? err.message : "Could not send. Check your connection and try again.") + " If it keeps failing, call or text 423-521-5694.", true);
+    status(err.message + " If it keeps failing, call or text 423-521-5694.", true);
   } finally { $("submit").disabled = false; }
 });
 
-$("another").onclick = () => location.reload();
+// fresh form without reloading, so it works with no internet too
+$("another").onclick = () => { $("form").reset(); document.querySelectorAll(".chip.on, #agree.on").forEach(x => x.classList.remove("on"));
+  document.querySelectorAll(".err").forEach(x => x.classList.remove("err")); $("sigClear").click(); penSeen = false; status("");
+  $("done").style.display = "none"; $("form").style.display = ""; window.scrollTo(0, 0); };
 })();
 </script>
 <!-- NERDS-TAWK-CHAT -->
