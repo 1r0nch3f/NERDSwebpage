@@ -60,6 +60,14 @@
   #queue { display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #2a2210; border: 1px solid #8a6d1e; color: #f3d98b; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 15px; }
   #queue.show { display: flex; }
   #queue .btn-small { color: #f3d98b; border-color: #8a6d1e; }
+  #staffCard { display: none; border-color: #3a4a6b; }
+  #staffCard.show { display: block; }
+  .inv-row { display: flex; gap: 10px; }
+  .inv-row input { flex: 1; }
+  .inv-row .btn-small { min-height: 48px; padding: 0 18px; }
+  #invInfo { margin-top: 10px; font-size: 15px; min-height: 22px; }
+  #invInfo.ok { color: #7fd6a0; }
+  #invInfo.bad { color: #ff8a84; }
   @media (max-width: 640px) { .banner h1 { font-size: 30px; } .grid { grid-template-columns: 1fr; } }
 
 /* ===== NAV ===== */
@@ -113,6 +121,12 @@
 <div class="container">
 <div id="queue"><span id="queueText"></span><button type="button" class="btn-small" id="queueSend">Upload now</button></div>
 <form id="form" novalidate>
+  <div class="card" id="staffCard">
+    <h2>Load an invoice</h2>
+    <div class="inv-row"><input type="text" id="invNum" inputmode="numeric" placeholder="Invoice #" aria-label="Invoice number"><button type="button" class="btn-small" id="invLoad">Load</button><button type="button" class="btn-small" id="invClear" style="display:none">Unlink</button></div>
+    <div id="invInfo"></div>
+  </div>
+
   <div class="card">
     <h2>You</h2>
     <div class="grid">
@@ -181,9 +195,34 @@
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbzqGCV-UyLkc7i21g9asXxy0IEkttDMIxyvRsW34JCUlV_E6hOeNYk_3IPpu1hkyCRxRA/exec";
 const $ = id => document.getElementById(id);
 let version = null;
-const AKEY = "nerds-intake-agreement", QKEY = "nerds-intake-queue";
+const AKEY = "nerds-intake-agreement", QKEY = "nerds-intake-queue", SKEY = "nerds-intake-staff";
 const get = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
 const put = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } };
+
+// staff devices: opened once as /intake#staff=<key>, the key is kept on the device and stripped from the address bar
+const hashKey = /^#staff=([\w-]{20,100})$/.exec(location.hash);
+if (hashKey) { put(SKEY, hashKey[1]); history.replaceState(null, "", location.pathname + location.search); }
+const staffKey = get(SKEY);
+let linked = null;   // invoice number loaded into this form
+if (staffKey) $("staffCard").classList.add("show");
+function invInfo(t, cls){ $("invInfo").textContent = t; $("invInfo").className = cls || ""; }
+function unlink(){ linked = null; $("invNum").value = ""; $("invNum").disabled = false; $("invLoad").style.display = ""; $("invClear").style.display = "none"; invInfo(""); }
+$("invClear").onclick = unlink;
+$("invNum").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("invLoad").click(); } });
+$("invLoad").onclick = async () => {
+  const n = $("invNum").value.trim().replace(/^#/, "");
+  if (!n) return invInfo("Enter an invoice number.", "bad");
+  $("invLoad").disabled = true; invInfo("Looking up invoice #" + n + "...");
+  try {
+    const r = await (await fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "lookup", staffKey: staffKey, invoice: n }) })).json();
+    if (!r.ok) return invInfo(r.error || "Lookup failed.", "bad");
+    const fill = (id, v) => { if (v) { $(id).value = v; $(id).classList.remove("err"); } };
+    fill("name", r.name); fill("email", r.email); fill("phone", r.phone); fill("work", r.work); fill("signedName", r.name);
+    linked = r.invoice; $("invNum").value = r.invoice; $("invNum").disabled = true; $("invLoad").style.display = "none"; $("invClear").style.display = "";
+    invInfo(`Linked to invoice #${r.invoice}, ${r.status}, $${r.total}.` + (r.phone ? "" : " No phone on file, get it at the door."), "ok");
+  } catch (e) { invInfo("No connection. Invoice lookup needs internet.", "bad"); }
+  finally { $("invLoad").disabled = false; }
+};
 
 // agreement text comes from the backend, so the page and the signed PDF always match.
 // The last copy is kept on the device so the form still works with no internet.
@@ -259,6 +298,7 @@ $("form").addEventListener("submit", async e => {
     type: chip("type"), model: $("model").value.trim(), working: chip("working"), conditionNotes: $("conditionNotes").value.trim(),
     work: $("work").value.trim(), extra: $("extra").value.trim(), signedName: $("signedName").value.trim(),
     agree: true, version: version, signature: sigImage(), website: $("website").value };
+  if (linked) { data.invoice = linked; data.staffKey = staffKey; }
   $("submit").disabled = true; status("Sending...");
   const done = (ticket, text) => { $("form").style.display = "none"; $("doneTicket").textContent = ticket; if (text) $("doneText").textContent = text;
     $("done").style.display = ""; window.scrollTo(0, 0); };
@@ -280,7 +320,7 @@ $("form").addEventListener("submit", async e => {
 
 // fresh form without reloading, so it works with no internet too
 $("another").onclick = () => { $("form").reset(); document.querySelectorAll(".chip.on, #agree.on").forEach(x => x.classList.remove("on"));
-  document.querySelectorAll(".err").forEach(x => x.classList.remove("err")); $("sigClear").click(); penSeen = false; status("");
+  document.querySelectorAll(".err").forEach(x => x.classList.remove("err")); $("sigClear").click(); penSeen = false; status(""); unlink();
   $("done").style.display = "none"; $("form").style.display = ""; window.scrollTo(0, 0); };
 })();
 </script>
