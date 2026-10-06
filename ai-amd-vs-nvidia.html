@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI and Workstation GPUs - NERDS PC</title>
+<title>AMD or NVIDIA for Local AI? ROCm 10 Changes the Answer - NERDS PC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -53,7 +53,19 @@
 .nav-links a{padding:10px 12px;font-size:14px}
 .nav-toggle{display:block}
 }
-</style></head>
+</style><style>
+.art{max-width:760px}
+.art h2{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:24px;letter-spacing:.5px;margin:34px 0 10px;color:#fff;border-bottom:2px solid #e53935;padding-bottom:6px}
+.art p,.art li{font-size:16px;line-height:1.7;color:#d6d6d6}
+.art p{margin:0 0 14px}
+.art ul{margin:8px 0 8px 20px}
+.art li{margin:6px 0}
+.art b{color:#fff}
+.art .meta{font-size:13px;color:#9a9a9a;letter-spacing:1px;text-transform:uppercase;margin:-6px 0 18px}
+.art a{color:#e53935}
+.art .src{font-size:13px;color:#9a9a9a;margin-top:24px}
+</style>
+</head>
 <body>
 <nav class="nav">
 <div class="nav-inner">
@@ -76,7 +88,41 @@
 </div>
 </div>
 </nav>
-<div class="wrap"><h1>AI<span class="dot">.</span> GPUs</h1><p class="lede">For local AI the number that matters most is memory. More VRAM means bigger models running fully on the card, faster and without the cloud. These are the workstation cards I build AI machines around. Prices on these move fast, so text me for today's price and I will match the card to what you actually need to run.</p><div class="grid"><div class="card"><div class="gpu-img noimg"><img src="gpu-rtxpro6000.png" alt="RTX PRO 6000 Blackwell" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">NVIDIA</div><div class="name">RTX PRO 6000 Blackwell</div><p class="blurb">96GB of memory on one card. Runs the biggest local models without splitting them across cards, and pairs up for multi-GPU builds. The top of the line for serious local AI and heavy rendering.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-r9700.png" alt="Radeon AI PRO R9700" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">AMD</div><div class="name">Radeon AI PRO R9700</div><p class="blurb">32GB of memory with ROCm support for local AI. Strong inference for mid-size models at a fraction of the top-tier price, and a single-fan blower design that stacks well in multi-GPU workstations.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-b70pro-ai.png" alt="Arc Pro B70" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">Intel</div><div class="name">Arc Pro B70</div><p class="blurb">32GB of memory, certified drivers for CAD and creative apps, and solid local AI inference. The value pick for 32GB of VRAM.</p></div></div><div class="card"><div class="gpu-img noimg"><img src="gpu-b60.png" alt="Arc Pro B60" onerror="this.remove();this.parentNode.classList.add('noimg')" onload="this.parentNode.classList.remove('noimg')"><span class="noimg-label">Add photo</span></div><div class="body"><div class="tier">Intel</div><div class="name">Arc Pro B60</div><p class="blurb">24GB in a compact blower card. The entry point for running local AI models on-site, and easy to fit two or more in one build.</p></div></div></div><p class="lede" style="margin-top:24px">Building the whole machine? See the <a href="ai-workstation.html" style="color:#e53935;">AI workstation builds</a>. Not sure whether to go AMD or NVIDIA? <a href="ai-amd-vs-nvidia.html" style="color:#e53935;">Read my take</a>.</p><div class="foot-cta"><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a></div><p class="disclaim">AI and workstation GPU prices change week to week with availability and market pricing. Contact me for a current quote before finalizing a build.</p></div>
+<div class="wrap"><div class="art"><h1>AMD or NVIDIA for Local AI<span class="dot">?</span></h1>
+<p class="meta">ROCm 10 just changed the answer &middot; October 2026</p>
+<p>For years, if you asked me what to buy for running AI on your own machine, the answer was easy: NVIDIA. Not because their cards were always faster, but because their software, CUDA, was the only thing everything just worked on. AMD's version, ROCm, was Linux-only, picky about which cards it supported, and a headache to set up.</p>
+<p>That has changed a lot this year.</p>
+<h2>What AMD Just Did</h2>
+<p>AMD released ROCm 10 at the end of August, skipping straight from version 7, and ROCm 10.1 dropped on October 5. The big points:</p>
+<ul>
+<li>Windows 11 is supported now, not just Linux.</li>
+<li>It works across the Radeon AI PRO R9700, the whole RX 9000 lineup, and the RX 7000 cards like the 7900 XTX.</li>
+<li>The major AI tools are on board, including PyTorch and vLLM.</li>
+<li>AMD claims around 3.3x faster inference and 2.4x faster training compared to ROCm 7. Those are AMD's numbers, and I'm waiting on independent testing before I take them as gospel.</li>
+</ul>
+<h2>Where NVIDIA Still Wins</h2>
+<ul>
+<li><b>Everything supports it first.</b> New AI tools and models almost always show up on CUDA before anything else. If you want zero friction, NVIDIA is still the safe bet.</li>
+<li><b>The biggest single card.</b> The RTX PRO 6000 Blackwell has 96GB of memory on one card. Nothing from AMD matches that in a single card right now.</li>
+<li><b>Raw speed at the top end.</b> If you want the fastest card money can buy and budget isn't the issue, NVIDIA still holds that crown.</li>
+</ul>
+<h2>Where AMD Wins Now</h2>
+<ul>
+<li><b>Memory for the money.</b> For local AI, memory decides what you can run. The Radeon AI PRO R9700 gives you 32GB for a fraction of what NVIDIA charges for that much.</li>
+<li><b>Two cards punch above their weight.</b> In Phoronix's testing, two R9700s matched the response speed of NVIDIA's RTX 6000 Ada workstation card while costing far less.</li>
+<li><b>Open source.</b> ROCm is open, which matters for businesses that don't want to be locked into one vendor.</li>
+</ul>
+<h2>Don't Forget Intel</h2>
+<p>Intel's Arc Pro B60 (24GB) and B70 (32GB) are the budget way into local AI. They're not the fastest, but they get a lot of memory into a machine without the big price tag.</p>
+<h2>So Which Is Better?</h2>
+<ul>
+<li><b>Go NVIDIA</b> if you need the biggest models on one card, want every tool to work on day one, or the budget is wide open.</li>
+<li><b>Go AMD</b> if you want the most memory for your money, are running mid-size models, or want to scale with two or more cards.</li>
+<li><b>Go Intel</b> if you're just getting into local AI and want to keep the cost down.</li>
+</ul>
+<p>The honest answer is that it depends on what you want to run. That's the conversation I have with every customer before I spec a build. Check out the <a href="gpu-ai.html">AI GPU lineup</a> and the <a href="ai-workstation.html">AI workstation builds</a>, or text me and I'll match the card to the job.</p>
+<p class="src">Sources: <a href="https://rocm.docs.amd.com/en/latest/about/release-notes.html" target="_blank" rel="noopener">AMD ROCm 10.1.0 release notes</a> &middot; <a href="https://newsroom.amd.com/news/rocm-10-software-ai-native-developer-experiences/" target="_blank" rel="noopener">AMD Newsroom: ROCm 10</a> &middot; <a href="https://www.phoronix.com/review/amd-radeon-ai-pro-r9700/3" target="_blank" rel="noopener">Phoronix: Radeon AI PRO R9700 benchmarks</a> (tested on ROCm 7)</p>
+</div><div class="foot-cta"><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a></div><p class="disclaim">AI and workstation GPU prices change week to week with availability and market pricing. Contact me for a current quote before finalizing a build.</p></div>
 <!-- NERDS MERCH SHOP FOOTER -->
 <div style="background:#000;border-top:1px solid #2a2c31;padding:24px 16px;text-align:center;">
   <a href="https://nerds-vzh-shop.fourthwall.com" target="_blank" rel="noopener"
