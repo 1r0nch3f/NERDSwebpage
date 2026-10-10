@@ -17,7 +17,7 @@
   .nav-inner{max-width:1180px;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;height:54px}
   .nav-brand{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:2px;color:#fff;text-decoration:none}
   .nav-brand span{color:var(--red)}
-  .nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .nav-links{display:flex;gap:2px;align-items:center;flex-wrap:wrap}
   .nav-links a{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);text-decoration:none;padding:6px 10px;border-radius:6px;transition:color .15s,background .15s;white-space:nowrap}
   .nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(229,57,53,.15)}
   .nav-links a.active{color:var(--red)}
@@ -43,9 +43,10 @@
 
   /* Three pillars */
   .pillars {
-    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
     margin-bottom: 36px;
   }
+  @media (max-width: 1000px) { .pillars { grid-template-columns: 1fr 1fr; } }
   .pillar {
     text-align: center; padding: 28px 20px; border-radius: 10px;
     transition: transform 0.2s; cursor: pointer;
@@ -236,6 +237,7 @@
 <a href="build-service.html">Build Service</a>
 <a href="builds.html">Builds</a>
 <a href="repair-services.html">Repair</a>
+<a href="business-it.html">Business IT</a>
 <a href="points.html">Leaderboard</a>
 <a href="about.html">About</a>
 <a href="contact.html">Contact</a>
@@ -251,7 +253,7 @@
     <p>Owner-operated personal technology services in Dalton, GA, Chattanooga, and Cleveland, TN. You talk directly to the person doing the work. Every time.</p>
   </div>
 
-  <!-- THREE PILLARS -->
+  <!-- FOUR PILLARS -->
   <div class="pillars">
     <a class="pillar" href="amd.html">
       <div class="pillar-icon">&#128421;</div>
@@ -267,6 +269,11 @@
       <div class="pillar-icon">&#9881;</div>
       <h3>3D Printing</h3>
       <p>Custom prints, prototypes, replacement parts, and multi-color designs. If you can think it, we can print it.</p>
+    </a>
+    <a class="pillar" href="business-it.html">
+      <div class="pillar-icon">&#127970;</div>
+      <h3>Business IT</h3>
+      <p>Flat monthly IT support for small offices. One price, no contracts, and we come to you. Free 30-minute IT checkup.</p>
     </a>
   </div>
 
