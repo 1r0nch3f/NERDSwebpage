@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Repair Services - NERDS PC</title>
-<meta name="description" content="PC and laptop repair in Dalton, GA. Tune-ups, virus removal, upgrades, and fixes with straight pricing. Most repairs back in under 24 hours.">
+<title>Business IT Plans - NERDS PC</title>
+<meta name="description" content="Flat monthly IT support for small offices in Dalton, GA, Chattanooga, and Cleveland, TN. Essentials $199/mo, Standard $499/mo. No contracts. Free 30-minute IT checkup.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -61,6 +61,20 @@
 .nav-links a{padding:10px 12px;font-size:14px}
 .nav-toggle{display:block}
 }
+
+  .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .plan { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; padding: 24px 26px; }
+  .plan.featured { border-top: 3px solid #e53935; }
+  .plan.basic { border-top: 3px solid #34b56a; }
+  .plan h3 { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 22px; font-weight: 400; color: #fff; margin-bottom: 2px; }
+  .plan .who { font-size: 14px; color: #9a9a9a; margin-bottom: 10px; }
+  .plan .price { font-family: 'Oswald', sans-serif; font-size: 40px; font-weight: 500; color: #e53935; margin-bottom: 12px; }
+  .plan .price small { font-size: 15px; color: #9a9a9a; font-family: 'Open Sans', Arial, sans-serif; font-weight: 400; }
+  .plan ul { list-style: none; }
+  .plan li { font-size: 14px; color: #cfcfcf; padding: 6px 0 6px 22px; border-bottom: 1px solid #23252a; position: relative; }
+  .plan li:last-child { border-bottom: none; }
+  .plan li::before { content: '\2713'; position: absolute; left: 0; color: #e53935; font-weight: 700; }
+  @media (max-width: 700px) { .plan-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -88,58 +102,64 @@
 </nav>
 
 <div class="banner">
-  <h1>Repair Services</h1>
-  <p>Parts prices are high right now. Before you replace a slow or broken PC, let me look at it. Most of the time the fix costs a fraction of a new machine.</p>
+  <h1>Business IT Plans</h1>
+  <p>Flat monthly IT support for small offices in Dalton, GA, Chattanooga, and Cleveland, TN. One price, no contracts, and a real person who picks up the phone.</p>
   <div class="banner-line"></div>
 </div>
 
 <div class="container">
-  <p class="intro">Straight pricing, posted up front. Consultation is always free, and I give you the number before I touch anything.</p>
+  <p class="intro">Most small offices don't have an IT person on staff. When a computer, printer or the Wi-Fi acts up, work stops and somebody's nephew gets the call. We become your IT department for a flat monthly price, and we post that price right here. No sales call needed to find out what it costs.</p>
 
-  <h2 class="section-heading">Pricing</h2>
-  <div class="price-grid">
-    <div class="price-card"><h3>Consultation</h3><div class="price">Free</div><p>I look over your device, tell you what is going on, and lay out your options.</p></div>
-    <div class="price-card"><h3>Gaming PC Health Check</h3><div class="price">Free</div><p>Temps, dust, drive health, drivers, and updates. You get a straight answer on what needs fixing and what does not.</p></div>
-    <div class="price-card"><h3>Tune-Up and Cleanup</h3><div class="price">$59</div><p>Startup and background cleanup, updates, and a dust-out. For the PC that used to be fast.</p></div>
-    <div class="price-card"><h3>Virus and Malware Removal</h3><div class="price">$99</div><p>Full removal and a security cleanup, so it stays gone.</p></div>
-    <div class="price-card"><h3>Windows Reinstall</h3><div class="price">$89</div><p>Fresh install with all updates done. Windows license not included unless you need one.</p></div>
-    <div class="price-card"><h3>Data Backup or Transfer</h3><div class="price">$79</div><p>Your files moved to a new drive or a new machine, or backed up before a repair.</p></div>
-    <div class="price-card"><h3>Hardware Install</h3><div class="price">$40 <small>labor</small></div><p>SSD, RAM, GPU, and similar upgrades. Parts are extra.</p></div>
-    <div class="price-card"><h3>Laptop Screen Replacement</h3><div class="price">$79 <small>labor</small></div><p>Parts extra. I quote the screen for your exact model first.</p></div>
-    <div class="price-card"><h3>Anything Else</h3><div class="price">$65 <small>per hour</small></div><p>Custom problems get an estimate up front, not a surprise afterward.</p></div>
-    <div class="price-card"><h3>Diagnostic, Gaming or Custom PC</h3><div class="price">$40</div><p>Free when you go ahead with the repair. Standard PCs are free to diagnose.</p></div>
-  </div>
-  <p class="note">Replacement parts are priced separately from labor. If a part has to be ordered, I tell you the cost before I order it.</p>
-
-  <h2 class="section-heading">Turnaround</h2>
-  <div class="speed-grid">
-    <div class="speed-box speed-standard">
+  <h2 class="section-heading">Plans</h2>
+  <div class="plan-grid">
+    <div class="plan basic">
+      <h3>Essentials</h3>
+      <p class="who">For offices with up to 5 computers</p>
+      <div class="price">$199 <small>per month</small></div>
+      <ul>
+        <li>Remote support during business hours</li>
+        <li>2 hours of hands-on labor included every month</li>
+        <li>Monthly health check: updates, backups verified, drive health</li>
+        <li>Next business day response</li>
+        <li>On-site visits $65 per hour, no trip fee</li>
+        <li>Extra labor $75 per hour</li>
+      </ul>
+    </div>
+    <div class="plan featured">
       <h3>Standard</h3>
-      <p>Most repairs are back to you in under 24 hours.</p>
-      <p>Jobs that need a part ordered, or a machine that has hit the limit of its hardware, take longer. I tell you that up front and keep you posted.</p>
+      <p class="who">For offices with up to 10 computers</p>
+      <div class="price">$499 <small>per month</small></div>
+      <ul>
+        <li>Remote support during business hours</li>
+        <li>5 hours of hands-on labor included every month</li>
+        <li>Monthly health check: updates, backups verified, drive health</li>
+        <li>Same day response</li>
+        <li>One on-site visit included every month</li>
+        <li>Extra labor $75 per hour</li>
+      </ul>
     </div>
-    <div class="speed-box speed-priority">
-      <h3>Priority: +$60</h3>
-      <p>Front of the line. Done in a few hours, or while you wait when the job allows it.</p>
-      <p>Priority covers my time, not parts shipping. If a part is not on hand, priority cannot make it appear.</p>
-    </div>
+  </div>
+  <p class="note">More than 10 computers? We'll put together a custom quote. Both plans are month to month and can be cancelled with 30 days notice.</p>
+
+  <h2 class="section-heading">Free 30-Minute IT Checkup</h2>
+  <div class="lead">
+    <p><strong>We come to your office and take a look, free, no strings attached.</strong> We'll check your computers, backups, Wi-Fi and printers, and tell you straight what's working, what's at risk, and what can wait.</p>
+    <p>If a plan makes sense for you, great. If it doesn't, you still walk away knowing where you stand.</p>
   </div>
 
   <h2 class="section-heading">How It Works</h2>
   <div class="lead">
-    <p><strong>Drop off, remote, or house call.</strong> I do not have a storefront, so everything runs by appointment. A lot of software problems can be fixed remotely without you hauling anything anywhere.</p>
-    <p><strong>House calls:</strong> +$25 trip fee in Dalton and the surrounding area. Good for home networks, business setups, and anything that is a pain to move.</p>
+    <p><strong>We're mobile, so we come to you.</strong> Most problems get fixed remotely without anyone leaving their desk. When something needs hands on it, we show up.</p>
+    <p><strong>No contracts.</strong> Month to month, 30 days notice to cancel. We'd rather keep you because the work is good.</p>
     <p><strong>Payments</strong> run through Wave.</p>
   </div>
 
   <div class="foot">
-    <h3>Get It Fixed</h3>
-    <p>Call or text and we will set a time. Same day when I can.</p>
+    <h3>Book Your Free Checkup</h3>
+    <p>Call, text or email and we'll set a time that works for your office.</p>
     <a class="primary" href="tel:4235215694">Call or Text 423-521-5694</a>
-    <a class="ghost" href="intake.html">Drop-Off Form</a>
-    <a class="ghost" href="business-it.html">Business IT Plans</a>
-    <a class="ghost" href="contact.html" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
-    <a class="ghost" href="https://g.page/r/Cd9quwK_GrF0EAI/review" target="_blank" rel="noopener">Review Us on Google</a>
+    <a class="ghost" href="mailto:mike@chattnerds.com?subject=Free%20IT%20Checkup">Email Us</a>
+    <a class="ghost" href="repair-services.html">Repair Pricing</a>
   </div>
 </div>
 <!-- NERDS-TAWK-CHAT -->
