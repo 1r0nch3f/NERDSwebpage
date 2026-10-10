@@ -444,6 +444,7 @@
     <button class="tab" role="tab" aria-selected="false" data-board="alltime">All Time</button>
     <button class="tab" role="tab" aria-selected="false" data-board="watch">Watch Time</button>
     <button class="tab" role="tab" aria-selected="false" data-board="fights">Fights</button>
+    <button class="tab" role="tab" aria-selected="false" data-board="season">Season</button>
   </div>
 
   <div class="subtabs" id="subtabs" hidden>
@@ -619,11 +620,55 @@
     }).join('');
   }
 
+  // Season standings (2026-10-09): win % with a 15-fight line; the top 10 make the King of the Bots finale.
+  function renderSeason() {
+    var s = data.season || {};
+    var rows = s.standings || [];
+    var min = s.minFights || 15;
+    var top = s.topSize || 10;
+    setLabels('Season', 'Fighters', 'Qualified');
+    el.sPoints.textContent = s.n ? num(s.n) : '-';
+    el.sViewers.textContent = num(rows.length);
+    el.sRedeems.textContent = num(s.qualifiedCount || 0);
+    var head = '<div class="empty" style="padding:10px 0">Season ' + esc(String(s.n || 1)) +
+      ': top ' + top + ' by win % (' + min + '+ fights) make the <b>King of the Bots</b> finale.' +
+      (s.qualifiedCount < Math.min(top, rows.length) ? ' Open spots go to the next best under ' + min + ' fights (backfill).' : '') + '</div>';
+    if (!rows.length) {
+      el.board.innerHTML = head + '<div class="empty">No fights this season yet.<br>Redeem Robot Fight and call someone out with @name.</div>';
+      return;
+    }
+    var html = head;
+    var lineDrawn = false;
+    rows.forEach(function (r) {
+      if (!r.qualified && !lineDrawn) {
+        lineDrawn = true;
+        html += '<div class="empty" style="padding:8px 0;border-top:1px dashed var(--cyan-dim)">Under ' + min + ' fights' +
+          (r.rank <= top ? ' (top ' + top + ' spots here are backfill)' : '') + '</div>';
+      }
+      var cls = r.rank <= 3 && r.qualified ? ' top' + r.rank : '';
+      var fill = Math.max(2, Math.round(r.pct));
+      var need = min - r.fights;
+      html += '' +
+        '<div class="row' + cls + '">' +
+          '<div class="fill" style="width:' + fill + '%"></div>' +
+          '<div class="rank">' + r.rank + '</div>' +
+          '<div class="who">' +
+            '<div class="name">' + esc(r.userName) + (r.rank <= top ? ' <span style="color:#FFC23D">&#9733;</span>' : '') + '</div>' +
+            '<div class="redeems">' + num(r.wins) + '-' + num(r.losses) + ' &middot; ' + num(r.fights) + ' fight' + (r.fights === 1 ? '' : 's') +
+              (need > 0 ? ' &middot; ' + need + ' to qualify' : '') + '</div>' +
+          '</div>' +
+          '<div class="points">' + r.pct + '<span>win %</span></div>' +
+        '</div>';
+    });
+    el.board.innerHTML = html;
+  }
+
   function renderBoard() {
     if (!data) return;
     el.subtabs.hidden = current !== 'watch';
     if (current === 'watch') return renderWatch();
     if (current === 'fights') return renderFights();
+    if (current === 'season') return renderSeason();
     setLabels('Points Spent', 'Viewers', 'Redemptions');
 
     var rows = (data.boards && data.boards[current]) || [];
@@ -744,6 +789,10 @@
   if (location.hash === '#fights') {
     var fb = document.querySelector('.tab[data-board="fights"]');
     if (fb) fb.click();
+  }
+  if (location.hash === '#season') {
+    var sb = document.querySelector('.tab[data-board="season"]');
+    if (sb) sb.click();
   }
   if (location.hash === '#watch') {
     var wb = document.querySelector('.tab[data-board="watch"]');
