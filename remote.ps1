@@ -85,7 +85,7 @@ function Offer-Report {
     Write-Host ''
     Say 'Mike can also get a diagnostic report of this computer: hardware, drivers,'
     Say 'errors and crash logs. No personal files, photos, passwords or browsing'
-    Say 'history are collected, and nothing is changed.'
+    Say 'history are collected, and nothing is changed. It takes 2-5 minutes.'
     $a = (Read-Host 'Send Mike a diagnostic report now? (Y/n)').Trim().ToLower()
     if ($a -eq '' -or $a -eq 'y' -or $a -eq 'yes') {
         $env:NERDS_RID = $script:NerdsId

@@ -24,12 +24,10 @@ if (-not $Nested) {
         Start-Process powershell.exe -Verb RunAs -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', "irm $NerdsSelf | iex"
         return
     }
-    Say 'Quick report takes about a minute. Deep report (full logs, for crashes and'
-    Say 'freezes) takes 2-5 minutes. Pick Deep only if Mike asked for it.'
-    $deep = ((Read-Host 'Type Q for quick or D for deep, then Enter [Q]').Trim().ToUpper() -eq 'D')
-} else {
-    $deep = $false
+    Say 'This collects a full report for Mike (hardware, drivers, errors and crash'
+    Say 'logs). It takes 2-5 minutes. Leave this window open until it says done.'
 }
+$deep = $true
 
 $core = Join-Path $env:TEMP 'nerds-pc-report.ps1'
 try {
