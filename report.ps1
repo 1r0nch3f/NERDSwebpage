@@ -68,7 +68,12 @@ if (-not $report) {
         $r = Invoke-RestMethod $Upload -Method Post -Body $body -ContentType 'application/json'
         $ok = [bool]$r.ok
     } catch {}
-    if ($ok) { Say 'Report sent. Mike has it.' 'Green' }
+    $txt = [IO.Path]::ChangeExtension($report, '.txt')
+    if ($report -ne $txt) { Remove-Item -LiteralPath $txt -Force -ErrorAction SilentlyContinue }   # it's inside the zip
+    if ($ok) {
+        Remove-Item -LiteralPath $report -Force -ErrorAction SilentlyContinue   # Mike has it; keep the Desktop clean
+        Say 'Report sent. Mike has it.' 'Green'
+    }
     else {
         Say "Couldn't send the report automatically. It's saved on your Desktop:" 'Red'
         Say "  $report"
