@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NERDS AI phone line backup: Twilio plays this when the AI line (Mike's PC) can't be reached. -->
+<Response>
+  <Say voice="woman">Thanks for calling NERDS Computer Repair. Please leave your name, your number, and what you need after the tone, and Mike will call you back.</Say>
+  <Say voice="woman" language="es-MX">Para dejar un mensaje en español, hable después del tono.</Say>
+  <Record maxLength="120" playBeep="true" action="https://www.chattnerds.com/phone/done.xml" method="GET" />
+</Response>
