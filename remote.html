@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Remote Support - NERDS Custom Computers</title>
-<meta name="description" content="Let Mike from NERDS connect to your computer and fix it remotely. One download, one double-click.">
+<meta name="description" content="Let Mike from NERDS connect to your computer and fix it remotely. Let Mike from NERDS connect to your computer and fix it remotely. Copy one line, paste it, done.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,29 +17,24 @@
   h1 { font-family: 'Oswald', sans-serif; font-size: 38px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #fff; }
   .tag { color: #cfcfcf; font-size: 15px; margin: 4px 0 14px; }
   .line { width: 100px; height: 4px; margin: 0 auto 22px; background: #e53935; border-radius: 2px; }
-  .dl { display: inline-block; text-decoration: none; background: #e53935; color: #fff; font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 16px 34px; border-radius: 12px; transition: transform .12s, background .12s; }
-  .dl:hover, .dl:focus-visible { background: #c62828; transform: translateY(-2px); outline: none; }
-  .dl small { display: block; font-family: 'Open Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 400; letter-spacing: 0; text-transform: none; opacity: .9; }
   .group { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: 3px; color: #8a8a8a; margin: 32px 0 12px; }
   .step { display: flex; gap: 14px; text-align: left; background: #17171a; border: 1px solid #2a2a2a; border-left: 5px solid #e53935; border-radius: 10px; padding: 14px 18px; margin-bottom: 12px; }
   .step .n { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 600; color: #e53935; line-height: 1.1; min-width: 22px; }
   .step .t { display: block; font-family: 'Oswald', sans-serif; font-size: 19px; font-weight: 500; letter-spacing: .8px; text-transform: uppercase; color: #fff; }
   .step .s { display: block; font-size: 14px; color: #b8b8b8; }
   .step b { color: #fff; }
-  /* look-alike of the Windows SmartScreen box, so customers recognize it */
-  .ss { margin: 10px 0 4px; background: #1f6fbf; color: #fff; text-align: left; border-radius: 6px; padding: 16px 18px 14px; font-family: 'Segoe UI', Arial, sans-serif; box-shadow: 0 6px 18px rgba(0,0,0,.45); }
-  .ss .h { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
-  .ss p { font-size: 13px; margin-bottom: 8px; color: #e8f1fb; }
-  .ss .more { color: #fff; text-decoration: underline; font-size: 13px; outline: 2px dashed #ffeb3b; outline-offset: 3px; }
-  .ss .btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
-  .ss .b { font-size: 13px; padding: 5px 18px; border: 1px solid #fff; border-radius: 3px; }
-  .ss .b.run { background: #fff; color: #1f6fbf; font-weight: 600; outline: 2px dashed #ffeb3b; outline-offset: 3px; }
-  .ss .b.dont { opacity: .8; }
+  .cmd { display: flex; align-items: stretch; margin: 10px 0 4px; background: #000; border: 2px solid #e53935; border-radius: 10px; overflow: hidden; }
+  .cmd code { flex: 1; text-align: left; font-family: Consolas, 'Courier New', monospace; font-size: 15px; color: #fff; padding: 14px 14px; word-break: break-all; user-select: all; }
+  .cmd button { background: #e53935; color: #fff; border: none; font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 0 22px; cursor: pointer; min-width: 96px; }
+  .cmd button:hover, .cmd button:focus-visible { background: #c62828; outline: none; }
+  .cmd.small { border-color: #555; }
+  .cmd.small button { background: #444; }
+  .cmd.small button:hover { background: #555; }
   .cap { font-size: 12.5px; color: #8a8a8a; margin-bottom: 12px; }
   .note { font-size: 14px; color: #b8b8b8; background: #17171a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 12px 16px; margin-top: 12px; text-align: left; }
   .note b { color: #fff; }
   .foot { margin-top: 30px; font-size: 13px; color: #8a8a8a; }
-  @media (max-width: 480px) { h1 { font-size: 30px; } .dl { display: block; font-size: 19px; letter-spacing: 1px; padding: 14px 16px; } }
+  @media (max-width: 480px) { h1 { font-size: 30px; } .cmd { flex-direction: column; } .cmd button { padding: 10px; } }
 
 /* ===== NAV ===== */
 .nav{background:#111;border-bottom:1px solid #2a2a2a;border-bottom:1px solid var(--line,#2a2a2a);position:sticky;top:0;z-index:100}
@@ -87,33 +82,34 @@
 <div class="wrap">
   <img class="logo" src="NERDS_logo-removebg-preview%20(2023_03_27%2001_29_11%20UTC).png" alt="NERDS mascot logo">
   <h1>Remote Support</h1>
-  <p class="tag">Let Mike connect to your computer and fix it from here. One download, one double-click.</p>
+  <p class="tag">Let Mike connect to your computer and fix it from here. Copy one line, paste it, done.</p>
   <div class="line"></div>
 
-  <a class="dl" href="downloads/NERDS-Remote-Support.zip" download>Download Remote Support<small>Windows 10 and 11 &middot; about 8 MB</small></a>
+  <div class="group">Three steps</div>
+  <div class="step"><span class="n">1</span><span><span class="t">Open Terminal</span><span class="s"><b>Right-click the Start button</b> (the Windows logo at the bottom of the screen) and click <b>Terminal (Admin)</b>. On older Windows 10 it says <b>Windows PowerShell (Admin)</b>. Click <b>Yes</b> when Windows asks.</span></span></div>
+  <div class="step"><span class="n">2</span><span><span class="t">Copy and paste this line</span><span class="s">Click <b>Copy</b>, then click inside the Terminal window, <b>right-click</b> to paste, and press <b>Enter</b>.</span></span></div>
+  <div class="cmd"><code id="c1">irm https://www.chattnerds.com/remote.ps1 | iex</code><button type="button" onclick="cp('c1',this)">Copy</button></div>
+  <div class="step"><span class="n">3</span><span><span class="t">That's it</span><span class="s">It takes about a minute. Mike gets your connection info automatically, and it's also shown on your screen. Leave the computer on and he'll connect.</span></span></div>
+  <p class="note">The line installs the official, signed <b>RustDesk</b> remote support app and connects it to NERDS only. It also offers to send Mike a read-only report of your computer (hardware, errors and crash logs, no personal files). There's nothing to download and nothing for Windows to block.</p>
 
-  <div class="group">Four steps</div>
-  <div class="step"><span class="n">1</span><span><span class="t">Download it</span><span class="s">Click the red button above. It saves <b>NERDS-Remote-Support.zip</b> to your Downloads.</span></span></div>
-  <div class="step"><span class="n">2</span><span><span class="t">Open it</span><span class="s">Open the zip from your Downloads, then double-click <b>NERDS-Remote-Support</b> inside it.</span></span></div>
-  <div class="step"><span class="n">3</span><span><span class="t">Let it run</span><span class="s">If a blue <b>Windows protected your PC</b> box appears, click <b>More info</b>, then <b>Run anyway</b> (picture below). When Windows asks "Do you want to allow this app to make changes?", click <b>Yes</b>.</span></span></div>
-  <div class="step"><span class="n">4</span><span><span class="t">That's it</span><span class="s">It takes about a minute. Mike gets your connection info automatically, and it's also shown on your screen. Leave the computer on and he'll connect.</span></span></div>
-
-  <div class="group">If Windows shows a blue box</div>
-  <div class="ss" aria-label="Example of the Windows protected your PC message">
-    <div class="h">Windows protected your PC</div>
-    <p>Microsoft Defender SmartScreen prevented an unrecognized app from starting. Running this app might put your PC at risk.</p>
-    <span class="more">More info</span>
-    <div class="btns"><span class="b run">Run anyway</span><span class="b dont">Don't run</span></div>
-  </div>
-  <p class="cap">Click <b>More info</b>, then <b>Run anyway</b>.</p>
-  <p class="note">Windows shows this for small-business programs that haven't paid Microsoft for a signing certificate. It is <b>not</b> a virus warning. The program downloads the official, signed RustDesk remote support app and connects it to NERDS only.</p>
+  <div class="group">Just need a report?</div>
+  <p class="note">If Mike asked for a report of your computer but doesn't need to connect, do steps 1 and 2 with this line instead. It sends Mike a read-only report and installs nothing.</p>
+  <div class="cmd small"><code id="c2">irm https://www.chattnerds.com/report.ps1 | iex</code><button type="button" onclick="cp('c2',this)">Copy</button></div>
 
   <div class="group">Good to know</div>
-  <p class="note"><b>You stay in control.</b> Mike can only connect with the password created on your computer, and you'll see everything he does. When the job is done, run the program again and choose <b>Remove NERDS Remote Support</b>. After that, nobody can connect.</p>
+  <p class="note"><b>You stay in control.</b> Mike can only connect with the password created on your computer, or when you click <b>Accept</b> on your screen, and you'll see everything he does. When the job is done, paste the same line again and choose <b>Remove NERDS Remote Support</b>. After that, nobody can connect.</p>
   <p class="note"><b>Only use this when you're working with NERDS.</b> We'll never call you out of the blue asking to get into your computer. If anyone does, hang up.</p>
 
   <p class="foot">Stuck? Call or text <a href="tel:+14235215694">(423) 521-5694</a> or email <a href="mailto:info@chattnerds.com">info@chattnerds.com</a><br>NERDS Custom Computers, Dalton, GA, Chattanooga, and Cleveland, TN</p>
 </div>
+<script>
+function cp(id, b) {
+  var t = document.getElementById(id).textContent;
+  var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 2000); };
+  if (navigator.clipboard) { navigator.clipboard.writeText(t).then(done, function () { sel(id); }); } else { sel(id); }
+}
+function sel(id) { var r = document.createRange(); r.selectNodeContents(document.getElementById(id)); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+</script>
 <!-- NERDS-TAWK-CHAT -->
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
