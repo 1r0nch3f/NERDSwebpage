@@ -89,9 +89,11 @@
   @media (max-width: 600px) { .gallery-grid { grid-template-columns: 1fr; } }
 
   /* Tested badge */
-  .tested { display: flex; align-items: center; gap: 16px; background: #17181b; border: 1px solid #2a2c31; border-left: 4px solid #3ecf8e; border-radius: 10px; padding: 18px 20px; }
+  .tested { display: flex; align-items: center; gap: 16px; background: #17181b; border: 1px solid #2a2c31; border-left: 4px solid #3ecf8e; border-radius: 10px; padding: 18px 20px; text-decoration: none; transition: background .15s, border-color .15s; }
+  a.tested:hover { background: #1c1e22; border-left-color: #5ff0ab; }
   .tested .mark { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #3ecf8e; white-space: nowrap; }
   .tested p { font-size: 15px; color: #d7d7d7; margin: 0; }
+  .tested .go { color: #fff; font-weight: 700; white-space: nowrap; }
 
   .cta-box { text-align: center; padding: 32px 24px; background: #17181b; border-radius: 10px; border: 1px solid #2a2c31; margin-top: 40px; }
   .cta-box h3 { font-family: 'Oswald', sans-serif; font-size: 22px; text-transform: uppercase; color: #fff; margin-bottom: 8px; }
@@ -174,10 +176,10 @@
   </div>
 
   <h2 class="section-title">Tested &amp; Verified</h2>
-  <div class="tested">
+  <a class="tested" href="emiko/certificate.html" target="_blank" rel="noopener">
     <span class="mark">Passed</span>
-    <p>Your PC went through a full hardware stress test before it came home: processor, graphics, memory, and drives, all pushed under load. The graphics card held strong temperatures at full tilt, all 24GB of video memory tested clean, and the system logged zero errors the entire run. It is ready to go.</p>
-  </div>
+    <p>Your PC went through a full hardware stress test before it came home: processor, graphics, memory, and drives, all pushed under load. The graphics card held strong temperatures at full tilt, all 24GB of video memory tested clean, and the system logged zero errors the entire run. <span class="go">View your certificate &rarr;</span></p>
+  </a>
 
   <div class="cta-box">
     <h3>Questions About Your Build?</h3>
