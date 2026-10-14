@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GD8KXQQMB6');
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Emiko's Build | NERDS PC</title>
+<meta name="description" content="Your custom build from NERDS PC.">
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Site Navigation */
+  .site-nav { background: #0e0e10; border-bottom: 1px solid #2a2c31; position: sticky; top: 0; z-index: 999; }
+  .site-nav-inner { max-width: 1100px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .site-nav-logo { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; text-decoration: none; }
+  .site-nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+  .site-nav-links { display: flex; align-items: center; gap: 22px; }
+  .site-nav-links a { font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; color: #cfcfcf; text-decoration: none; white-space: nowrap; }
+  .site-nav-links a:hover { color: #fff; }
+  .site-nav-links a.site-nav-cta { background: #e53935; color: #fff; padding: 8px 18px; border-radius: 5px; }
+  .site-nav-links a.site-nav-cta:hover { background: #c62828; color: #fff; }
+  @media (max-width: 860px) {
+    .site-nav-toggle { display: block; }
+    .site-nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: #0e0e10; border-bottom: 1px solid #2a2c31; flex-direction: column;
+      align-items: flex-start; padding: 16px 24px; gap: 16px;
+    }
+    .site-nav-links.open { display: flex; }
+    .site-nav-links a.site-nav-cta { width: 100%; text-align: center; }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Open Sans', Arial, sans-serif; color: #e6e6e6; line-height: 1.7; background: #0e0e10; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px 24px 60px; }
+
+  /* Hero */
+  .hero { position: relative; border-radius: 12px; overflow: hidden; margin: 18px 0 8px; border: 1px solid #2a2c31; }
+  .hero img { width: 100%; display: block; aspect-ratio: 16 / 9; object-fit: cover; }
+  .hero-overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 28px; background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0) 100%);
+  }
+  .hero-kicker { font-family: 'Open Sans', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #ff8fc7; margin-bottom: 6px; }
+  .hero-title { font-family: 'Oswald', sans-serif; font-size: 40px; font-weight: 600; text-transform: uppercase; color: #fff; line-height: 1.05; }
+  @media (max-width: 600px) { .hero-title { font-size: 28px; } .hero-overlay { padding: 18px; } }
+
+  .lead { font-size: 17px; color: #d7d7d7; margin: 22px 0 10px; max-width: 760px; }
+
+  .section-title {
+    font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 500;
+    text-transform: uppercase; color: #fff; margin: 40px 0 16px;
+    padding-bottom: 10px; border-bottom: 3px solid #e53935;
+  }
+
+  /* Specs */
+  .spec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .spec {
+    background: #17181b; border: 1px solid #2a2c31; border-radius: 8px;
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .spec .k { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: #8f9196; }
+  .spec .v { font-size: 15px; color: #fff; font-weight: 600; }
+  @media (max-width: 600px) { .spec-grid { grid-template-columns: 1fr; } }
+
+  /* Custom touches */
+  .touches { background: #17181b; border: 1px solid #2a2c31; border-radius: 10px; padding: 20px 22px; }
+  .touches ul { list-style: none; display: grid; gap: 10px; }
+  .touches li { padding-left: 26px; position: relative; font-size: 15px; color: #e6e6e6; }
+  .touches li::before { content: ""; position: absolute; left: 0; top: 2px; color: #ff8fc7; font-size: 15px; }
+
+  /* Video */
+  .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 10px; overflow: hidden; border: 1px solid #2a2c31; background: #000; }
+  .video-wrap video, .video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+  /* Gallery */
+  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .gallery-item { border-radius: 10px; overflow: hidden; border: 1px solid #2a2c31; background: #17181b; aspect-ratio: 4 / 3; }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 600px) { .gallery-grid { grid-template-columns: 1fr; } }
+
+  /* Tested badge */
+  .tested { display: flex; align-items: center; gap: 16px; background: #17181b; border: 1px solid #2a2c31; border-left: 4px solid #3ecf8e; border-radius: 10px; padding: 18px 20px; }
+  .tested .mark { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #3ecf8e; white-space: nowrap; }
+  .tested p { font-size: 15px; color: #d7d7d7; margin: 0; }
+
+  .cta-box { text-align: center; padding: 32px 24px; background: #17181b; border-radius: 10px; border: 1px solid #2a2c31; margin-top: 40px; }
+  .cta-box h3 { font-family: 'Oswald', sans-serif; font-size: 22px; text-transform: uppercase; color: #fff; margin-bottom: 8px; }
+  .cta-box p { font-size: 15px; color: #a8a8a8; margin-bottom: 18px; }
+  .cta-btn { display: inline-block; background: #e53935; color: #fff; padding: 12px 32px; border-radius: 4px; font-size: 16px; font-weight: 700; text-decoration: none; }
+  .cta-btn:hover { background: #c62f2c; }
+  .footnote { text-align: center; font-size: 13px; color: #6f7176; margin-top: 24px; }
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="https://www.chattnerds.com/" class="site-nav-logo">NERDS PC</a>
+    <button class="site-nav-toggle" onclick="document.querySelector('.site-nav-links').classList.toggle('open')">&#9776;</button>
+    <div class="site-nav-links">
+      <a href="https://www.chattnerds.com/">Home</a>
+      <a href="https://www.chattnerds.com/build-service.html">PC Builds</a>
+      <a href="https://www.chattnerds.com/3d-printing.html">3D Printing</a>
+      <a href="https://www.chattnerds.com/builds.html">Builds</a>
+      <a href="https://www.chattnerds.com/about.html">About</a>
+      <a href="https://www.chattnerds.com/contact.html">Contact</a>
+      <a href="https://www.chattnerds.com/quote.html" class="site-nav-cta">Get a Quote</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="hero">
+    <img src="emiko/hero.jpg" alt="Emiko's finished custom PC lit in pink next to a butterfly wallpaper">
+    <div class="hero-overlay">
+      <div class="hero-kicker">Your Build Is Ready</div>
+      <div class="hero-title">Emiko's Build</div>
+    </div>
+  </div>
+
+  <p class="lead">Here is your PC, start to finish. We rebuilt the cooling, brought every part back to spec, set it up fresh, and gave it a one-of-a-kind butterfly theme to match your style. Scroll down for the photos, the walkthrough video, and the full parts list.</p>
+
+  <h2 class="section-title">The Build</h2>
+  <p class="lead" style="margin-top:0;">Your machine came in running hot and crashing under load. We pulled the old cooling, moved it to a quieter all-in-one liquid cooler, re-seated the graphics card for solid temperatures, and did a clean Windows setup so it starts fresh. Then we dressed it head to toe in a custom butterfly theme and stress-tested the whole thing before it came back to you.</p>
+
+  <h2 class="section-title">The Reveal</h2>
+  <div class="video-wrap">
+    <iframe src="https://www.youtube.com/embed/F6LSk-7c3qk" title="Emiko's NERDS PC build reveal" allowfullscreen loading="lazy"></iframe>
+  </div>
+
+  <h2 class="section-title">Custom Touches</h2>
+  <div class="touches">
+    <ul>
+      <li>3D-printed butterfly fan covers across the build</li>
+      <li>A custom "EMIKO" name badge on the front fan</li>
+      <li>Butterfly accents on the bottom intake and front panel</li>
+      <li>A custom butterfly desktop wallpaper made just for you</li>
+      <li>Bubble-pink case with a light blue interior</li>
+    </ul>
+  </div>
+
+  <h2 class="section-title">What's Inside</h2>
+  <div class="spec-grid">
+    <div class="spec"><span class="k">Processor</span><span class="v">AMD Ryzen 9 9950X (16-Core)</span></div>
+    <div class="spec"><span class="k">Graphics</span><span class="v">AMD Radeon RX 7900 XTX 24GB</span></div>
+    <div class="spec"><span class="k">Motherboard</span><span class="v">Gigabyte X870E AORUS Elite WIFI7</span></div>
+    <div class="spec"><span class="k">Memory</span><span class="v">32GB G.SKILL DDR5-6000 (EXPO)</span></div>
+    <div class="spec"><span class="k">Cooling</span><span class="v">Corsair iCUE LINK TITAN II 360 AIO</span></div>
+    <div class="spec"><span class="k">Power Supply</span><span class="v">Corsair AX1600i, 1600W Titanium</span></div>
+    <div class="spec"><span class="k">Storage</span><span class="v">1TB NVMe SSD + 4TB Samsung 990 EVO Plus</span></div>
+    <div class="spec"><span class="k">Case</span><span class="v">Thermaltake View 270 Plus, Bubble Pink</span></div>
+  </div>
+
+  <h2 class="section-title">Gallery</h2>
+  <div class="gallery-grid">
+    <div class="gallery-item"><img src="emiko/cover-closeup.jpg" alt="Butterfly fan cover with the EMIKO name badge" loading="lazy"></div>
+    <div class="gallery-item"><img src="emiko/interior-pink.jpg" alt="Interior lit in pink showing the cooling and graphics card" loading="lazy"></div>
+    <div class="gallery-item"><img src="emiko/fan-pump.jpg" alt="Butterfly fan and liquid cooler pump block" loading="lazy"></div>
+    <div class="gallery-item"><img src="emiko/neon-sign.jpg" alt="Interior with butterfly fans and a neon controller sign" loading="lazy"></div>
+    <div class="gallery-item"><img src="emiko/bottom-grill.jpg" alt="Butterfly accents on the bottom intake panel" loading="lazy"></div>
+    <div class="gallery-item"><img src="emiko/finished-o11.jpg" alt="Finished pink build on the bench" loading="lazy"></div>
+    <div class="gallery-item"><img src="emiko/parts-haul.jpg" alt="All of the components laid out before the build" loading="lazy"></div>
+    <div class="gallery-item"><img src="emiko/bench-test.jpg" alt="The graphics card during bench stress testing" loading="lazy"></div>
+  </div>
+
+  <h2 class="section-title">Tested &amp; Verified</h2>
+  <div class="tested">
+    <span class="mark">Passed</span>
+    <p>Your PC went through a full hardware stress test before it came home: processor, graphics, memory, and drives, all pushed under load. The graphics card held strong temperatures at full tilt, all 24GB of video memory tested clean, and the system logged zero errors the entire run. It is ready to go.</p>
+  </div>
+
+  <div class="cta-box">
+    <h3>Questions About Your Build?</h3>
+    <p>Call or text us any time. We stand behind every machine we build.</p>
+    <a class="cta-btn" href="sms:+14235215694">Text 423-521-5694</a>
+    <p style="margin: 14px 0 0; font-size: 14px;">Or call: <a href="tel:4235215694" style="color:#fff;">423-521-5694</a></p>
+  </div>
+
+  <p class="footnote">Built by NERDS Custom Computers &middot; Dalton, GA</p>
+
+</div>
+<!-- NERDS-TAWK-CHAT -->
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a64b64a1320a91d46342627/1jucmg4ch';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>
