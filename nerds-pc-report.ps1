@@ -128,7 +128,8 @@ W ("  Power plan               : {0}" -f ((powercfg /getactivescheme) -replace '
 
 Step 'Drives'
 Section 'DRIVES'
-T (Get-PhysicalDisk | Select-Object FriendlyName, MediaType, BusType, @{n='GB';e={[math]::Round($_.Size/1GB)}}, HealthStatus, OperationalStatus)
+# DeviceId matches the Wear / errors table below; FirmwareVersion added 2026-10-19 (Emiko's 990 EVO Plus dropping at boot).
+T (Get-PhysicalDisk | Sort-Object DeviceId | Select-Object DeviceId, FriendlyName, FirmwareVersion, MediaType, BusType, @{n='GB';e={[math]::Round($_.Size/1GB)}}, HealthStatus, OperationalStatus)
 $rel = Get-PhysicalDisk | Get-StorageReliabilityCounter
 if ($rel) { W 'Wear / errors:'; T ($rel | Select-Object DeviceId, Temperature, Wear, ReadErrorsTotal, WriteErrorsTotal, PowerOnHours) }
 $smart = Get-CimInstance -Namespace root\wmi MSStorageDriver_FailurePredictStatus
