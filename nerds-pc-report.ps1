@@ -79,8 +79,52 @@ if (Test-Path $dx) {
     W ''
     W 'dxdiag highlights:'
     $dxl | Where-Object { $_ -match '^\s*(DirectX Version|Card name|Driver Version|Driver Date/Size|Dedicated Memory|Shared Memory|Feature Levels|Driver Model|Hardware Scheduling|Notes)\s*:' } | ForEach-Object { $_.Trim() } | Where-Object { $_ -notmatch 'Unknown$' } | Select-Object -Unique -First 30 | ForEach-Object { W ("  " + $_) }
+    # Every screen from dxdiag's display section (2026-10-18, Emiko's video-playback freezes: the GPU line above
+    # shows one mode per card, and multi-screen / mixed refresh setups are a common factor in idle and video hangs).
+    $screens = @(); $card = ''; $m = $null
+    foreach ($l in $dxl) {
+        if ($l -match '^\s*Card name:\s*(.+)$') { $card = $Matches[1].Trim() }
+        elseif ($l -match '^\s*Current Mode:\s*(.+)$') { if ($m) { $screens += $m }; $m = [pscustomobject]@{ Card = $card; Mode = $Matches[1].Trim(); Model = ''; Native = ''; Output = ''; Hdr = ''; Space = '' } }
+        elseif ($m -and $l -match '^\s*Monitor Model:\s*(.+)$') { $m.Model = $Matches[1].Trim() }
+        elseif ($m -and $l -match '^\s*Native Mode:\s*(.+)$') { $m.Native = $Matches[1].Trim() }
+        elseif ($m -and $l -match '^\s*Output Type:\s*(.+)$') { $m.Output = $Matches[1].Trim() }
+        elseif ($m -and $l -match '^\s*HDR Support:\s*(.+)$') { $m.Hdr = $Matches[1].Trim() }
+        elseif ($m -and $l -match '^\s*Display Color Space:\s*(.+)$') { $m.Space = $Matches[1].Trim() }
+    }
+    if ($m) { $screens += $m }
+    $screens = @($screens | Where-Object { $_.Mode -notmatch '^Unknown' -and ($_.Model -or $_.Output) })
+    W ''
+    W ("Screens      : {0} connected" -f $screens.Count)
+    $i = 0
+    foreach ($s in $screens) {
+        $i++
+        $hdr = if ($s.Space -match 'G2084') { 'HDR ON' } elseif ($s.Hdr -match '^Supported') { 'HDR off (supported)' } else { 'no HDR' }
+        W ("  {0}: {1}  {2}  via {3}  {4}  (preferred {5})  on {6}" -f $i, $(if ($s.Model -and $s.Model -ne 'unknown') { $s.Model } else { 'unknown model' }), ($s.Mode -replace '\s*\(32 bit\)', ''), $s.Output, $hdr, $s.Native, $s.Card)
+    }
+    $hz = @($screens | ForEach-Object { if ($_.Mode -match '\((\d+)Hz\)') { [int]$Matches[1] } } | Sort-Object -Unique)
+    if ($screens.Count -gt 1) { W ("NOTE: {0} screens connected." -f $screens.Count) }
+    if ($hz.Count -gt 1) { W ("NOTE: screens run at different refresh rates ({0} Hz). Mixed refresh rates are a common factor in GPU idle / video-playback freezes and flicker." -f ($hz -join ' / ')) }
     Remove-Item $dx -Force
 }
+
+# Settings that matter for GPU freezes and devices dropping off (2026-10-18).
+W ''
+W 'Settings that affect GPU freezes:'
+$gd = Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers'
+W ("  GPU scheduling (HAGS)    : {0}" -f $(switch ($gd.HwSchMode) { 2 { 'ON' } 1 { 'off' } default { 'Windows default' } }))
+W ("  Driver timeout (TDR)     : {0}" -f $(if ($null -ne $gd.TdrDelay -or $null -ne $gd.TdrLevel) { (@($(if ($null -ne $gd.TdrDelay) { "TdrDelay=$($gd.TdrDelay) s" }), $(if ($null -ne $gd.TdrLevel) { "TdrLevel=$($gd.TdrLevel)" })) | Where-Object { $_ }) -join ', ' } else { 'Windows default' }))
+$dwm = Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\Dwm'
+W ("  Multiplane overlay (MPO) : {0}" -f $(if ($dwm.OverlayTestMode -eq 5) { 'OFF (OverlayTestMode=5)' } else { 'on (Windows default)' }))
+$aspm = powercfg /query SCHEME_CURRENT SUB_PCIEXPRESS ASPM 2>$null | Select-String '0x0000000[0-9]$'
+$aspmName = @{ 0 = 'Off'; 1 = 'Moderate power savings'; 2 = 'Maximum power savings' }
+if ($aspm.Count -ge 2) {
+    $ac = [Convert]::ToInt32((($aspm[0].Line -split ':')[-1]).Trim(), 16); $dc = [Convert]::ToInt32((($aspm[1].Line -split ':')[-1]).Trim(), 16)
+    W ("  PCIe Link State Power Mgmt: plugged in {0}, battery {1}" -f $aspmName[$ac], $aspmName[$dc])
+} else { W '  PCIe Link State Power Mgmt: not readable' }
+$hib = (Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Power').HibernateEnabled
+$fs = (Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power').HiberbootEnabled
+W ("  Fast Startup             : {0}" -f $(if ($hib -eq 0) { 'off (hibernation is off)' } elseif ($fs -eq 0) { 'off' } else { 'ON' }))
+W ("  Power plan               : {0}" -f ((powercfg /getactivescheme) -replace '.*\((.*)\).*','$1'))
 
 Step 'Drives'
 Section 'DRIVES'
@@ -217,12 +261,55 @@ $apps = @('HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKLM:\
     ForEach-Object { Get-ItemProperty $_ } | Where-Object { $_.DisplayName -and -not $_.SystemComponent } |
     Sort-Object DisplayName -Unique
 W ("{0} programs installed." -f @($apps).Count)
-$flag = 'Afterburner|RivaTuner|RTSS|Overwolf|Wallpaper Engine|Razer Cortex|Driver Booster|Driver Easy|CCleaner|McAfee|Norton|Avast|AVG|Avira|Webroot|PC Optimizer|Ryzen Master|Armoury|iCUE|Lightshot|Discord|GeForce Experience|NVIDIA App|AMD Software|Steam|Epic Games|Battle\.net|EA app|Ubisoft'
+$flag = 'Afterburner|RivaTuner|RTSS|Overwolf|CurseForge|Thunderstore|r2modman|Vortex|Mod Organizer|Wabbajack|WowUp|ReShade|Special K|Lossless Scaling|Wallpaper Engine|Razer Cortex|Driver Booster|Driver Easy|CCleaner|McAfee|Norton|Avast|AVG|Avira|Webroot|PC Optimizer|Ryzen Master|Armoury|iCUE|Lightshot|Discord|GeForce Experience|NVIDIA App|AMD Software|Steam|Epic Games|Battle\.net|EA app|Ubisoft'
 W 'Programs that commonly matter for games / performance:'
 $apps | Where-Object { $_.DisplayName -match $flag } | ForEach-Object { W ("  {0}  {1}" -f $_.DisplayName, $_.DisplayVersion) }
 W ''
 W 'Full list:'
 $apps | ForEach-Object { W ("  {0}  {1}" -f $_.DisplayName, $_.DisplayVersion) }
+
+Step 'Game mods and graphics hooks'
+Section 'GAME MODS AND GRAPHICS HOOKS'
+# Mods that hook the graphics pipeline (ReShade, ENB, Special K, DXVK, loaders) live as DLLs inside the game folder,
+# so they never show up as installed programs (2026-10-18, Emiko: lots of games, mod folders seen).
+$gameRoots = @()
+$steam = (Get-ItemProperty 'HKCU:\Software\Valve\Steam').SteamPath
+foreach ($vdf in @("$steam\steamapps\libraryfolders.vdf", 'C:\Program Files (x86)\Steam\steamapps\libraryfolders.vdf')) {
+    if (Test-Path $vdf) { Get-Content $vdf | Select-String '"path"\s+"(.+)"' | ForEach-Object { $gameRoots += (Join-Path ($_.Matches[0].Groups[1].Value -replace '\\\\', '\') 'steamapps\common') } }
+}
+foreach ($d in (Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null }).Root) {
+    foreach ($sub in 'Program Files (x86)', 'Program Files', 'Games', 'Riot Games', 'Epic Games', 'XboxGames', 'GOG Games') { $gameRoots += (Join-Path $d $sub) }
+}
+$gameRoots = @($gameRoots | Where-Object { Test-Path $_ } | Sort-Object -Unique)
+$hookNames = 'dxgi.dll', 'd3d11.dll', 'd3d12.dll', 'd3d9.dll', 'd3d8.dll', 'dinput8.dll', 'opengl32.dll', 'ReShade.ini', 'ReShade.log', 'enbseries.ini', 'enblocal.ini', 'SpecialK64.dll', 'dxvk.conf', 'winhttp.dll'
+$hooks = foreach ($r in $gameRoots) {
+    Get-ChildItem $r -Directory | ForEach-Object {
+        $g = $_
+        Get-ChildItem $g.FullName -Recurse -Depth 3 -File -Include $hookNames |
+            Where-Object { $_.DirectoryName -notmatch '\\(Microsoft|Windows|Common Files|WindowsApps|D3D12|d3d12on7|12on7|mesa)(\\|$)' } |
+            ForEach-Object { [pscustomobject]@{ Game = $g.Name; File = $_.FullName.Substring($g.FullName.Length + 1) } }
+    }
+}
+W 'Graphics hook / injector files inside game folders (ReShade, ENB, Special K, DXVK, mod loaders):'
+if ($hooks) { $hooks | Group-Object Game | ForEach-Object { W ("  {0}: {1}" -f $_.Name, (($_.Group.File | Select-Object -First 6) -join ', ')) } } else { W '  (none found)' }
+W ''
+W 'Mod folders and mod managers found:'
+$modHits = @()
+foreach ($r in $gameRoots) {
+    Get-ChildItem $r -Directory | ForEach-Object {
+        foreach ($sub in 'BepInEx', 'MelonLoader', 'Mods', 'Data\SKSE', 'Interface\AddOns', '_retail_\Interface\AddOns') {
+            $p = Join-Path $_.FullName $sub
+            if (Test-Path $p) { $modHits += ("  {0}\{1}  ({2} items)" -f $_.Name, $sub, @(Get-ChildItem $p).Count) }
+        }
+    }
+}
+foreach ($d in (Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null }).Root) {
+    Get-ChildItem $d -Directory | Where-Object { $_.Name -match 'Vortex|Mod Organizer|ModOrganizer|Wabbajack|r2modman|Thunderstore' } | ForEach-Object { $modHits += "  $($_.FullName)" }
+}
+foreach ($p in "$env:APPDATA\Vortex", "$env:LOCALAPPDATA\ModOrganizer", "$env:APPDATA\r2modmanPlus-local", "$env:APPDATA\Thunderstore Mod Manager", "$env:LOCALAPPDATA\Overwolf", "$env:APPDATA\CurseForge") {
+    if (Test-Path $p) { $modHits += "  $p" }
+}
+if ($modHits) { $modHits | Select-Object -Unique -First 40 | ForEach-Object { W $_ } } else { W '  (none found)' }
 
 Section 'STARTUP ITEMS'
 T (Get-CimInstance Win32_StartupCommand | Select-Object Name, Location)
