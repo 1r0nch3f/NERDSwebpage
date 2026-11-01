@@ -96,6 +96,23 @@
   }
   .cta-btn:hover { background: #c62f2c; }
 
+  .build-card {
+    background: #17181b; border: 1px solid #2a2c31; border-radius: 10px;
+    padding: 16px; margin-bottom: 18px;
+  }
+  .build-card h3 {
+    font-family: 'Oswald', sans-serif; font-size: 18px; text-transform: uppercase;
+    color: #fff; margin-bottom: 4px; letter-spacing: 0.5px;
+  }
+  .build-card .build-spec { font-size: 14px; color: #a8a8a8; margin-bottom: 14px; }
+  .build-card .gallery-grid { margin-bottom: 0; }
+  .build-card .cta-btn { margin-top: 14px; padding: 10px 24px; font-size: 15px; }
+  .build-tag {
+    display: inline-block; background: #e53935; color: #fff; font-size: 12px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    padding: 3px 10px; border-radius: 4px; margin-left: 8px; vertical-align: middle;
+  }
+
   @media (max-width: 700px) {
     .gallery-grid { grid-template-columns: 1fr; }
     .gallery-item.wide { grid-column: span 1; aspect-ratio: 4/3; }
@@ -133,6 +150,53 @@
     <a class="cta-btn" href="sms:+14235215694">Text 423-521-5694</a>
     <p style="margin: 14px 0 0; font-size: 14px;">Or call: <a href="tel:4235215694" style="color:#fff;">423-521-5694</a></p>
   </div>
+
+  <h2 class="page-title" id="recent-builds" style="font-size: 26px; margin-bottom: 20px;">Recent Builds</h2>
+
+  <div class="build-card">
+    <h3>Ryzen 9 9950X + Radeon RX 7900 XTX</h3>
+    <p class="build-spec">Customer build: custom loop converted to a 360mm AIO, every part brought back to spec, custom 3D-printed butterfly theme.</p>
+    <div class="gallery-grid">
+      <div class="gallery-item wide">
+        <img src="https://www.chattnerds.com/showcase/emiko/hero.jpg" alt="Ryzen 9 9950X and Radeon RX 7900 XTX custom PC in a pink Thermaltake case with butterfly accents" loading="lazy">
+      </div>
+      <div class="gallery-item">
+        <img src="https://www.chattnerds.com/showcase/emiko/finished-o11.jpg" alt="Finished pink custom PC build with RGB lighting" loading="lazy">
+      </div>
+      <div class="gallery-item">
+        <img src="https://www.chattnerds.com/showcase/emiko/interior-pink.jpg" alt="Interior of a pink custom PC with a 360mm AIO and Radeon graphics card" loading="lazy">
+      </div>
+    </div>
+  </div>
+
+  <div class="build-card">
+    <h3>Ryzen 7 9700X + RTX 4070 Ti <span class="build-tag">Available now</span></h3>
+    <p class="build-spec">Tested and certified gaming build, ready to go. Local pickup.</p>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="https://www.chattnerds.com/build-9700x-4070ti-purple.jpg" alt="Ryzen 7 9700X and RTX 4070 Ti gaming PC with purple RGB lighting" loading="lazy">
+      </div>
+      <div class="gallery-item">
+        <img src="https://www.chattnerds.com/build-9700x-4070ti-geforce.jpg" alt="GeForce RTX 4070 Ti graphics card installed in a Ryzen 7 9700X build" loading="lazy">
+      </div>
+    </div>
+    <a class="cta-btn" href="sms:+14235215694">Text us about this one</a>
+  </div>
+
+  <div class="build-card">
+    <h3>Ryzen 5 7500X3D + Radeon RX 9070 XT</h3>
+    <p class="build-spec">All-AMD gaming build: X3D cache for high frame rates, PowerColor RX 9070 XT, 360mm AIO.</p>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="https://www.chattnerds.com/build-7500x3d-9070xt-interior.jpg" alt="Ryzen 5 7500X3D and PowerColor Radeon RX 9070 XT build with purple RGB fans" loading="lazy">
+      </div>
+      <div class="gallery-item">
+        <img src="https://www.chattnerds.com/build-7500x3d-9070xt-blue.jpg" alt="All-AMD gaming PC with blue lighting and a PowerColor Radeon graphics card" loading="lazy">
+      </div>
+    </div>
+  </div>
+
+  <h2 class="page-title" style="font-size: 26px; margin: 10px 0 20px;">More Builds</h2>
 
   <div class="gallery-grid">
 
