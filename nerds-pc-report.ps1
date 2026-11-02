@@ -262,7 +262,7 @@ $apps = @('HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKLM:\
     ForEach-Object { Get-ItemProperty $_ } | Where-Object { $_.DisplayName -and -not $_.SystemComponent } |
     Sort-Object DisplayName -Unique
 W ("{0} programs installed." -f @($apps).Count)
-$flag = 'Afterburner|RivaTuner|RTSS|Overwolf|CurseForge|Thunderstore|r2modman|Vortex|Mod Organizer|Wabbajack|WowUp|ReShade|Special K|Lossless Scaling|Wallpaper Engine|Razer Cortex|Driver Booster|Driver Easy|CCleaner|McAfee|Norton|Avast|AVG|Avira|Webroot|PC Optimizer|Ryzen Master|Armoury|iCUE|Lightshot|Discord|GeForce Experience|NVIDIA App|AMD Software|Steam|Epic Games|Battle\.net|EA app|Ubisoft'
+$flag = 'Afterburner|RivaTuner|RTSS|Overwolf|CurseForge|Thunderstore|r2modman|Vortex|Mod Organizer|Wabbajack|WowUp|ReShade|Special K|Lossless Scaling|OBS Studio|Streamlabs|XSplit|NVIDIA Broadcast|Camera Hub|Elgato|Meld Studio|Twitch Studio|PRISM Live|vMix|ManyCam|Snap Camera|VTube|Voicemeeter|Wallpaper Engine|Razer Cortex|Driver Booster|Driver Easy|CCleaner|McAfee|Norton|Avast|AVG|Avira|Webroot|PC Optimizer|Ryzen Master|Armoury|iCUE|Lightshot|Discord|GeForce Experience|NVIDIA App|AMD Software|Steam|Epic Games|Battle\.net|EA app|Ubisoft'
 W 'Programs that commonly matter for games / performance:'
 $apps | Where-Object { $_.DisplayName -match $flag } | ForEach-Object { W ("  {0}  {1}" -f $_.DisplayName, $_.DisplayVersion) }
 W ''
@@ -312,6 +312,160 @@ foreach ($p in "$env:APPDATA\Vortex", "$env:LOCALAPPDATA\ModOrganizer", "$env:AP
 }
 if ($modHits) { $modHits | Select-Object -Unique -First 40 | ForEach-Object { W $_ } } else { W '  (none found)' }
 
+Step 'Streaming: 30-second GPU load sample, cameras, OBS / Streamlabs (keep your game and OBS open)'
+Section 'STREAMING: GPU LOAD, CAMERAS, OBS / STREAMLABS'
+# Added 2026-11-02 (a streamer's GPU overloads and the camera won't run while live). The rest of the report is a
+# snapshot; this shows what the GPU is doing right now, who has the camera, and how OBS is set up.
+# Never reads OBS service.json (holds the stream key).
+$streamFiles = @()
+$liveApps = Get-Process | Where-Object { $_.ProcessName -match '^(obs64|obs32|obs)$|Streamlabs|NVIDIA Broadcast|Camera Hub|XSplit|Meld|Twitch Studio|PRISM|vMix|ManyCam|Snap Camera|VTube|veadotube|Discord' } |
+    Select-Object -ExpandProperty ProcessName -Unique
+W ("Streaming / camera apps running during this report: {0}" -f $(if ($liveApps) { $liveApps -join ', ' } else { 'none (GPU numbers below are NOT from a live stream)' }))
+W ''
+W 'GPU load, 30-second sample (per graphics adapter; only means something if the game and OBS were running):'
+$gs = Get-Counter -Counter '\GPU Engine(*)\Utilization Percentage', '\GPU Adapter Memory(*)\Dedicated Usage' -SampleInterval 2 -MaxSamples 15
+if ($gs) {
+    $typeVals = @{}   # "luid|engtype" -> per-sample % (busiest engine of that type)
+    $procSum = @{}    # "pid|engtype" -> summed %
+    $vramPeak = @{}   # luid -> peak dedicated bytes
+    $n = 0
+    foreach ($s in $gs) {
+        $n++
+        $engSum = @{}; $engKey = @{}
+        foreach ($c in $s.CounterSamples) {
+            if ($c.InstanceName -match '^pid_(\d+)_luid_(0x[0-9a-f]+_0x[0-9a-f]+)_phys_(\d+)_eng_(\d+)_engtype_(.*)$') {
+                $procId = $Matches[1]; $luid = $Matches[2]; $t = $(if ($Matches[5]) { $Matches[5] } else { 'other' })
+                $k = "$luid|$($Matches[3])|$($Matches[4])"
+                $engSum[$k] = [double]$engSum[$k] + $c.CookedValue; $engKey[$k] = "$luid|$t"
+                $procSum["$procId|$t"] = [double]$procSum["$procId|$t"] + $c.CookedValue
+            } elseif ($c.InstanceName -match '^luid_(0x[0-9a-f]+_0x[0-9a-f]+)_phys') {
+                $luid = $Matches[1]; if ($c.CookedValue -gt [double]$vramPeak[$luid]) { $vramPeak[$luid] = $c.CookedValue }
+            }
+        }
+        $perType = @{}
+        foreach ($k in $engSum.Keys) { $v = [math]::Min(100, $engSum[$k]); if ($v -gt [double]$perType[$engKey[$k]]) { $perType[$engKey[$k]] = $v } }
+        foreach ($tk in $perType.Keys) { if (-not $typeVals[$tk]) { $typeVals[$tk] = New-Object System.Collections.ArrayList }; [void]$typeVals[$tk].Add($perType[$tk]) }
+    }
+    $luids = @($typeVals.Keys | ForEach-Object { ($_ -split '\|')[0] } | Sort-Object -Unique | Sort-Object { -[double]$vramPeak[$_] })
+    foreach ($l in $luids) {
+        W ("  Adapter {0}  (dedicated VRAM in use, peak {1:N1} GB)" -f $l, ([double]$vramPeak[$l] / 1GB))
+        foreach ($t in '3D', 'VideoEncode', 'VideoDecode', 'Compute', 'Copy') {
+            $vals = $typeVals["$l|$t"]
+            if (-not $vals) { continue }
+            $avg = ($vals | Measure-Object -Average).Average * $vals.Count / $n   # samples where the engine was idle count as 0
+            $peak = ($vals | Measure-Object -Maximum).Maximum
+            W ("    {0,-12} average {1,3:N0}%   peak {2,3:N0}%" -f $t, $avg, $peak)
+        }
+    }
+    $main = $luids | Select-Object -First 1
+    if ($main -and $typeVals["$main|3D"]) {
+        $peak3d = ($typeVals["$main|3D"] | Measure-Object -Maximum).Maximum
+        $avg3d = ($typeVals["$main|3D"] | Measure-Object -Average).Average * $typeVals["$main|3D"].Count / $n
+        if ($avg3d -ge 90) { W ("NOTE: main GPU 3D engine averaged {0:N0}% (peak {1:N0}%). It is maxed out: OBS and the camera are starved. Cap the game's FPS." -f $avg3d, $peak3d) }
+    }
+    W '  Top GPU users during the sample (average %):'
+    $top = foreach ($k in $procSum.Keys) {
+        $procId, $t = $k -split '\|', 2
+        if ($t -notin '3D', 'VideoEncode', 'VideoDecode', 'Compute') { continue }
+        $p = Get-Process -Id $procId
+        [pscustomobject]@{ Process = $(if ($p) { $p.ProcessName } else { "pid $procId (exited)" }); Engine = $t; Avg = $procSum[$k] / $n }
+    }
+    $top = @($top | Group-Object Process, Engine | ForEach-Object { [pscustomobject]@{ Process = $_.Group[0].Process; Engine = $_.Group[0].Engine; Avg = ($_.Group | Measure-Object Avg -Sum).Sum } } |
+        Where-Object { $_.Avg -ge 0.5 } | Sort-Object Avg -Descending | Select-Object -First 10)
+    if ($top) { $top | ForEach-Object { W ("    {0,5:N1}%  {1,-12} {2}" -f $_.Avg, $_.Engine, $_.Process) } } else { W '    (nothing using the GPU)' }
+} else { W '  (GPU performance counters not available)' }
+$smi = Join-Path $env:SystemRoot 'System32\nvidia-smi.exe'
+if (Test-Path $smi) {
+    W '  nvidia-smi (end of sample):'
+    & $smi --query-gpu=name,temperature.gpu,utilization.gpu,memory.used,memory.total,power.draw,power.limit,clocks.gr,pstate,pcie.link.gen.current,pcie.link.width.current --format=csv 2>$null | ForEach-Object { W ("    " + $_) }
+}
+
+W ''
+W 'Cameras and capture devices:'
+$cams = Get-PnpDevice -PresentOnly | Where-Object { $_.Class -in 'Camera', 'Image' -or ($_.Class -eq 'MEDIA' -and $_.FriendlyName -match 'Capture|Elgato|AVerMedia|Cam Link|Webcam|Camera|Razer|Logi|Magewell') }
+T ($cams | Select-Object Status, Class, FriendlyName, @{n='HardwareId';e={($_.InstanceId -split '\\')[1]}})
+$cb = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam'
+W ("Camera privacy: whole PC {0}, this user {1}, desktop apps {2}" -f (Get-ItemProperty ($cb -replace '^HKCU', 'HKLM')).Value, (Get-ItemProperty $cb).Value, (Get-ItemProperty "$cb\NonPackaged").Value)
+$camUse = foreach ($k in @(Get-ChildItem $cb | Where-Object { $_.PSChildName -ne 'NonPackaged' }) + @(Get-ChildItem "$cb\NonPackaged")) {
+    $p = Get-ItemProperty $k.PSPath
+    if (-not $p.LastUsedTimeStart) { continue }
+    [pscustomobject]@{ InUseNow = $(if ($p.LastUsedTimeStop -eq 0) { 'YES' } else { '' }); LastUsed = [DateTime]::FromFileTime($p.LastUsedTimeStart); App = ($k.PSChildName -replace '#', '\').Replace($env:USERPROFILE, '%USERPROFILE%') }
+}
+W 'Apps that used the camera, newest first (InUseNow YES = holding it right now; only one app can hold most webcams):'
+T ($camUse | Sort-Object LastUsed -Descending | Select-Object -First 10)
+
+$obs = Join-Path $env:APPDATA 'obs-studio'
+if (Test-Path $obs) {
+    W ''
+    W 'OBS Studio setup:'
+    $active = @{}
+    foreach ($gi in 'user.ini', 'global.ini') {
+        $p = Join-Path $obs $gi
+        if (Test-Path $p) { Get-Content $p | Where-Object { $_ -match '^(Profile|SceneCollection)=(.*)$' } | ForEach-Object { $active[$Matches[1]] = $Matches[2] }; if ($active.Count) { break } }
+    }
+    W ("  Active profile: {0}   scene collection: {1}" -f $active['Profile'], $active['SceneCollection'])
+    $profs = @(Get-ChildItem (Join-Path $obs 'basic\profiles') -Directory)
+    if ($profs.Count -gt 1) { W ("  All profiles: " + (($profs | ForEach-Object { $_.Name }) -join ', ')) }
+    foreach ($pd in $profs | Where-Object { $_.Name -eq $active['Profile'] -or $profs.Count -eq 1 }) {
+        $ini = Join-Path $pd.FullName 'basic.ini'
+        $sec = ''
+        $keys = if (Test-Path $ini) { foreach ($il in Get-Content $ini) {
+            if ($il -match '^\[(.+)\]$') { $sec = $Matches[1] }
+            elseif ($il -match '^(Mode|BaseCX|BaseCY|OutputCX|OutputCY|FPSType|FPSCommon|FPSInt|StreamEncoder|VBitrate|Preset|NVENCPreset2|Encoder|RecEncoder|RecQuality|Rescale|RescaleRes|ScaleType|ColorFormat|ColorSpace)=') { "$sec.$il" }
+        } }
+        W ("  Profile '{0}' settings: {1}" -f $pd.Name, $(if ($keys) { $keys -join ', ' } else { '(no settings file)' }))
+        foreach ($e in 'streamEncoder.json', 'recordEncoder.json') {
+            $p = Join-Path $pd.FullName $e
+            if (Test-Path $p) { W ("    {0}: {1}" -f $e, ((Get-Content $p -Raw) -replace '\s+', ' ')) }
+        }
+    }
+    foreach ($sc in Get-ChildItem (Join-Path $obs 'basic\scenes') -Filter *.json) {
+        $j = $null; try { $j = Get-Content $sc.FullName -Raw | ConvertFrom-Json } catch {}
+        if (-not $j -or -not $j.sources) { continue }
+        $src = @($j.sources)
+        W ("  Scene collection '{0}': {1} sources" -f $sc.BaseName, $src.Count)
+        W ("    source types: " + (($src | Group-Object id | Sort-Object Count -Descending | ForEach-Object { "$($_.Name) x$($_.Count)" }) -join ', '))
+        $flt = @($src | ForEach-Object { $_.filters } | Where-Object { $_ })
+        if ($flt) { W ("    filters: " + (($flt | Group-Object id | Sort-Object Count -Descending | ForEach-Object { "$($_.Name) x$($_.Count)" }) -join ', ')) }
+        foreach ($s in $src | Where-Object { $_.id -match 'dshow_input|mediafoundation|av_capture' }) {
+            $fi = [double]$s.settings.frame_interval
+            W ("    camera source '{0}': device {1}, resolution {2}, fps {3}, filters: {4}" -f $s.name, $(if ($s.settings.video_device_id) { ($s.settings.video_device_id -split ':')[0] } else { 'not set' }),
+                $(if ($s.settings.res_type -eq 1) { $s.settings.resolution } else { 'device default' }), $(if ($fi -gt 0) { [math]::Round(1e7 / $fi) } else { 'default' }),
+                $(if ($s.filters) { (@($s.filters) | ForEach-Object { "$($_.name) ($($_.id))" }) -join ', ' } else { 'none' }))
+        }
+        if ($flt | Where-Object { $_.id -match 'greenscreen|nv_|shader|blur|upscal' }) { W '    NOTE: GPU-heavy filters in use (background removal / blur / shaders). These cost real GPU time every frame.' }
+    }
+}
+
+function ObsLogSummary($dir, $label) {
+    $logs = @(Get-ChildItem $dir -File | Where-Object { $_.Extension -in '.txt', '.log' } | Sort-Object LastWriteTime -Descending | Select-Object -First 3)
+    if (-not $logs) { return @() }
+    $files = @($logs | Where-Object { $_.Length -lt 5MB } | ForEach-Object { [pscustomobject]@{ Src = $_.FullName; Name = "$label-$($_.Name)" } })
+    $f = $logs | Where-Object { Select-String -Path $_.FullName -Pattern '==== (Streaming|Recording) Start' -Quiet } | Select-Object -First 1
+    if (-not $f) { $f = $logs[0] }
+    W ''
+    W ("{0} log summary: {1}  (last written {2}; newest 3 logs are in the zip under Streaming\)" -f $label, $f.Name, $f.LastWriteTime)
+    $lines = Get-Content $f.FullName | ForEach-Object { $_ -replace '^\d\d:\d\d:\d\d\.\d{3}:\s?', '' }
+    $key = $lines | Where-Object { $_ -match 'OBS \d+\.\d+\.\d+|Running as administrator|Loading up D3D1[12] on adapter|Hardware-Accelerated GPU Scheduling|Game Mode|base resolution|output resolution|downscale filter|^\s*fps:\s+\d+/\d+\s*$|==== (Streaming|Recording) (Start|Stop)|skipped frames due to encoding lag|lagged frames due to rendering lag|dropped frames due to insufficient bandwidth' }
+    $key | Select-Object -First 40 | ForEach-Object { W ("  " + $_.Trim()) }
+    # encoder blocks: the "[<encoder>: '<output>'] ..." line plus its indented detail lines
+    $encL = New-Object System.Collections.ArrayList
+    for ($i = 0; $i -lt $lines.Count -and $encL.Count -lt 40; $i++) {
+        if ($lines[$i] -match "^\[(obs-nvenc|jim-nvenc|NVENC|texture-amf|AMF|amf|x264|obs_x264|qsv|QSV|av1|hevc|h264|h265|ffmpeg)[^\]]*'[^']*'\]" -or $lines[$i] -match "^encoder '") {
+            if ($encL -notcontains $lines[$i].Trim()) { [void]$encL.Add($lines[$i].Trim()) }
+            for ($j = $i + 1; $j -lt [math]::Min($lines.Count, $i + 20) -and $lines[$j] -match '^\s+\S'; $j++) { [void]$encL.Add('  ' + $lines[$j].Trim()) }
+        }
+    }
+    if ($encL.Count) { W '  Encoder:'; $encL | ForEach-Object { W ("    " + $_) } }
+    $noise = 'error_reporting|ErrorMode|CEF|\[browser|Failed to initialize module|Failed to load .en-US|DeckLink|version info size|redistributable not found|LoadLibrary failed|Failed to open config file|CoreAudio'
+    $errL = @($lines | Where-Object { $_ -match 'dshow|Video Capture|Could not|Failed to|[Ee]rror|timed out|device.*(busy|in use|lost)' -and $_ -notmatch $noise } | Select-Object -Unique -First 15)
+    if ($errL) { W '  Camera / errors:'; $errL | ForEach-Object { W ("    " + $_.Trim()) } }
+    return $files
+}
+$streamFiles += @(ObsLogSummary (Join-Path $obs 'logs') 'OBS')
+$streamFiles += @(ObsLogSummary (Join-Path $env:APPDATA 'slobs-client\node-obs\logs') 'Streamlabs')
+if (-not (Test-Path $obs) -and -not (Test-Path (Join-Path $env:APPDATA 'slobs-client'))) { W ''; W 'OBS / Streamlabs: not found for this user.' }
+
 Section 'STARTUP ITEMS'
 T (Get-CimInstance Win32_StartupCommand | Select-Object Name, Location)
 
@@ -325,6 +479,7 @@ if ($wlan) { $wlan | ForEach-Object { W ("  " + $_.Line.Trim()) } }
 W ''
 W 'Attached in the zip: System.evtx and Application.evtx (last 14 days, warnings and errors)'
 W 'for opening in Event Viewer.'
+if ($streamFiles) { W 'Also in the zip: Streaming\\ (newest OBS / Streamlabs logs).' }
 W '--- end of report ---'
 [IO.File]::WriteAllText($out, $sb.ToString(), [Text.Encoding]::UTF8)
 
@@ -337,6 +492,10 @@ $ms = [int64](14 * 24 * 3600 * 1000)
 $q = "*[System[(Level=1 or Level=2 or Level=3) and TimeCreated[timediff(@SystemTime) <= $ms]]]"
 foreach ($log in 'System', 'Application') {
     wevtutil epl $log (Join-Path $work "$log.evtx") "/q:$q" /ow:true 2>$null
+}
+if ($streamFiles) {
+    $sd = Join-Path $work 'Streaming'; New-Item -ItemType Directory -Force $sd | Out-Null
+    foreach ($sf in $streamFiles) { Copy-Item -LiteralPath $sf.Src (Join-Path $sd $sf.Name) }
 }
 
 # ---------------- DEEP mode: everything needed to pin down a crash in one pull ----------------
