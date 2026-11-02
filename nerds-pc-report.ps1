@@ -222,16 +222,21 @@ W ''
 W 'Kernel crash reports (LiveKernelEvent codes from Windows Error Reporting):'
 W '  141 = graphics driver hung and was reset, 117 = graphics driver timed out,'
 W '  1a8/1b8 = graphics/display kernel issue, ab = session teardown, 193 = video memory issue'
+# Dates come from EventTime inside Report.wer: Windows rewrites old report folders in bulk, so the folder date
+# can make months-old GPU hangs look new (seen on Mike's PC 2026-11-02, 50 old reports re-dated at once).
+function WerTime($txt, $dir) { if ($txt -match 'EventTime=(\d+)') { try { return [DateTime]::FromFileTime([int64]$Matches[1]) } catch {} }; return $dir.LastWriteTime }
 $werDirs = @('C:\ProgramData\Microsoft\Windows\WER\ReportArchive', 'C:\ProgramData\Microsoft\Windows\WER\ReportQueue') |
     ForEach-Object { Get-ChildItem $_ -Directory } | Where-Object { $_.LastWriteTime -gt $since }
 $lke = foreach ($d in $werDirs) {
     $r = Join-Path $d.FullName 'Report.wer'
     if (-not (Test-Path $r)) { continue }
     $txt = Get-Content $r -Encoding Unicode -Raw
+    $when = WerTime $txt $d
+    if ($when -lt $since) { continue }
     if ($txt -notmatch 'EventType=(LiveKernelEvent|BlueScreen)') { continue }
     $code = if ($txt -match 'Sig\[0\]\.Value=([0-9A-Fa-f]+)') { $Matches[1].ToLower() } else { '?' }
     $drv = if ($txt -match 'Sig\[\d\]\.Name=(?:Failure|Faulting)[^\r\n]*\r?\nSig\[\d\]\.Value=([^\r\n]+)') { $Matches[1] } else { '' }
-    [pscustomobject]@{ When = $d.LastWriteTime; Type = $Matches[0] -replace '.*=', ''; Code = $code; Detail = $drv }
+    [pscustomobject]@{ When = $when; Type = $Matches[0] -replace '.*=', ''; Code = $code; Detail = $drv }
 }
 if ($lke) {
     $lke | Group-Object Code | Sort-Object Count -Descending | ForEach-Object { W ("  code {0}: {1}x, last {2}" -f $_.Name, $_.Count, ($_.Group | Sort-Object When -Descending | Select-Object -First 1).When) }
@@ -319,31 +324,54 @@ Section 'STREAMING: GPU LOAD, CAMERAS, OBS / STREAMLABS'
 $streamFiles = @()
 # Streaming mode (report.ps1 asked "streaming or camera problem?" and got Y): wait for the customer to load the game
 # and OBS before sampling, so slow PCs and single-screen setups never have to race the report or alt-tab back.
-# Goes when OBS/Streamlabs runs AND the GPU is busy for 4 checks in a row, or OBS has run 3 min, or 10 min pass. (2026-11-02)
+# v2 (2026-11-02, Mike's live test): a GPU-% threshold missed light games (modded Stardew ~5% on a 7900 XTX) and a
+# 3-minute OBS cutoff left before a slow game finished loading. Now: detect the game itself (a process running from a
+# game library folder, or any non-system process drawing on the GPU), give it 45 s to finish loading, then sample.
+# Waits up to 10 minutes; OBS/Streamlabs is waited for up to 2 more minutes after the game shows up.
 $streamWait = ''
 if ($env:NERDS_REPORT_STREAM) {
-    Step 'Waiting for your game and OBS / Streamlabs (up to 10 minutes). Play like normal; no need to come back here.'
-    $procPat = $(if ($env:NERDS_STREAM_TEST_PROCS) { $env:NERDS_STREAM_TEST_PROCS } else { '^(obs64|obs32|obs)$|Streamlabs' })
-    $busyPct = $(if ($env:NERDS_STREAM_TEST_BUSY) { [double]$env:NERDS_STREAM_TEST_BUSY } else { 40 })
+    Step 'Waiting for your game (up to 10 minutes). Open it and OBS / Streamlabs and play like normal; no need to come back here.'
+    $obsPat = $(if ($env:NERDS_STREAM_TEST_OBS) { $env:NERDS_STREAM_TEST_OBS } else { '^(obs64|obs32|obs)$|Streamlabs' })
     $maxWait = $(if ($env:NERDS_STREAM_TEST_MAX) { [int]$env:NERDS_STREAM_TEST_MAX } else { 600 })
-    $t0 = Get-Date; $obsSince = $null; $streak = 0; $lastNote = 0; $why = ''
+    $settle = $(if ($env:NERDS_STREAM_TEST_SETTLE) { [int]$env:NERDS_STREAM_TEST_SETTLE } else { 45 })
+    $gameDirs = @($gameRoots | Where-Object { $_ -match '\\steamapps\\common$|\\(Games|Riot Games|Epic Games|XboxGames|GOG Games)$' })
+    foreach ($d in (Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null }).Root) {
+        foreach ($sub in 'Program Files\EA Games', 'Program Files\Epic Games', 'Program Files (x86)\Ubisoft\Ubisoft Game Launcher\games', 'Program Files (x86)\GOG Galaxy\Games') { $p = Join-Path $d $sub; if (Test-Path $p) { $gameDirs += $p } }
+    }
+    if ($env:NERDS_STREAM_TEST_GAMEROOT) { $gameDirs += $env:NERDS_STREAM_TEST_GAMEROOT }
+    $gameDirs = @($gameDirs | Sort-Object -Unique)
+    $notGame = '^(dwm|explorer|csrss|svchost|System|Idle|audiodg|ctfmon|conhost|powershell|pwsh|WindowsTerminal|OpenConsole|LockApp|SearchHost|StartMenuExperienceHost|ShellExperienceHost|TextInputHost|ApplicationFrameHost|SystemSettings|Widgets|WidgetService|PhoneExperienceHost|CrossDeviceService|backgroundTaskHost|RuntimeBroker|GameBar.*|XboxPcApp|obs64|obs32|obs|obs-browser-page|obs-ffmpeg-mux|chrome|msedge|msedgewebview2|firefox|opera|brave|vivaldi|Discord|steam|steamwebhelper|steamservice|EpicGamesLauncher|EpicWebHelper|Battle\.net|Agent|EADesktop|EABackgroundService|EAConnect.*|UbisoftConnect|upc|UplayWebCore|GalaxyClient.*|RiotClient.*|Overwolf.*|NVIDIA.*|nvcontainer|nvsphelper64|RadeonSoftware|AMDRSServ|AMDRSSrcExt|amdow|cncmd|atieclxx|Spotify|Teams|ms-teams|Code|Streamlabs.*|StreamElements.*|Insta360.*|Camera Hub|Voicemeeter.*|WigiDash.*|Wallpaper.*|Lively.*|iCUE|SignalRgb|Armoury.*|.*[Cc]rash[Hh]andler.*|.*[Cc]rash[Rr]eport.*|crashpad_handler|EasyAntiCheat.*|BEService.*|vc_redist.*|.*[Ll]auncher.*|.*[Uu]pdater.*|.*[Ss]etup.*)$'
+    $t0 = Get-Date; $game = $null; $gameSince = $null; $obsSeen = $false; $lastNote = 0; $why = ''
     while ($true) {
         $el = ((Get-Date) - $t0).TotalSeconds
-        $obsUp = [bool](Get-Process | Where-Object { $_.ProcessName -match $procPat })
-        if ($obsUp -and -not $obsSince) { $obsSince = Get-Date }
-        $eng = @{}
-        (Get-Counter '\GPU Engine(*engtype_3D)\Utilization Percentage' -SampleInterval 1 -MaxSamples 1).CounterSamples | ForEach-Object {
-            if ($_.InstanceName -match 'luid_(.+)_phys_(\d+)_eng_(\d+)') { $k = $Matches[0] -replace '^.*?luid', 'luid'; $eng[$k] = [double]$eng[$k] + $_.CookedValue }
+        $procs = Get-Process
+        $obsUp = [bool]($procs | Where-Object { $_.ProcessName -match $obsPat })
+        if ($obsUp) { $obsSeen = $true }
+        # a process running from a game library folder...
+        $found = $procs | Where-Object { $_.ProcessName -notmatch $notGame -and $_.Path } | Where-Object { $pp = $_.Path; [bool]($gameDirs | Where-Object { $pp.StartsWith($_ + '\', [StringComparison]::OrdinalIgnoreCase) }) } |
+            Sort-Object WorkingSet64 -Descending | Select-Object -First 1
+        # ...or any non-system process drawing on the GPU's 3D engine (games installed somewhere else)
+        if (-not $found) {
+            $use = @{}
+            (Get-Counter '\GPU Engine(*engtype_3D)\Utilization Percentage' -SampleInterval 1 -MaxSamples 1).CounterSamples | ForEach-Object {
+                if ($_.InstanceName -match '^pid_(\d+)_') { $use[$Matches[1]] = [double]$use[$Matches[1]] + $_.CookedValue }
+            }
+            $found = $use.Keys | Where-Object { $use[$_] -ge 2 } | ForEach-Object { $procs | Where-Object Id -eq ([int]$_) } |
+                Where-Object { $_ -and $_.ProcessName -notmatch $notGame } | Sort-Object WorkingSet64 -Descending | Select-Object -First 1
         }
-        $load = ($eng.Values | Measure-Object -Maximum).Maximum
-        if ($load -ge $busyPct) { $streak++ } else { $streak = 0 }
-        if ($obsUp -and $streak -ge 4) { $why = 'caught the game running with OBS open'; break }
-        if ($obsSince -and ((Get-Date) - $obsSince).TotalSeconds -ge 180) { $why = 'OBS open 3 minutes, GPU not busy (game may be in a menu, capped, or not started)'; break }
-        if ($el -ge $maxWait) { $why = "gave up after $([int]($maxWait / 60)) minutes (OBS open: $obsUp)"; break }
-        if ($el - $lastNote -ge 60) { $lastNote = $el; if ($el -gt 5) { Step ("Still waiting ({0} min). OBS open: {1}. Load the game and play." -f [int]($el / 60), $(if ($obsUp) { 'yes' } else { 'no' })) } }
-        Start-Sleep -Seconds 2
+        if ($found) {
+            if (-not $game -or -not (Get-Process -Id $game.Id -ErrorAction SilentlyContinue)) { $game = $found; $gameSince = Get-Date }
+        } elseif ($game -and -not (Get-Process -Id $game.Id -ErrorAction SilentlyContinue)) { $game = $null; $gameSince = $null }
+        if ($game) {
+            $gs = ((Get-Date) - $gameSince).TotalSeconds
+            if ($gs -ge $settle -and $obsUp) { $why = "caught the game ($($game.ProcessName)) running $([int]$gs) s with OBS open"; break }
+            if ($gs -ge $settle + 120) { $why = "caught the game ($($game.ProcessName)) running $([int]$gs) s; OBS / Streamlabs never opened"; break }
+        }
+        if ($el -ge $maxWait) { $why = "gave up after $([int]($maxWait / 60)) minutes (game: $(if ($game) { $game.ProcessName } else { 'none found' }), OBS open: $obsUp)"; break }
+        if ($el - $lastNote -ge 60) { $lastNote = $el; if ($el -gt 5) { Step ("Still waiting ({0} min). Game: {1}. OBS: {2}." -f [int]($el / 60), $(if ($game) { $game.ProcessName } else { 'not seen yet' }), $(if ($obsUp) { 'open' } else { 'not open' })) } }
+        Start-Sleep -Seconds 3
     }
-    $streamWait = "Streaming mode: waited {0:N0} s, {1} (GPU 3D at the end: {2:N0}%)." -f ((Get-Date) - $t0).TotalSeconds, $why, $load
+    $streamWait = "Streaming mode: waited {0:N0} s, {1}." -f ((Get-Date) - $t0).TotalSeconds, $why
 }
 Step 'Measuring GPU load for 30 seconds, then checking cameras and OBS / Streamlabs'
 if ($streamWait) { W $streamWait } elseif (-not $env:NERDS_REPORT_STREAM) { W 'Streaming mode: off (did not wait for a game; numbers are from whatever was running).' }
@@ -422,6 +450,7 @@ $camUse = foreach ($k in @(Get-ChildItem $cb | Where-Object { $_.PSChildName -ne
 }
 W 'Apps that used the camera, newest first (InUseNow YES = holding it right now; only one app can hold most webcams):'
 T ($camUse | Sort-Object LastUsed -Descending | Select-Object -First 10)
+W 'Note: Windows does not record every camera use (OBS often never shows here). The OBS camera lines below are the better check.'
 
 # Overlay / alert sites behind browser sources (StreamElements, Streamlabs widgets...): host name only,
 # never the full link (those links carry account tokens). 2026-11-02.
@@ -479,18 +508,29 @@ if (Test-Path $obs) {
                 $(if ($s.settings.res_type -eq 1) { $s.settings.resolution } else { 'device default' }), $(if ($fi -gt 0) { [math]::Round(1e7 / $fi) } else { 'default' }),
                 $(if ($s.filters) { (@($s.filters) | ForEach-Object { "$($_.name) ($($_.id))" }) -join ', ' } else { 'none' }))
         }
+        # which scene OBS last saved as active, and whether a camera source is in it (directly or one nested scene down)
+        $camNames = @($src | Where-Object { $_.id -match 'dshow_input|mediafoundation|av_capture' } | ForEach-Object { $_.name })
+        foreach ($which in @(@('current_program_scene', 'Active scene'), @('current_scene', 'Preview scene'))) {
+            $sn = $j.($which[0]); if (-not $sn -or ($which[1] -eq 'Preview scene' -and $sn -eq $j.current_program_scene)) { continue }
+            $items = @(($src | Where-Object { $_.id -eq 'scene' -and $_.name -eq $sn } | Select-Object -First 1).settings.items | ForEach-Object { $_.name })
+            $nested = @($items | ForEach-Object { $n = $_; ($src | Where-Object { $_.id -eq 'scene' -and $_.name -eq $n } | Select-Object -First 1).settings.items | ForEach-Object { $_.name } })
+            $camIn = @($camNames | Where-Object { $items -contains $_ -or $nested -contains $_ })
+            W ("    {0} (as OBS last saved it): '{1}'  camera in it: {2}" -f $which[1], $sn, $(if ($camIn) { 'YES (' + ($camIn -join ', ') + ')' } elseif ($camNames) { 'no' } else { 'no camera source in OBS' }))
+        }
         if ($flt | Where-Object { $_.id -match 'greenscreen|nv_|shader|blur|upscal' }) { W '    NOTE: GPU-heavy filters in use (background removal / blur / shaders). These cost real GPU time every frame.' }
     }
 }
 
 function ObsLogSummary($dir, $label) {
-    $logs = @(Get-ChildItem $dir -File | Where-Object { $_.Extension -in '.txt', '.log' } | Sort-Object LastWriteTime -Descending | Select-Object -First 3)
-    if (-not $logs) { return @() }
-    $files = @($logs | Where-Object { $_.Length -lt 5MB } | ForEach-Object { [pscustomobject]@{ Src = $_.FullName; Name = "$label-$($_.Name)" } })
-    $f = $logs | Where-Object { Select-String -Path $_.FullName -Pattern '==== (Streaming|Recording) Start' -Quiet } | Select-Object -First 1
-    if (-not $f) { $f = $logs[0] }
+    $all = @(Get-ChildItem $dir -File | Where-Object { $_.Extension -in '.txt', '.log' } | Sort-Object LastWriteTime -Descending)
+    if (-not $all) { return @() }
+    $logs = @($all | Select-Object -First 3)
+    $f = $logs[0]   # current / latest session (2026-11-02: was "newest log with a stream", which skipped today's session)
+    $sl = $all | Select-Object -First 15 | Where-Object { Select-String -Path $_.FullName -Pattern '==== (Streaming|Recording) Start' -Quiet } | Select-Object -First 1
+    $zipLogs = @($logs) + @($(if ($sl -and $logs -notcontains $sl) { $sl }))
+    $files = @($zipLogs | Where-Object { $_.Length -lt 5MB } | ForEach-Object { [pscustomobject]@{ Src = $_.FullName; Name = "$label-$($_.Name)" } })
     W ''
-    W ("{0} log summary: {1}  (last written {2}; newest 3 logs are in the zip under Streaming\)" -f $label, $f.Name, $f.LastWriteTime)
+    W ("{0} log summary (latest session): {1}  (last written {2}; newest 3 logs + the last streamed one are in the zip under Streaming\)" -f $label, $f.Name, $f.LastWriteTime)
     $lines = Get-Content $f.FullName | ForEach-Object { $_ -replace '^\d\d:\d\d:\d\d\.\d{3}:\s?', '' }
     $key = $lines | Where-Object { $_ -match 'OBS \d+\.\d+\.\d+|Running as administrator|Loading up D3D1[12] on adapter|Hardware-Accelerated GPU Scheduling|Game Mode|base resolution|output resolution|downscale filter|^\s*fps:\s+\d+/\d+\s*$|==== (Streaming|Recording) (Start|Stop)|skipped frames due to encoding lag|lagged frames due to rendering lag|dropped frames due to insufficient bandwidth' }
     $key | Select-Object -First 40 | ForEach-Object { W ("  " + $_.Trim()) }
@@ -503,9 +543,19 @@ function ObsLogSummary($dir, $label) {
         }
     }
     if ($encL.Count) { W '  Encoder:'; $encL | ForEach-Object { W ("    " + $_) } }
-    $noise = 'error_reporting|ErrorMode|CEF|\[browser|Failed to initialize module|Failed to load .en-US|DeckLink|version info size|redistributable not found|LoadLibrary failed|Failed to open config file|CoreAudio'
-    $errL = @($lines | Where-Object { $_ -match 'dshow|Video Capture|Could not|Failed to|[Ee]rror|timed out|device.*(busy|in use|lost)' -and $_ -notmatch $noise } | Select-Object -Unique -First 15)
-    if ($errL) { W '  Camera / errors:'; $errL | ForEach-Object { W ("    " + $_.Trim()) } }
+    # OBS logs camera PROBLEMS (device busy / failed to start), not normal starts, so silence here means no camera errors.
+    $camL = @($lines | Where-Object { $_ -match '\[dshow|\[DShow|win-dshow:|DShow:|video device|Video Capture Device' -and $_ -notmatch '^\s*win-dshow\.dll\s*$|obs_init_module' } | Select-Object -Unique -First 20)
+    W '  Camera (OBS logs only camera problems, not normal starts):'
+    if ($camL) { $camL | ForEach-Object { W ("    " + $_.Trim()) } } else { W '    no camera errors this session' }
+    $noise = 'error_reporting|ErrorMode|CEF|\[browser|Failed to initialize module|Failed to load .en-US|DeckLink|version info size|redistributable not found|LoadLibrary failed|Failed to open config file|CoreAudio|^\s*win-dshow\.dll\s*$'
+    $errL = @($lines | Where-Object { $_ -match 'Could not|Failed to|[Ee]rror|timed out|device.*(busy|in use|lost)' -and $_ -notmatch $noise } | Select-Object -Unique -First 15)
+    if ($errL) { W '  Errors:'; $errL | ForEach-Object { W ("    " + $_.Trim()) } }
+    if ($sl -and $sl.FullName -ne $f.FullName) {
+        W ("  Last stream / recording was in {0} (last written {1}):" -f $sl.Name, $sl.LastWriteTime)
+        Get-Content $sl.FullName | ForEach-Object { $_ -replace '^\d\d:\d\d:\d\d\.\d{3}:\s?', '' } |
+            Where-Object { $_ -match '==== (Streaming|Recording) (Start|Stop)|skipped frames due to encoding lag|lagged frames due to rendering lag|dropped frames due to insufficient bandwidth|^\s*fps:\s+\d+/\d+\s*$|output resolution' } |
+            Select-Object -First 25 | ForEach-Object { W ("    " + $_.Trim()) }
+    } elseif (-not $sl) { W '  No stream or recording found in the last 15 logs.' }
     return $files
 }
 $sePlug = @("$env:ProgramFiles\obs-studio\obs-plugins\64bit", "$env:ProgramData\obs-studio\plugins", (Join-Path $obs 'plugin_config')) | Where-Object { Test-Path $_ } |
@@ -618,7 +668,7 @@ if ($env:NERDS_REPORT_DEEP) {
     foreach ($root in 'C:\ProgramData\Microsoft\Windows\WER\ReportArchive', 'C:\ProgramData\Microsoft\Windows\WER\ReportQueue') {
         Get-ChildItem $root -Directory | Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-30) } | ForEach-Object {
             $r = Join-Path $_.FullName 'Report.wer'
-            if (Test-Path $r) { Copy-Item $r (Join-Path $wr ($_.Name + '.wer')) }
+            if ((Test-Path $r) -and (WerTime (Get-Content $r -Encoding Unicode -Raw) $_) -gt (Get-Date).AddDays(-30)) { Copy-Item $r (Join-Path $wr ($_.Name + '.wer')) }
         }
     }
     Get-ChildItem 'C:\Windows\Minidump' -Filter *.dmp | Sort-Object LastWriteTime -Descending | Select-Object -First 5 |
