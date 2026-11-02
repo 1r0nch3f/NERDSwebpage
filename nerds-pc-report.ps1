@@ -492,6 +492,10 @@ if (Test-Path $obs) {
             if (Test-Path $p) { W ("    {0}: {1}" -f $e, ((Get-Content $p -Raw) -replace '\s+', ' ')) }
         }
     }
+    # The scene JSON is only saved on exit / edits, so the live scene comes from the newest log's switch lines (2026-11-02).
+    $obsLog = Get-ChildItem (Join-Path $obs 'logs') -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    $switches = @(); if ($obsLog) { $switches = @(Select-String -Path $obsLog.FullName -Pattern "^(\d\d:\d\d:\d\d)\.\d{3}: (?:User )?[Ss]witched to scene '(.+)'$" | ForEach-Object { [pscustomobject]@{ Time = $_.Matches[0].Groups[1].Value; Scene = $_.Matches[0].Groups[2].Value } }) }
+    $liveScene = $(if ($switches) { $switches[-1].Scene })
     foreach ($sc in Get-ChildItem (Join-Path $obs 'basic\scenes') -Filter *.json) {
         $j = $null; try { $j = Get-Content $sc.FullName -Raw | ConvertFrom-Json } catch {}
         if (-not $j -or -not $j.sources) { continue }
@@ -510,13 +514,16 @@ if (Test-Path $obs) {
         }
         # which scene OBS last saved as active, and whether a camera source is in it (directly or one nested scene down)
         $camNames = @($src | Where-Object { $_.id -match 'dshow_input|mediafoundation|av_capture' } | ForEach-Object { $_.name })
-        foreach ($which in @(@('current_program_scene', 'Active scene'), @('current_scene', 'Preview scene'))) {
-            $sn = $j.($which[0]); if (-not $sn -or ($which[1] -eq 'Preview scene' -and $sn -eq $j.current_program_scene)) { continue }
+        if ($liveScene) { $sceneChecks = @(, @($liveScene, "Active scene (from today's OBS log, $($switches[-1].Time))")) }
+        else { $sceneChecks = @(@($j.current_program_scene, 'Active scene (as OBS last saved it)'), @($(if ($j.current_scene -ne $j.current_program_scene) { $j.current_scene }), 'Preview scene (as OBS last saved it)')) }
+        foreach ($which in $sceneChecks) {
+            $sn = $which[0]; if (-not $sn) { continue }
             $items = @(($src | Where-Object { $_.id -eq 'scene' -and $_.name -eq $sn } | Select-Object -First 1).settings.items | ForEach-Object { $_.name })
             $nested = @($items | ForEach-Object { $n = $_; ($src | Where-Object { $_.id -eq 'scene' -and $_.name -eq $n } | Select-Object -First 1).settings.items | ForEach-Object { $_.name } })
             $camIn = @($camNames | Where-Object { $items -contains $_ -or $nested -contains $_ })
-            W ("    {0} (as OBS last saved it): '{1}'  camera in it: {2}" -f $which[1], $sn, $(if ($camIn) { 'YES (' + ($camIn -join ', ') + ')' } elseif ($camNames) { 'no' } else { 'no camera source in OBS' }))
+            W ("    {0}: '{1}'  camera in it: {2}" -f $which[1], $sn, $(if ($camIn) { 'YES (' + ($camIn -join ', ') + ')' } elseif ($camNames) { 'no' } else { 'no camera source in OBS' }))
         }
+        if ($switches) { W ("    Scene switches in today's OBS log: " + (($switches | Select-Object -Last 12 | ForEach-Object { "$($_.Time) $($_.Scene)" }) -join ', ')) }
         if ($flt | Where-Object { $_.id -match 'greenscreen|nv_|shader|blur|upscal' }) { W '    NOTE: GPU-heavy filters in use (background removal / blur / shaders). These cost real GPU time every frame.' }
     }
 }
@@ -543,10 +550,10 @@ function ObsLogSummary($dir, $label) {
         }
     }
     if ($encL.Count) { W '  Encoder:'; $encL | ForEach-Object { W ("    " + $_) } }
-    # OBS logs camera PROBLEMS (device busy / failed to start), not normal starts, so silence here means no camera errors.
+    # Camera lines: OBS logs the device when the camera source starts or its settings load, and logs failures (device busy etc.).
     $camL = @($lines | Where-Object { $_ -match '\[dshow|\[DShow|win-dshow:|DShow:|video device|Video Capture Device' -and $_ -notmatch '^\s*win-dshow\.dll\s*$|obs_init_module' } | Select-Object -Unique -First 20)
-    W '  Camera (OBS logs only camera problems, not normal starts):'
-    if ($camL) { $camL | ForEach-Object { W ("    " + $_.Trim()) } } else { W '    no camera errors this session' }
+    W '  Camera lines from OBS this session:'
+    if ($camL) { $camL | ForEach-Object { W ("    " + $_.Trim()) } } else { W '    (none: OBS did not start or report a camera this session)' }
     $noise = 'error_reporting|ErrorMode|CEF|\[browser|Failed to initialize module|Failed to load .en-US|DeckLink|version info size|redistributable not found|LoadLibrary failed|Failed to open config file|CoreAudio|^\s*win-dshow\.dll\s*$'
     $errL = @($lines | Where-Object { $_ -match 'Could not|Failed to|[Ee]rror|timed out|device.*(busy|in use|lost)' -and $_ -notmatch $noise } | Select-Object -Unique -First 15)
     if ($errL) { W '  Errors:'; $errL | ForEach-Object { W ("    " + $_.Trim()) } }
