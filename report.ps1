@@ -28,6 +28,18 @@ if (-not $Nested) {
     Say 'logs). It takes 2-5 minutes. Leave this window open until it says done.'
 }
 $deep = $true
+$stream = $false
+if (-not $Nested) {
+    Write-Host ''
+    $a = Read-Host 'Is this for a streaming or camera problem? Type Y or N, then press Enter'
+    $stream = $a -match '^\s*y'
+    if ($stream) {
+        Write-Host ''
+        Say 'OK. Now open your game and OBS (or Streamlabs), turn your camera on, and play like normal.' 'Yellow'
+        Say 'Take your time. You do NOT need to come back to this window: the report waits for your' 'Yellow'
+        Say 'game (up to 10 minutes), measures it, and sends itself to Mike when it is done.' 'Yellow'
+    }
+}
 
 $core = Join-Path $env:TEMP 'nerds-pc-report.ps1'
 try {
@@ -40,10 +52,10 @@ try {
 }
 
 Write-Host ''
-Say 'Streaming or camera problem? Open your game and OBS (or Streamlabs) now and leave them running: the GPU check starts in about a minute.' 'Yellow'
 Say ("Collecting the PC report (read-only{0})..." -f $(if ($deep) { ', deep: 2-5 minutes' } else { ', about a minute' })) 'Cyan'
 $env:NERDS_REPORT_QUIET = '1'
 if ($deep) { $env:NERDS_REPORT_DEEP = '1' } else { Remove-Item Env:NERDS_REPORT_DEEP -ErrorAction SilentlyContinue }
+if ($stream) { $env:NERDS_REPORT_STREAM = '1' } else { Remove-Item Env:NERDS_REPORT_STREAM -ErrorAction SilentlyContinue }
 $report = ''
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $core *>&1 | ForEach-Object {
     $s = "$_".Trim()
@@ -56,20 +68,24 @@ if (-not $report) {
     Say "The report didn't finish. Mike can run it with you later: (423) 521-5694" 'Red'
 } else {
     Say 'Sending it to Mike...' 'Cyan'
-    $ok = $false
-    try {
-        $body = @{
-            key  = 'nerds-report-v1'
-            name = (Split-Path $report -Leaf)
-            pc   = $env:COMPUTERNAME
-            user = $env:USERNAME
-            rid  = "$env:NERDS_RID"
-            data = [Convert]::ToBase64String([IO.File]::ReadAllBytes($report))
-        } | ConvertTo-Json
-        $r = Invoke-RestMethod $Upload -Method Post -Body $body -ContentType 'application/json'
-        $ok = [bool]$r.ok
-    } catch {}
+    function Send-File([string]$path) {
+        try {
+            $body = @{
+                key  = 'nerds-report-v1'
+                name = (Split-Path $path -Leaf)
+                pc   = $env:COMPUTERNAME
+                user = $env:USERNAME
+                rid  = "$env:NERDS_RID"
+                data = [Convert]::ToBase64String([IO.File]::ReadAllBytes($path))
+            } | ConvertTo-Json
+            return [bool](Invoke-RestMethod $Upload -Method Post -Body $body -ContentType 'application/json').ok
+        } catch { return $false }
+    }
+    # The small text summary goes up on its own first (2026-11-02): Deep zips run ~10 MB, too big for
+    # Mike's AI to open from Drive, while the summary is a few dozen KB and is what gets read first.
     $txt = [IO.Path]::ChangeExtension($report, '.txt')
+    if ($report -ne $txt -and (Test-Path -LiteralPath $txt)) { [void](Send-File $txt) }
+    $ok = Send-File $report
     if ($report -ne $txt) { Remove-Item -LiteralPath $txt -Force -ErrorAction SilentlyContinue }   # it's inside the zip
     if ($ok) {
         Remove-Item -LiteralPath $report -Force -ErrorAction SilentlyContinue   # Mike has it; keep the Desktop clean
@@ -82,4 +98,5 @@ if (-not $report) {
     }
 }
 Remove-Item Env:NERDS_RID -ErrorAction SilentlyContinue
+Remove-Item Env:NERDS_REPORT_STREAM -ErrorAction SilentlyContinue
 if (-not $Nested) { Write-Host ''; Read-Host 'Press Enter to close this window' | Out-Null }

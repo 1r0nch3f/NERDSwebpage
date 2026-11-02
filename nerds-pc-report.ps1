@@ -312,12 +312,41 @@ foreach ($p in "$env:APPDATA\Vortex", "$env:LOCALAPPDATA\ModOrganizer", "$env:AP
 }
 if ($modHits) { $modHits | Select-Object -Unique -First 40 | ForEach-Object { W $_ } } else { W '  (none found)' }
 
-Step 'Measuring GPU load for 30 seconds, then checking cameras and OBS / Streamlabs'
 Section 'STREAMING: GPU LOAD, CAMERAS, OBS / STREAMLABS'
 # Added 2026-11-02 (a streamer's GPU overloads and the camera won't run while live). The rest of the report is a
 # snapshot; this shows what the GPU is doing right now, who has the camera, and how OBS is set up.
 # Never reads OBS service.json (holds the stream key).
 $streamFiles = @()
+# Streaming mode (report.ps1 asked "streaming or camera problem?" and got Y): wait for the customer to load the game
+# and OBS before sampling, so slow PCs and single-screen setups never have to race the report or alt-tab back.
+# Goes when OBS/Streamlabs runs AND the GPU is busy for 4 checks in a row, or OBS has run 3 min, or 10 min pass. (2026-11-02)
+$streamWait = ''
+if ($env:NERDS_REPORT_STREAM) {
+    Step 'Waiting for your game and OBS / Streamlabs (up to 10 minutes). Play like normal; no need to come back here.'
+    $procPat = $(if ($env:NERDS_STREAM_TEST_PROCS) { $env:NERDS_STREAM_TEST_PROCS } else { '^(obs64|obs32|obs)$|Streamlabs' })
+    $busyPct = $(if ($env:NERDS_STREAM_TEST_BUSY) { [double]$env:NERDS_STREAM_TEST_BUSY } else { 40 })
+    $maxWait = $(if ($env:NERDS_STREAM_TEST_MAX) { [int]$env:NERDS_STREAM_TEST_MAX } else { 600 })
+    $t0 = Get-Date; $obsSince = $null; $streak = 0; $lastNote = 0; $why = ''
+    while ($true) {
+        $el = ((Get-Date) - $t0).TotalSeconds
+        $obsUp = [bool](Get-Process | Where-Object { $_.ProcessName -match $procPat })
+        if ($obsUp -and -not $obsSince) { $obsSince = Get-Date }
+        $eng = @{}
+        (Get-Counter '\GPU Engine(*engtype_3D)\Utilization Percentage' -SampleInterval 1 -MaxSamples 1).CounterSamples | ForEach-Object {
+            if ($_.InstanceName -match 'luid_(.+)_phys_(\d+)_eng_(\d+)') { $k = $Matches[0] -replace '^.*?luid', 'luid'; $eng[$k] = [double]$eng[$k] + $_.CookedValue }
+        }
+        $load = ($eng.Values | Measure-Object -Maximum).Maximum
+        if ($load -ge $busyPct) { $streak++ } else { $streak = 0 }
+        if ($obsUp -and $streak -ge 4) { $why = 'caught the game running with OBS open'; break }
+        if ($obsSince -and ((Get-Date) - $obsSince).TotalSeconds -ge 180) { $why = 'OBS open 3 minutes, GPU not busy (game may be in a menu, capped, or not started)'; break }
+        if ($el -ge $maxWait) { $why = "gave up after $([int]($maxWait / 60)) minutes (OBS open: $obsUp)"; break }
+        if ($el - $lastNote -ge 60) { $lastNote = $el; if ($el -gt 5) { Step ("Still waiting ({0} min). OBS open: {1}. Load the game and play." -f [int]($el / 60), $(if ($obsUp) { 'yes' } else { 'no' })) } }
+        Start-Sleep -Seconds 2
+    }
+    $streamWait = "Streaming mode: waited {0:N0} s, {1} (GPU 3D at the end: {2:N0}%)." -f ((Get-Date) - $t0).TotalSeconds, $why, $load
+}
+Step 'Measuring GPU load for 30 seconds, then checking cameras and OBS / Streamlabs'
+if ($streamWait) { W $streamWait } elseif (-not $env:NERDS_REPORT_STREAM) { W 'Streaming mode: off (did not wait for a game; numbers are from whatever was running).' }
 $liveApps = Get-Process | Where-Object { $_.ProcessName -match '^(obs64|obs32|obs)$|Streamlabs|StreamElements|SE\.Live|NVIDIA Broadcast|Camera Hub|XSplit|Meld|Twitch Studio|PRISM|vMix|ManyCam|Snap Camera|VTube|veadotube|Discord' } |
     Select-Object -ExpandProperty ProcessName -Unique
 W ("Streaming / camera apps running during this report: {0}" -f $(if ($liveApps) { $liveApps -join ', ' } else { 'none (GPU numbers below are NOT from a live stream)' }))
