@@ -262,7 +262,7 @@ $apps = @('HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKLM:\
     ForEach-Object { Get-ItemProperty $_ } | Where-Object { $_.DisplayName -and -not $_.SystemComponent } |
     Sort-Object DisplayName -Unique
 W ("{0} programs installed." -f @($apps).Count)
-$flag = 'Afterburner|RivaTuner|RTSS|Overwolf|CurseForge|Thunderstore|r2modman|Vortex|Mod Organizer|Wabbajack|WowUp|ReShade|Special K|Lossless Scaling|OBS Studio|Streamlabs|XSplit|NVIDIA Broadcast|Camera Hub|Elgato|Meld Studio|Twitch Studio|PRISM Live|vMix|ManyCam|Snap Camera|VTube|Voicemeeter|Wallpaper Engine|Razer Cortex|Driver Booster|Driver Easy|CCleaner|McAfee|Norton|Avast|AVG|Avira|Webroot|PC Optimizer|Ryzen Master|Armoury|iCUE|Lightshot|Discord|GeForce Experience|NVIDIA App|AMD Software|Steam|Epic Games|Battle\.net|EA app|Ubisoft'
+$flag = 'Afterburner|RivaTuner|RTSS|Overwolf|CurseForge|Thunderstore|r2modman|Vortex|Mod Organizer|Wabbajack|WowUp|ReShade|Special K|Lossless Scaling|OBS Studio|Streamlabs|StreamElements|SE\.Live|XSplit|NVIDIA Broadcast|Camera Hub|Elgato|Meld Studio|Twitch Studio|PRISM Live|vMix|ManyCam|Snap Camera|VTube|Voicemeeter|Wallpaper Engine|Razer Cortex|Driver Booster|Driver Easy|CCleaner|McAfee|Norton|Avast|AVG|Avira|Webroot|PC Optimizer|Ryzen Master|Armoury|iCUE|Lightshot|Discord|GeForce Experience|NVIDIA App|AMD Software|Steam|Epic Games|Battle\.net|EA app|Ubisoft'
 W 'Programs that commonly matter for games / performance:'
 $apps | Where-Object { $_.DisplayName -match $flag } | ForEach-Object { W ("  {0}  {1}" -f $_.DisplayName, $_.DisplayVersion) }
 W ''
@@ -312,13 +312,13 @@ foreach ($p in "$env:APPDATA\Vortex", "$env:LOCALAPPDATA\ModOrganizer", "$env:AP
 }
 if ($modHits) { $modHits | Select-Object -Unique -First 40 | ForEach-Object { W $_ } } else { W '  (none found)' }
 
-Step 'Streaming: 30-second GPU load sample, cameras, OBS / Streamlabs (keep your game and OBS open)'
+Step 'Measuring GPU load for 30 seconds, then checking cameras and OBS / Streamlabs'
 Section 'STREAMING: GPU LOAD, CAMERAS, OBS / STREAMLABS'
 # Added 2026-11-02 (a streamer's GPU overloads and the camera won't run while live). The rest of the report is a
 # snapshot; this shows what the GPU is doing right now, who has the camera, and how OBS is set up.
 # Never reads OBS service.json (holds the stream key).
 $streamFiles = @()
-$liveApps = Get-Process | Where-Object { $_.ProcessName -match '^(obs64|obs32|obs)$|Streamlabs|NVIDIA Broadcast|Camera Hub|XSplit|Meld|Twitch Studio|PRISM|vMix|ManyCam|Snap Camera|VTube|veadotube|Discord' } |
+$liveApps = Get-Process | Where-Object { $_.ProcessName -match '^(obs64|obs32|obs)$|Streamlabs|StreamElements|SE\.Live|NVIDIA Broadcast|Camera Hub|XSplit|Meld|Twitch Studio|PRISM|vMix|ManyCam|Snap Camera|VTube|veadotube|Discord' } |
     Select-Object -ExpandProperty ProcessName -Unique
 W ("Streaming / camera apps running during this report: {0}" -f $(if ($liveApps) { $liveApps -join ', ' } else { 'none (GPU numbers below are NOT from a live stream)' }))
 W ''
@@ -394,6 +394,21 @@ $camUse = foreach ($k in @(Get-ChildItem $cb | Where-Object { $_.PSChildName -ne
 W 'Apps that used the camera, newest first (InUseNow YES = holding it right now; only one app can hold most webcams):'
 T ($camUse | Sort-Object LastUsed -Descending | Select-Object -First 10)
 
+# Overlay / alert sites behind browser sources (StreamElements, Streamlabs widgets...): host name only,
+# never the full link (those links carry account tokens). 2026-11-02.
+function UrlHosts($urls) {
+    $h = foreach ($u in $urls) { if ($u -match '^https?://([^/:?#]+)') { $Matches[1].ToLower() -replace '^www\.', '' } elseif ($u) { 'local files' } }
+    if ($h) { ($h | Group-Object | Sort-Object Count -Descending | ForEach-Object { "$($_.Name) x$($_.Count)" }) -join ', ' } else { '' }
+}
+# Walk any scene-collection JSON (OBS or Streamlabs format) and return every object that looks like a source or filter.
+function SceneObjects($o, [int]$depth = 0) {
+    if ($null -eq $o -or $depth -gt 12) { return }
+    if ($o -is [System.Array]) { foreach ($x in $o) { SceneObjects $x ($depth + 1) }; return }
+    if ($o -isnot [System.Management.Automation.PSCustomObject]) { return }
+    $kind = $(if ($o.PSObject.Properties['type'] -and $o.type -is [string] -and $o.PSObject.Properties['settings']) { $o.type } elseif ($o.PSObject.Properties['id'] -and $o.id -is [string] -and $o.PSObject.Properties['settings']) { $o.id })
+    if ($kind) { [pscustomobject]@{ Kind = $kind; Name = $o.name; Settings = $o.settings } }
+    foreach ($p in $o.PSObject.Properties) { if ($p.Name -ne 'settings') { SceneObjects $p.Value ($depth + 1) } }
+}
 $obs = Join-Path $env:APPDATA 'obs-studio'
 if (Test-Path $obs) {
     W ''
@@ -426,6 +441,8 @@ if (Test-Path $obs) {
         W ("  Scene collection '{0}': {1} sources" -f $sc.BaseName, $src.Count)
         W ("    source types: " + (($src | Group-Object id | Sort-Object Count -Descending | ForEach-Object { "$($_.Name) x$($_.Count)" }) -join ', '))
         $flt = @($src | ForEach-Object { $_.filters } | Where-Object { $_ })
+        $bs = UrlHosts @($src | Where-Object { $_.id -eq 'browser_source' } | ForEach-Object { if ($_.settings.is_local_file) { 'file' } else { $_.settings.url } })
+        if ($bs) { W ("    browser sources by site: " + $bs) }
         if ($flt) { W ("    filters: " + (($flt | Group-Object id | Sort-Object Count -Descending | ForEach-Object { "$($_.Name) x$($_.Count)" }) -join ', ')) }
         foreach ($s in $src | Where-Object { $_.id -match 'dshow_input|mediafoundation|av_capture' }) {
             $fi = [double]$s.settings.frame_interval
@@ -462,9 +479,34 @@ function ObsLogSummary($dir, $label) {
     if ($errL) { W '  Camera / errors:'; $errL | ForEach-Object { W ("    " + $_.Trim()) } }
     return $files
 }
+$sePlug = @("$env:ProgramFiles\obs-studio\obs-plugins\64bit", "$env:ProgramData\obs-studio\plugins", (Join-Path $obs 'plugin_config')) | Where-Object { Test-Path $_ } |
+    ForEach-Object { Get-ChildItem $_ | Where-Object { $_.Name -match 'streamelements|se\.live' } } | Select-Object -First 1
+if ($sePlug) { W ''; W ("StreamElements SE.Live plugin found in OBS: {0}" -f $sePlug.FullName) }
 $streamFiles += @(ObsLogSummary (Join-Path $obs 'logs') 'OBS')
-$streamFiles += @(ObsLogSummary (Join-Path $env:APPDATA 'slobs-client\node-obs\logs') 'Streamlabs')
-if (-not (Test-Path $obs) -and -not (Test-Path (Join-Path $env:APPDATA 'slobs-client'))) { W ''; W 'OBS / Streamlabs: not found for this user.' }
+$slRoots = @(foreach ($base in $env:APPDATA, $env:LOCALAPPDATA) { Get-ChildItem $base -Directory | Where-Object { $_.Name -match '^(slobs-client|streamlabs)' -and $_.Name -notmatch 'updater' } })
+W ''
+if (-not $slRoots) { W 'Streamlabs Desktop: no data folder found for this user (not installed or never run).' }
+foreach ($sr in $slRoots) {
+    W ("Streamlabs data folder: {0}" -f $sr.FullName.Replace($env:USERPROFILE, '%USERPROFILE%'))
+    $logDirs = @(Get-ChildItem $sr.FullName -Directory -Recurse -Depth 2 | Where-Object { $_.Name -eq 'logs' })
+    if ($logDirs) { foreach ($ld in $logDirs) { $streamFiles += @(ObsLogSummary $ld.FullName ('Streamlabs-' + ($ld.Parent.Name -replace '[^\w-]', ''))) } }
+    else { W '  (no logs folder found in it)' }
+    $scDir = Join-Path $sr.FullName 'SceneCollections'
+    foreach ($sc in Get-ChildItem $scDir -Filter *.json | Where-Object { $_.Name -notmatch 'manifest' } | Sort-Object LastWriteTime -Descending | Select-Object -First 3) {
+        $j = $null; try { $j = Get-Content $sc.FullName -Raw | ConvertFrom-Json } catch {}
+        $objs = @(SceneObjects $j)
+        if (-not $objs) { continue }
+        W ("  Streamlabs scene collection {0} (saved {1}): {2} sources/filters" -f $sc.BaseName, $sc.LastWriteTime, $objs.Count)
+        W ("    types: " + (($objs | Group-Object Kind | Sort-Object Count -Descending | ForEach-Object { "$($_.Name) x$($_.Count)" }) -join ', '))
+        $bs = UrlHosts @($objs | Where-Object { $_.Kind -eq 'browser_source' } | ForEach-Object { if ($_.Settings.is_local_file) { 'file' } else { $_.Settings.url } })
+        if ($bs) { W ("    browser sources by site: " + $bs) }
+        foreach ($c in $objs | Where-Object { $_.Kind -match 'dshow_input|mediafoundation' }) {
+            W ("    camera source '{0}': device {1}, resolution {2}" -f $c.Name, $(if ($c.Settings.video_device_id) { ($c.Settings.video_device_id -split ':')[0] } else { 'not set' }), $(if ($c.Settings.res_type -eq 1) { $c.Settings.resolution } else { 'device default' }))
+        }
+        if ($objs | Where-Object { $_.Kind -match 'greenscreen|nv_|shader|blur|upscal|background' }) { W '    NOTE: GPU-heavy filters in use (background removal / blur / shaders).' }
+    }
+}
+if (-not (Test-Path $obs) -and -not $slRoots) { W 'OBS Studio: not found for this user either.' }
 
 Section 'STARTUP ITEMS'
 T (Get-CimInstance Win32_StartupCommand | Select-Object Name, Location)
@@ -479,7 +521,7 @@ if ($wlan) { $wlan | ForEach-Object { W ("  " + $_.Line.Trim()) } }
 W ''
 W 'Attached in the zip: System.evtx and Application.evtx (last 14 days, warnings and errors)'
 W 'for opening in Event Viewer.'
-if ($streamFiles) { W 'Also in the zip: Streaming\\ (newest OBS / Streamlabs logs).' }
+if ($streamFiles) { W 'Also in the zip: Streaming\ (newest OBS / Streamlabs logs).' }
 W '--- end of report ---'
 [IO.File]::WriteAllText($out, $sb.ToString(), [Text.Encoding]::UTF8)
 

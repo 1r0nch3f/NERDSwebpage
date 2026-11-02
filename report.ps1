@@ -40,6 +40,7 @@ try {
 }
 
 Write-Host ''
+Say 'Streaming or camera problem? Open your game and OBS (or Streamlabs) now and leave them running: the GPU check starts in about a minute.' 'Yellow'
 Say ("Collecting the PC report (read-only{0})..." -f $(if ($deep) { ', deep: 2-5 minutes' } else { ', about a minute' })) 'Cyan'
 $env:NERDS_REPORT_QUIET = '1'
 if ($deep) { $env:NERDS_REPORT_DEEP = '1' } else { Remove-Item Env:NERDS_REPORT_DEEP -ErrorAction SilentlyContinue }
