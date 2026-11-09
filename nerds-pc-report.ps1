@@ -235,7 +235,7 @@ foreach ($mi in $monIds) {
     if ($dm) { $dm.Used = $true; $winHz = ($dm.Modes | Where-Object { ($_.W -eq $nw -and $_.H -eq $nh) -or ($_.W -eq $nh -and $_.H -eq $nw) } | Measure-Object Hz -Maximum).Maximum }
     $edidHz = EdidMaxHz $mi.InstanceName
     $modeTxt = $(if ($nw) { "native {0}x{1}" -f $nw, $nh } else { 'native ?' }) +
-        $(if ($edidHz) { ", panel rated up to $edidHz Hz" } else { '' }) +
+        $(if ($edidHz) { ", monitor currently reports up to $edidHz Hz on this connection (check the model's rated spec; Windows keeps only the basic EDID block)" } else { '' }) +
         $(if ($winHz) { ", Windows offers $winHz Hz at native on this cable / GPU" } elseif ($dm) { '' } else { ' (screen off or mirrored: modes not readable)' })
     W ("  {0} {1}   {2}   {3}   via {4}   serial {5}   made {6}" -f $maker, $model, $size, $modeTxt, $via, $serial, $made)
 }
