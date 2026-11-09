@@ -24,10 +24,10 @@ if (-not $Nested) {
         Start-Process powershell.exe -Verb RunAs -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', "irm $NerdsSelf | iex"
         return
     }
-    Say 'This collects a full report for Mike (hardware, drivers, errors and crash'
-    Say 'logs). It takes 2-5 minutes. Leave this window open until it says done.'
+    Say 'This collects a full report for Mike (every part in the PC, drivers, errors and'
+    Say 'crash logs) and tests the parts. It takes 8-12 minutes, and the PC runs hard for a'
+    Say 'few minutes near the end: that is the test. Leave this window open until it says done.'
 }
-$deep = $true
 $stream = $false
 if (-not $Nested) {
     Write-Host ''
@@ -51,15 +51,34 @@ try {
     return
 }
 
+function Send-File([string]$path, [string]$name = '') {
+    try {
+        $body = @{
+            key  = 'nerds-report-v1'
+            name = $(if ($name) { $name } else { Split-Path $path -Leaf })
+            pc   = $env:COMPUTERNAME
+            user = $env:USERNAME
+            rid  = "$env:NERDS_RID"
+            data = [Convert]::ToBase64String([IO.File]::ReadAllBytes($path))
+        } | ConvertTo-Json
+        return [bool](Invoke-RestMethod $Upload -Method Post -Body $body -ContentType 'application/json').ok
+    } catch { return $false }
+}
+
 Write-Host ''
-Say ("Collecting the PC report (read-only{0})..." -f $(if ($deep) { ', deep: 2-5 minutes' } else { ', about a minute' })) 'Cyan'
+Say 'Collecting the PC report and testing the parts (read-only, 8-12 minutes)...' 'Cyan'
 $env:NERDS_REPORT_QUIET = '1'
-if ($deep) { $env:NERDS_REPORT_DEEP = '1' } else { Remove-Item Env:NERDS_REPORT_DEEP -ErrorAction SilentlyContinue }
+Remove-Item Env:NERDS_REPORT_DEEP -ErrorAction SilentlyContinue   # Deep is always on in the core since 2026-11-09
 if ($stream) { $env:NERDS_REPORT_STREAM = '1' } else { Remove-Item Env:NERDS_REPORT_STREAM -ErrorAction SilentlyContinue }
 $report = ''
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $core *>&1 | ForEach-Object {
     $s = "$_".Trim()
-    if ($s -match '\.(zip|txt)$' -and (Test-Path -LiteralPath $s)) { $report = $s }
+    if ($s -match '^PRE-TESTS: (.+\.txt)$') {
+        # The report is saved before the part tests run: send that copy now, so Mike has it even if the tests crash the PC.
+        $pre = $Matches[1]
+        if (Test-Path -LiteralPath $pre) { [void](Send-File $pre ([IO.Path]::GetFileNameWithoutExtension($pre) + '_before-tests.txt')) }
+    }
+    elseif ($s -match '\.(zip|txt)$' -and (Test-Path -LiteralPath $s)) { $report = $s }
     elseif ($s.StartsWith('- ')) { Say "   $s" 'Gray' }
 }
 Remove-Item $core -Force -ErrorAction SilentlyContinue
@@ -68,19 +87,6 @@ if (-not $report) {
     Say "The report didn't finish. Mike can run it with you later: (423) 521-5694" 'Red'
 } else {
     Say 'Sending it to Mike...' 'Cyan'
-    function Send-File([string]$path) {
-        try {
-            $body = @{
-                key  = 'nerds-report-v1'
-                name = (Split-Path $path -Leaf)
-                pc   = $env:COMPUTERNAME
-                user = $env:USERNAME
-                rid  = "$env:NERDS_RID"
-                data = [Convert]::ToBase64String([IO.File]::ReadAllBytes($path))
-            } | ConvertTo-Json
-            return [bool](Invoke-RestMethod $Upload -Method Post -Body $body -ContentType 'application/json').ok
-        } catch { return $false }
-    }
     # The small text summary goes up on its own first (2026-11-02): Deep zips run ~10 MB, too big for
     # Mike's AI to open from Drive, while the summary is a few dozen KB and is what gets read first.
     $txt = [IO.Path]::ChangeExtension($report, '.txt')

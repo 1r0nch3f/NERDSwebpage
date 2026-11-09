@@ -20,7 +20,8 @@ function Step([string]$m) { Write-Host "  - $m" -ForegroundColor Cyan }
 
 Write-Host ''
 Write-Host '  NERDS PC Report' -ForegroundColor Green
-Write-Host '  Collecting system info (read-only). This takes about a minute.' -ForegroundColor Gray
+Write-Host '  Collecting system info and testing the parts (read-only). This takes about 8 to 12 minutes.' -ForegroundColor Gray
+Write-Host '  The PC will run hard for a few minutes near the end; that is the test. Leave it alone until it says Done.' -ForegroundColor Gray
 Write-Host ''
 
 W 'NERDS PC REPORT  -  NERDS Computer Repair  -  chattnerds.com  -  423-521-5694'
@@ -44,6 +45,228 @@ W ("Windows      : {0}  version {1}  build {2}" -f $os.Caption, (Get-ItemPropert
 W ("Installed    : {0}   Last boot: {1}" -f $os.InstallDate, $os.LastBootUpTime)
 $lic = Get-CimInstance SoftwareLicensingProduct -Filter "PartialProductKey IS NOT NULL AND Name LIKE 'Windows%'" | Select-Object -First 1
 W ("Activation   : {0}" -f $(switch ($lic.LicenseStatus) { 1 {'Activated'} default {"NOT activated (status $($lic.LicenseStatus))"} }))
+
+# ---------------- PARTS INVENTORY (2026-11-09, Mike: "pull all parts it can and monitors as well") ----------------
+# Every part Windows can identify, with serials and condition evidence, so a PC can be priced remotely.
+Step 'Parts inventory'
+Section 'PARTS INVENTORY (every part Windows can see, for pricing / resale)'
+function WStr($a) { -join ($a | Where-Object { $_ } | ForEach-Object { [char]$_ }) }
+$subVendor = @{ '1043'='ASUS'; '1462'='MSI'; '1458'='Gigabyte'; '3842'='EVGA'; '19DA'='Zotac'; '1569'='Palit'; '10B0'='Gainward'; '196E'='PNY'; '1DA2'='Sapphire'; '148C'='PowerColor'; '1682'='XFX'; '1849'='ASRock'; '1B4C'='Galax / KFA2'; '7377'='Colorful'; '10DE'='NVIDIA (Founders / reference)'; '1002'='AMD (reference)'; '8086'='Intel'; '1028'='Dell'; '103C'='HP'; '17AA'='Lenovo'; '1025'='Acer'; '1558'='Clevo'; '1414'='Microsoft'; '144D'='Samsung'; '106B'='Apple'; '1ACC'='Point of View' }
+$pnpVendor = @{ ACR='Acer'; AUS='ASUS'; BNQ='BenQ'; DEL='Dell'; GSM='LG'; SAM='Samsung'; SNY='Sony'; HWP='HP'; HPN='HP'; LEN='Lenovo'; MSI='MSI'; AOC='AOC'; VSC='ViewSonic'; PHL='Philips'; GBT='Gigabyte'; SHP='Sharp'; APP='Apple'; NEC='NEC'; IVM='iiyama'; EIZ='EIZO'; HSD='HannStar'; XMI='Xiaomi'; AUO='AU Optronics (laptop panel)'; BOE='BOE (laptop panel)'; CMN='Innolux (laptop panel)'; LGD='LG Display (laptop panel)'; SDC='Samsung Display (laptop panel)'; IVO='InfoVision (laptop panel)' }
+$memType = @{ 20='DDR'; 21='DDR2'; 24='DDR3'; 26='DDR4'; 29='LPDDR3'; 30='LPDDR4'; 34='DDR5'; 35='LPDDR5' }
+
+$placeholder = 'To be filled|Default string|System Serial|O\.E\.M\.|^0+$|^None$|^$'
+$chSer = @($enc.SerialNumber, $bios.SerialNumber) | Where-Object { "$_".Trim() -notmatch $placeholder } | Select-Object -First 1
+W ("System       : {0} {1}  ({2})   serial {3}" -f $cs.Manufacturer, $cs.Model, $(if ($isLaptop) { 'laptop' } else { 'desktop' }), $(if ($chSer) { $chSer } else { 'none (custom build: the board model below is what identifies it)' }))
+foreach ($c in Get-CimInstance Win32_Processor) {
+    W ("CPU          : {0}   socket {1}, {2} cores / {3} threads, L3 {4} MB" -f $c.Name.Trim(), $c.SocketDesignation, $c.NumberOfCores, $c.NumberOfLogicalProcessors, [math]::Round($c.L3CacheSize / 1024))
+}
+W ("Motherboard  : {0} {1}   rev {2}   serial {3}" -f $bb.Manufacturer, $bb.Product, $bb.Version, $bb.SerialNumber)
+W ("BIOS         : {0} {1}  dated {2}" -f $bios.Manufacturer, $bios.SMBIOSBIOSVersion, $bios.ReleaseDate)
+
+$sticks = @(Get-CimInstance Win32_PhysicalMemory)
+$slots = (Get-CimInstance Win32_PhysicalMemoryArray | Where-Object { $_.Use -eq 3 } | Measure-Object MemoryDevices -Sum).Sum
+W ("RAM          : {0} GB total, {1} stick(s) in {2} slot(s){3}" -f [math]::Round(($sticks | Measure-Object Capacity -Sum).Sum / 1GB), $sticks.Count, $slots, $(if ($slots -gt $sticks.Count) { ", $($slots - $sticks.Count) empty" } else { '' }))
+T ($sticks | Select-Object @{n='Slot';e={$_.DeviceLocator}}, @{n='GB';e={[math]::Round($_.Capacity/1GB)}}, @{n='Type';e={ $t = $memType[[int]$_.SMBIOSMemoryType]; if ($t) { $t } else { "type $($_.SMBIOSMemoryType)" } }}, @{n='Form';e={ switch ($_.FormFactor) { 8 {'DIMM'} 12 {'SODIMM'} default {"$($_.FormFactor)"} } }}, @{n='SPD MHz';e={$_.Speed}}, @{n='Running MHz';e={$_.ConfiguredClockSpeed}}, @{n='Maker';e={ $pn = "$($_.PartNumber)".Trim(); $mf = "$($_.Manufacturer)".Trim(); if ($mf -and $mf -notmatch '^(Unknown|Undefined|0+|[0-9A-F]{4})$') { $mf } else { switch -Regex ($pn) { '^F[345]-' { 'G.Skill' } '^(CM|CMK|CMH|CMT|CMW|CMSX)' { 'Corsair' } '^KF|^KHX|^KVR|^KCP|^HX' { 'Kingston' } '^CT|^BL' { 'Crucial' } '^(TF|TD|TL|TP|TED|FF)' { 'TeamGroup' } '^M[34]' { 'Samsung / Micron (OEM)' } '^HMA|^HMC|^HMCG' { 'SK hynix (OEM)' } '^PSD|^PV' { 'Patriot' } '^(AX|AD)' { 'ADATA / XPG' } default { 'unknown' } } } }}, @{n='PartNumber';e={"$($_.PartNumber)".Trim()}}, @{n='Serial';e={"$($_.SerialNumber)".Trim()}})
+W '  (the part number shows the kit''s real rated speed; SPD MHz is the safe default it falls back to without XMP / EXPO)'
+
+$vram = @{}
+Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}' | ForEach-Object {
+    $p = Get-ItemProperty $_.PSPath
+    if ($p.DriverDesc -and $p.'HardwareInformation.qwMemorySize') { $vram[$p.DriverDesc] = [math]::Round($p.'HardwareInformation.qwMemorySize' / 1GB, 1) }
+}
+foreach ($g in Get-CimInstance Win32_VideoController | Where-Object { $_.PNPDeviceID -like 'PCI\*' }) {
+    $maker = 'unknown'; $ids = ''
+    if ($g.PNPDeviceID -match 'VEN_([0-9A-F]{4})&DEV_([0-9A-F]{4})&SUBSYS_([0-9A-F]{4})([0-9A-F]{4})') {
+        $maker = $(if ($subVendor[$Matches[4]]) { $subVendor[$Matches[4]] } else { "vendor id $($Matches[4])" })
+        $ids = "VEN_$($Matches[1]) DEV_$($Matches[2]) SUBSYS_$($Matches[3])$($Matches[4])"
+    }
+    W ("GPU          : {0}   {1} GB   card made by {2}   ({3})" -f $g.Name, $(if ($vram[$g.Name]) { $vram[$g.Name] } else { '?' }), $maker, $ids)
+}
+
+# Drive SMART read straight from the drive (2026-11-09): Windows' reliability counters leave power-on hours blank on many
+# NVMe drives. NVMe = health log page 02 via IOCTL_STORAGE_QUERY_PROPERTY; SATA = SMART READ ATTRIBUTES. Read-only, needs admin.
+Add-Type -ErrorAction SilentlyContinue -TypeDefinition @'
+using System; using System.Runtime.InteropServices; using Microsoft.Win32.SafeHandles;
+public class NerdsSmart {
+  [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Unicode)] static extern SafeFileHandle CreateFile(string n, uint a, uint s, IntPtr sa, uint c, uint f, IntPtr t);
+  [DllImport("kernel32.dll", SetLastError=true)] static extern bool DeviceIoControl(SafeFileHandle h, uint code, byte[] inb, int inl, byte[] outb, int outl, out int ret, IntPtr ov);
+  static SafeFileHandle Open(int n) { return CreateFile(@"\\.\PhysicalDrive" + n, 0xC0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero); }
+  static ulong U64(byte[] b, int o) { return BitConverter.ToUInt64(b, o); }
+  // NVMe: "poh|unitsWritten|unitsRead|pctUsed|spare|unsafeShutdowns|mediaErrors|powerCycles|criticalWarning"
+  public static string Nvme(int n) {
+    using (var h = Open(n)) {
+      if (h.IsInvalid) return "";
+      var inb = new byte[8 + 40 + 512];
+      BitConverter.GetBytes(50).CopyTo(inb, 0);   // StorageDeviceProtocolSpecificProperty
+      BitConverter.GetBytes(0).CopyTo(inb, 4);    // PropertyStandardQuery
+      BitConverter.GetBytes(3).CopyTo(inb, 8);    // ProtocolTypeNvme
+      BitConverter.GetBytes(2).CopyTo(inb, 12);   // NVMeDataTypeLogPage
+      BitConverter.GetBytes(2).CopyTo(inb, 16);   // log page 02: SMART / health
+      BitConverter.GetBytes(0).CopyTo(inb, 20);
+      BitConverter.GetBytes(40).CopyTo(inb, 24);  // data offset
+      BitConverter.GetBytes(512).CopyTo(inb, 28); // data length
+      var outb = new byte[inb.Length]; int ret;
+      if (!DeviceIoControl(h, 0x2D1400, inb, inb.Length, outb, outb.Length, out ret, IntPtr.Zero) || ret < 48 + 192) return "";
+      int o = 48;
+      return U64(outb, o + 128) + "|" + U64(outb, o + 48) + "|" + U64(outb, o + 32) + "|" + outb[o + 5] + "|" + outb[o + 3] + "|" + U64(outb, o + 144) + "|" + U64(outb, o + 160) + "|" + U64(outb, o + 112) + "|" + outb[o];
+    }
+  }
+  // SATA: "id=raw;id=raw;..." for every SMART attribute
+  public static string Ata(int n) {
+    using (var h = Open(n)) {
+      if (h.IsInvalid) return "";
+      var inb = new byte[33];   // SENDCMDINPARAMS, packed
+      BitConverter.GetBytes(512).CopyTo(inb, 0);
+      inb[4] = 0xD0; inb[5] = 1; inb[6] = 1; inb[7] = 0x4F; inb[8] = 0xC2; inb[9] = 0xA0; inb[10] = 0xB0; inb[12] = 0;
+      var outb = new byte[16 + 512]; int ret;
+      if (!DeviceIoControl(h, 0x7C088, inb, inb.Length, outb, outb.Length, out ret, IntPtr.Zero)) return "";
+      var sb = new System.Text.StringBuilder();
+      for (int i = 0; i < 30; i++) {
+        int o = 16 + 2 + i * 12; int id = outb[o]; if (id == 0) continue;
+        ulong raw = 0; for (int k = 5; k >= 0; k--) raw = (raw << 8) | outb[o + 5 + k];
+        sb.Append(id).Append('=').Append(raw).Append(';');
+      }
+      return sb.ToString();
+    }
+  }
+}
+'@
+function DriveSmart($d) {
+    $n = [int]$d.DeviceId
+    $x = [pscustomobject]@{ Hours = $null; WrittenTB = $null; 'Life used%' = $null; Spare = $null; Unsafe = $null; MediaErr = $null; Note = '' }
+    try {
+        if ($d.BusType -eq 'NVMe') {
+            $f = [NerdsSmart]::Nvme($n) -split '\|'
+            if ($f.Count -ge 9) {
+                $x.Hours = [uint64]$f[0]; $x.WrittenTB = [math]::Round([double]$f[1] * 512000 / 1e12, 1); $x.'Life used%' = [int]$f[3]; $x.Spare = "$($f[4])%"
+                $x.Unsafe = [uint64]$f[5]; $x.MediaErr = [uint64]$f[6]
+                if ([int]$f[8] -ne 0) { $x.Note = "CRITICAL WARNING flag $($f[8])" }
+            }
+        } elseif ($d.BusType -in 'SATA', 'ATA', 'RAID') {
+            $a = @{}; foreach ($p in ([NerdsSmart]::Ata($n) -split ';' | Where-Object { $_ })) { $kv = $p -split '='; $a[[int]$kv[0]] = [uint64]$kv[1] }
+            if ($a.Count) {
+                if ($a.ContainsKey(9)) { $x.Hours = $a[9] -band 0xFFFFFFFF }
+                if ($a.ContainsKey(241) -and $d.MediaType -eq 'SSD') { $x.WrittenTB = [math]::Round($a[241] * 512 / 1e12, 1) }
+                if ($a.ContainsKey(192)) { $x.Unsafe = $a[192] } elseif ($a.ContainsKey(174)) { $x.Unsafe = $a[174] }
+                $bad = @(); foreach ($id in 5, 197, 198) { if ($a.ContainsKey($id) -and $a[$id] -gt 0) { $bad += "attr $id = $($a[$id])" } }
+                $x.MediaErr = $(if ($bad) { $bad -join ', ' } else { 0 })
+                if ($bad) { $x.Note = 'reallocated / pending / bad sectors' }
+            }
+        }
+    } catch {}
+    if ($null -eq $x.Hours) { $r = $d | Get-StorageReliabilityCounter; if ($r.PowerOnHours) { $x.Hours = $r.PowerOnHours } }
+    if ($null -eq $x.Hours -and -not $x.Note) { $x.Note = $(if ($isAdmin) { 'drive did not report SMART' } else { 'run as admin for SMART' }) }
+    $x
+}
+W 'Drives       :'
+$disks = foreach ($d in Get-PhysicalDisk | Sort-Object { [int]$_.DeviceId }) {
+    $r = $d | Get-StorageReliabilityCounter
+    $sm = DriveSmart $d
+    [pscustomobject]@{ Disk = $d.DeviceId; Model = $d.FriendlyName; GB = [math]::Round($d.Size / 1GB); Type = "$($d.MediaType) $($d.BusType)".Trim(); Serial = ("$($d.SerialNumber)".Trim()).TrimEnd('.'); PowerOnHours = $sm.Hours; WrittenTB = $sm.WrittenTB; 'LifeUsed%' = $sm.'Life used%'; Spare = $sm.Spare; UnsafeOff = $sm.Unsafe; MediaErrors = $sm.MediaErr; TempC = $r.Temperature; Health = $d.HealthStatus; Note = $sm.Note }
+}
+foreach ($k in $disks) {
+    W ("  Disk {0}: {1}  {2} GB  {3}  serial {4}" -f $k.Disk, $k.Model, $k.GB, $k.Type, $k.Serial)
+    W ("          power-on hours {0}   written {1} TB   life used {2}%   spare {3}   unsafe power-offs {4}   media errors {5}   {6} C   health {7}{8}" -f $(if ($null -ne $k.PowerOnHours) { '{0:N0}' -f $k.PowerOnHours } else { '?' }), $(if ($null -ne $k.WrittenTB) { $k.WrittenTB } else { '?' }), $(if ($null -ne $k.'LifeUsed%') { $k.'LifeUsed%' } else { '?' }), $(if ($k.Spare) { $k.Spare } else { '?' }), $(if ($null -ne $k.UnsafeOff) { $k.UnsafeOff } else { '?' }), $(if ($null -ne $k.MediaErrors) { $k.MediaErrors } else { '?' }), $k.TempC, $k.Health, $(if ($k.Note) { "   NOTE: $($k.Note)" } else { '' }))
+}
+W '  (written = total data ever written; life used = the drive''s own wear estimate, 100 = rated life used up)'
+
+# Monitors: EDID (maker, model, serial, build date, size) + Windows display modes (native resolution, max refresh).
+Add-Type -ErrorAction SilentlyContinue -TypeDefinition @'
+using System; using System.Runtime.InteropServices; using System.Collections.Generic;
+public class NerdsDisp {
+  [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)] public struct DD { public int cb;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)] public string DeviceName; [MarshalAs(UnmanagedType.ByValTStr, SizeConst=128)] public string DeviceString;
+    public int StateFlags; [MarshalAs(UnmanagedType.ByValTStr, SizeConst=128)] public string DeviceID; [MarshalAs(UnmanagedType.ByValTStr, SizeConst=128)] public string DeviceKey; }
+  [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)] public struct DM {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)] public string dmDeviceName; public short dmSpecVersion, dmDriverVersion, dmSize, dmDriverExtra; public int dmFields;
+    public int dmPositionX, dmPositionY, dmDisplayOrientation, dmDisplayFixedOutput; public short dmColor, dmDuplex, dmYResolution, dmTTOption, dmCollate;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)] public string dmFormName; public short dmLogPixels;
+    public int dmBitsPerPel, dmPelsWidth, dmPelsHeight, dmDisplayFlags, dmDisplayFrequency, dmICMMethod, dmICMIntent, dmMediaType, dmDitherType, dmReserved1, dmReserved2, dmPanningWidth, dmPanningHeight; }
+  [DllImport("user32.dll", CharSet=CharSet.Unicode)] static extern bool EnumDisplayDevices(string dev, uint i, ref DD dd, uint flags);
+  [DllImport("user32.dll", CharSet=CharSet.Unicode)] static extern bool EnumDisplaySettings(string dev, int mode, ref DM dm);
+  public static List<string> Scan() {
+    var r = new List<string>();
+    for (uint a = 0; ; a++) {
+      var ad = new DD(); ad.cb = Marshal.SizeOf(ad); if (!EnumDisplayDevices(null, a, ref ad, 0)) break;
+      if ((ad.StateFlags & 1) == 0) continue;
+      var md = new DD(); md.cb = Marshal.SizeOf(md); string mon = EnumDisplayDevices(ad.DeviceName, 0, ref md, 0) ? md.DeviceID : "";
+      var modes = new List<string>();
+      for (int m = 0; ; m++) { var dm = new DM(); dm.dmSize = (short)Marshal.SizeOf(dm); if (!EnumDisplaySettings(ad.DeviceName, m, ref dm)) break; modes.Add(dm.dmPelsWidth + "x" + dm.dmPelsHeight + "@" + dm.dmDisplayFrequency); }
+      r.Add(mon + "|" + ad.DeviceString + "|" + String.Join(";", modes));
+    }
+    return r;
+  }
+}
+'@
+# Windows display modes per screen (what the GPU offers on this cable), matched to the EDID by the PnP code.
+$dispModes = @(); try { $dispModes = @([NerdsDisp]::Scan() | ForEach-Object { $f = $_ -split '\|'; [pscustomobject]@{ Code = $(if ($f[0] -match 'MONITOR\\([^\\]+)\\') { $Matches[1] } else { '' }); Gpu = $f[1]; Modes = @($f[2] -split ';' | Where-Object { $_ -match '^(\d+)x(\d+)@(\d+)$' } | ForEach-Object { [pscustomobject]@{ W = [int]$Matches[1]; H = [int]$Matches[2]; Hz = [int]$Matches[3] } }); Used = $false } }) } catch {}
+$srcModes = @(Get-CimInstance -Namespace root\wmi WmiMonitorListedSupportedSourceModes)
+# Raw EDID from the registry: the range-limits block (0xFD) holds the panel's real max refresh; WMI's mode list stops at 60 Hz.
+function EdidMaxHz([string]$inst) {
+    $key = 'HKLM:\SYSTEM\CurrentControlSet\Enum\' + ($inst -replace '_\d+$', '') + '\Device Parameters'
+    $e = (Get-ItemProperty $key).EDID
+    if (-not $e -or $e.Count -lt 128) { return 0 }
+    foreach ($o in 54, 72, 90, 108) {
+        if ($e[$o] -eq 0 -and $e[$o + 1] -eq 0 -and $e[$o + 3] -eq 0xFD) { return [int]$e[$o + 6] + $(if ($e[$o + 4] -band 2) { 255 } else { 0 }) }
+    }
+    return 0
+}
+$conns = @(Get-CimInstance -Namespace root\wmi WmiMonitorConnectionParams)
+$basics = @(Get-CimInstance -Namespace root\wmi WmiMonitorBasicDisplayParams)
+$monIds = @(Get-CimInstance -Namespace root\wmi WmiMonitorID)
+W ("Monitors     : {0} connected" -f $monIds.Count)
+foreach ($mi in $monIds) {
+    $code = WStr $mi.ManufacturerName
+    $maker = $(if ($pnpVendor[$code]) { $pnpVendor[$code] } else { $code })
+    $model = WStr $mi.UserFriendlyName; if (-not $model) { $model = "product code $(WStr $mi.ProductCodeID)" }
+    $serial = WStr $mi.SerialNumberID; if (-not $serial -or $serial -match '^0+$') { $serial = 'not reported' }
+    $made = $(if ($mi.WeekOfManufacture -ge 1 -and $mi.WeekOfManufacture -le 54) { "week $($mi.WeekOfManufacture) of $($mi.YearOfManufacture)" } else { "model year $($mi.YearOfManufacture)" })
+    $b = $basics | Where-Object { $_.InstanceName -eq $mi.InstanceName } | Select-Object -First 1
+    $size = $(if ($b -and $b.MaxHorizontalImageSize -gt 0) { "about {0:N0} in" -f ([math]::Sqrt([math]::Pow($b.MaxHorizontalImageSize, 2) + [math]::Pow($b.MaxVerticalImageSize, 2)) / 2.54) } else { 'size ?' })
+    $cn = $conns | Where-Object { $_.InstanceName -eq $mi.InstanceName } | Select-Object -First 1
+    $via = $(switch ([int64]$cn.VideoOutputTechnology) { 0 {'VGA'} 4 {'DVI'} 5 {'HDMI'} 6 {'built-in (LVDS)'} 10 {'DisplayPort'} 11 {'built-in (eDP)'} 2147483648 {'built-in'} default { if ($cn) { "type $($cn.VideoOutputTechnology)" } else { '?' } } })
+    $pcode = ($mi.InstanceName -split '\\')[1]
+    $sm = $srcModes | Where-Object { $_.InstanceName -eq $mi.InstanceName } | Select-Object -First 1
+    $nw = 0; $nh = 0
+    if ($sm) { $pm = $sm.MonitorSourceModes[$sm.PreferredMonitorSourceModeIndex]; $nw = [int]$pm.HorizontalActivePixels; $nh = [int]$pm.VerticalActivePixels }
+    $dm = $dispModes | Where-Object { $_.Code -eq $pcode -and -not $_.Used } | Select-Object -First 1
+    $winHz = 0
+    if ($dm) { $dm.Used = $true; $winHz = ($dm.Modes | Where-Object { ($_.W -eq $nw -and $_.H -eq $nh) -or ($_.W -eq $nh -and $_.H -eq $nw) } | Measure-Object Hz -Maximum).Maximum }
+    $edidHz = EdidMaxHz $mi.InstanceName
+    $modeTxt = $(if ($nw) { "native {0}x{1}" -f $nw, $nh } else { 'native ?' }) +
+        $(if ($edidHz) { ", panel rated up to $edidHz Hz" } else { '' }) +
+        $(if ($winHz) { ", Windows offers $winHz Hz at native on this cable / GPU" } elseif ($dm) { '' } else { ' (screen off or mirrored: modes not readable)' })
+    W ("  {0} {1}   {2}   {3}   via {4}   serial {5}   made {6}" -f $maker, $model, $size, $modeTxt, $via, $serial, $made)
+}
+
+$nics = Get-NetAdapter -Physical | Sort-Object InterfaceDescription
+W ("Network      : {0}" -f $(if ($nics) { ($nics.InterfaceDescription | Select-Object -Unique) -join '; ' } else { 'none found' }))
+$snd = Get-CimInstance Win32_SoundDevice
+W ("Sound        : {0}" -f $(if ($snd) { ($snd.Name | Select-Object -Unique) -join '; ' } else { 'none found' }))
+$cd = Get-CimInstance Win32_CDROMDrive
+if ($cd) { W ("Optical      : {0}" -f (($cd.Name | Select-Object -Unique) -join '; ')) }
+if ($isLaptop) {
+    $bsd = Get-CimInstance -Namespace root\wmi BatteryStaticData | Select-Object -First 1
+    $bfc = Get-CimInstance -Namespace root\wmi BatteryFullChargedCapacity | Select-Object -First 1
+    if ($bsd) { W ("Battery      : {0} {1}  serial {2}  design {3} mWh, now {4} mWh ({5:N0}% of original)" -f $bsd.ManufactureName, $bsd.DeviceName, $bsd.SerialNumber, $bsd.DesignedCapacity, $bfc.FullChargedCapacity, (100 * $bfc.FullChargedCapacity / [math]::Max(1, $bsd.DesignedCapacity))) }
+}
+W 'USB devices (keyboard, mouse, headset, webcam, capture card, AIO cooler, RGB / fan controllers, smart PSUs):'
+$usbSeen = @{}
+Get-PnpDevice -PresentOnly | Where-Object { $_.InstanceId -match '^USB\\VID_[0-9A-F]{4}&PID_[0-9A-F]{4}\\' } | ForEach-Object {
+    $vp = $(if ($_.InstanceId -match '^USB\\VID_([0-9A-F]{4})&PID_([0-9A-F]{4})') { "$($Matches[1]):$($Matches[2])" })
+    $desc = (Get-PnpDeviceProperty -InstanceId $_.InstanceId -KeyName 'DEVPKEY_Device_BusReportedDeviceDesc').Data
+    if (-not $desc) { $desc = $_.FriendlyName }
+    if ($desc -and $desc -notmatch 'Hub$|Root Hub|^USB Composite Device$|^USB Input Device$' -and -not $usbSeen[$vp]) { $usbSeen[$vp] = $true; W ("  {0}  ({1})" -f $desc.Trim(), $vp) }
+}
+if (-not $usbSeen.Count) { W '  (none found)' }
+$bt = Get-PnpDevice -PresentOnly -Class Bluetooth | Where-Object { $_.InstanceId -match '^(BTHENUM\\DEV_|BTHLE\\DEV_)' -and $_.FriendlyName }
+if ($bt) { W ("Bluetooth    : paired: {0}" -f (($bt.FriendlyName | Select-Object -Unique) -join '; ')) }
+$chan = $(if ($lic.Description -match '(\w+) channel') { $Matches[1] } else { 'unknown' })
+$oa3 = [bool](Get-CimInstance SoftwareLicensingService).OA3xOriginalProductKey
+W ("Windows      : {0}, license channel {1}{2}   key built into the BIOS: {3}" -f $os.Caption, $chan, $(switch -Regex ($chan) { '^RETAIL' { ' (can move to another PC)' } '^OEM' { ' (tied to this motherboard)' } '^VOLUME' { ' (business / volume license)' } default { '' } }), $(if ($oa3) { 'yes' } else { 'no' }))
+W 'Check by hand: power supply (brand / model / wattage label), case, CPU cooler, case fans. Windows cannot'
+W '               read these unless they show up in the USB list above (some AIO coolers and PSUs do).'
 
 Step 'Processor and memory'
 Section 'PROCESSOR AND MEMORY'
@@ -608,8 +831,8 @@ W ''
 W 'Attached in the zip: System.evtx and Application.evtx (last 14 days, warnings and errors)'
 W 'for opening in Event Viewer.'
 if ($streamFiles) { W 'Also in the zip: Streaming\ (newest OBS / Streamlabs logs).' }
-W '--- end of report ---'
-[IO.File]::WriteAllText($out, $sb.ToString(), [Text.Encoding]::UTF8)
+# Saved now with a marker; the TESTS section is added at the end. If the PC crashes under the tests, this copy survives.
+[IO.File]::WriteAllText($out, $sb.ToString() + "`r`n--- TESTS NOT FINISHED: if the report ends here, the PC crashed or was shut off during the tests ---`r`n", [Text.Encoding]::UTF8)
 
 # Raw Event Viewer logs (warnings and up, last 14 days) so Mike can open them in Event Viewer.
 Step 'Exporting Event Viewer logs'
@@ -626,9 +849,10 @@ if ($streamFiles) {
     foreach ($sf in $streamFiles) { Copy-Item -LiteralPath $sf.Src (Join-Path $sd $sf.Name) }
 }
 
-# ---------------- DEEP mode: everything needed to pin down a crash in one pull ----------------
+# ---------------- DEEP: everything needed to pin down a crash in one pull ----------------
+# Deep is the only mode since 2026-11-09 (Mike: "i want full information as its always needed"). NERDS_REPORT_DEEP / -Deep are ignored.
 $bigDumps = @()
-if ($env:NERDS_REPORT_DEEP) {
+if ($true) {
     $deep = Join-Path $work 'Deep'
     New-Item -ItemType Directory -Force $deep | Out-Null
     $ms30 = [int64](30 * 24 * 3600 * 1000)
@@ -716,6 +940,96 @@ if ($env:NERDS_REPORT_DEEP) {
 $zip = [IO.Path]::ChangeExtension($out, '.zip')
 Compress-Archive -Path (Join-Path $work '*') -DestinationPath $zip -Force
 Remove-Item $work -Recurse -Force
+# report.ps1 / the Remote Support EXE upload this pre-tests copy right away, so Mike has the report even if the tests crash the PC.
+if ($env:NERDS_REPORT_QUIET) { Write-Host "PRE-TESTS: $out" }
+
+# ---------------- TESTS (2026-11-09): prove the parts work, for pricing / resale and for diagnosis ----------------
+# Windows built-in tools only. Run last, after the report is saved and zipped.
+$testStart = Get-Date
+Section 'TESTS (built-in Windows tools; run after the rest of the report was saved)'
+$skipLoad = ''
+if ($env:NERDS_REPORT_STREAM) { $skipLoad = 'skipped: streaming mode (the game and OBS are running; a full CPU load would wreck the numbers above)' }
+elseif (-not $isAdmin) { $skipLoad = 'skipped: not run as administrator (Windows benchmarks need admin)' }
+elseif ($isLaptop -and (Get-CimInstance -Namespace root\wmi BatteryStatus | Where-Object { $_.PowerOnline -eq $false })) { $skipLoad = 'skipped: laptop is on battery. Plug it in and run the report again for the tests.' }
+if ($skipLoad) { W "CPU load test and benchmarks: $skipLoad" }
+else {
+    $secs = $(if ($env:NERDS_TEST_LOAD_SECONDS) { [int]$env:NERDS_TEST_LOAD_SECONDS } else { 120 })
+    Step ("Test: CPU at full load on every core ({0} seconds)" -f $secs)
+    $n = [Environment]::ProcessorCount
+    $until = [DateTime]::UtcNow.AddSeconds($secs)
+    $pool = [runspacefactory]::CreateRunspacePool(1, $n); $pool.Open()
+    $burn = foreach ($i in 1..$n) {
+        $ps = [powershell]::Create(); $ps.RunspacePool = $pool
+        [void]$ps.AddScript({ param($u) $x = 1.0; while ([DateTime]::UtcNow -lt $u) { for ($k = 0; $k -lt 200000; $k++) { $x = [math]::Sqrt($x * 1.000001 + $k) } }; $x }).AddArgument($until)
+        [pscustomobject]@{ PS = $ps; H = $ps.BeginInvoke() }
+    }
+    $samples = @()
+    while ([DateTime]::UtcNow -lt $until) {
+        Start-Sleep -Seconds 5
+        $pi = Get-CimInstance Win32_PerfFormattedData_Counters_ProcessorInformation -Filter "Name='_Total'"
+        # skip a sample that lands after the load stopped
+        if ($pi -and [DateTime]::UtcNow -lt $until.AddSeconds(-1)) { $samples += [pscustomobject]@{ S = [int]((Get-Date) - $testStart).TotalSeconds; Load = [int]$pi.PercentProcessorTime; MHz = [int]($pi.ProcessorFrequency * $pi.PercentProcessorPerformance / 100) } }
+    }
+    foreach ($j in $burn) { try { [void]$j.PS.EndInvoke($j.H) } catch {}; $j.PS.Dispose() }
+    $pool.Close(); $pool.Dispose()
+    if ($samples) {
+        $k = [math]::Max(1, [math]::Min(4, [math]::Floor($samples.Count / 2)))
+        $fMHz = ($samples | Select-Object -First $k | Measure-Object MHz -Average).Average
+        $lMHz = ($samples | Select-Object -Last $k | Measure-Object MHz -Average).Average
+        $avgLoad = ($samples | Measure-Object Load -Average).Average
+        W ("CPU full-load test: {0} s on all {1} threads, average load {2:N0}%" -f $secs, $n, $avgLoad)
+        W ("  effective clock: start {0:N0} MHz, end {1:N0} MHz, lowest {2:N0} MHz" -f $fMHz, $lMHz, ($samples | Measure-Object MHz -Minimum).Minimum)
+        if ($lMHz -lt 0.85 * $fMHz) { W '  NOTE: the clock fell more than 15% during the run = thermal or power throttling (cooler, paste, fans, airflow).' }
+        if ($avgLoad -lt 70) { W '  NOTE: load stayed under 70%; something else was competing, or the CPU parked cores.' }
+        W ('  samples: ' + (($samples | ForEach-Object { "$($_.S)s $($_.MHz) MHz $($_.Load)%" }) -join ', '))
+    }
+
+    # Windows System Assessment Tool: one line per measured number (lines starting with '>').
+    function WinSat([string[]]$a) {
+        $o = & "$env:SystemRoot\System32\WinSAT.exe" @a 2>&1 | Out-String
+        $l = @(($o -split "`r?`n") | Where-Object { $_ -match '^>\s' -and $_ -match '\d' -and $_ -notmatch 'Run Time|Running|Dshow|Media Foundation' } | ForEach-Object { '  ' + (($_ -replace '^>\s*', '') -replace '\s{2,}', '   ').Trim() } | Select-Object -Unique)
+        if ($l) { $l } else { '  (no result: ' + ((($o -split "`r?`n") | Where-Object { $_.Trim() } | Select-Object -Last 1)) + ')' }
+    }
+    Step 'Test: CPU and memory speed (Windows benchmark)'
+    W ''; W 'CPU benchmark (winsat cpuformal):'; WinSat @('cpuformal') | ForEach-Object { W $_ }
+    W ''; W 'Memory benchmark (winsat memformal):'; WinSat @('memformal') | ForEach-Object { W $_ }
+    W ''; W 'Drive read speed (winsat; compare to the drive''s rated speed, a slow result = worn drive, wrong slot or PCIe lanes):'
+    foreach ($d in Get-PhysicalDisk | Where-Object { $_.Size -gt 0 -and $_.BusType -ne 'USB' } | Sort-Object { [int]$_.DeviceId }) {
+        Step ("Test: drive {0} read speed ({1})" -f $d.DeviceId, $d.FriendlyName)
+        $seq = @(WinSat @('disk', '-seq', '-read', '-n', "$($d.DeviceId)")) -join ' ' -replace '^\s+', ''
+        $ran = @(WinSat @('disk', '-ran', '-read', '-n', "$($d.DeviceId)")) -join ' ' -replace '^\s+', ''
+        W ("  Drive {0} {1}:  {2}  |  {3}" -f $d.DeviceId, $d.FriendlyName, $seq, $ran)
+    }
+    # winsat d3d caps every result near 42 F/s on modern cards, so it is a works / doesn't-work check, not a speed number.
+    Step 'Test: graphics card renders (a test window may flash on screen)'
+    $gfx3d = @(WinSat @('d3d'))
+    W ''
+    W ("Graphics render check (winsat d3d): {0}" -f $(if ($gfx3d -match 'Direct3D') { 'PASSED, the card rendered every Direct3D test (Windows caps the speed numbers, so this proves it works, not how fast it is)' } else { 'FAILED or did not run: ' + ($gfx3d -join ' ') }))
+}
+
+W ''
+W 'Windows Memory Diagnostic results on this PC (RAM tests need a reboot, so the report reads past runs):'
+$mdr = Get-WinEvent -FilterHashtable @{LogName='System'; ProviderName='Microsoft-Windows-MemoryDiagnostics-Results'} -MaxEvents 3
+if ($mdr) { $mdr | ForEach-Object { W ("  {0}  {1}" -f $_.TimeCreated, (($_.Message -split "`r?`n") | Where-Object { $_.Trim() } | Select-Object -First 1)) } } else { W '  never run on this PC' }
+
+W ''
+W 'Temperatures Windows can read honestly:'
+Get-PhysicalDisk | Sort-Object { [int]$_.DeviceId } | ForEach-Object { $r = $_ | Get-StorageReliabilityCounter; W ("  Drive {0} {1}: {2}" -f $_.DeviceId, $_.FriendlyName, $(if ($r.Temperature) { "$($r.Temperature) C" } else { 'not reported' })) }
+$smi = Get-Command nvidia-smi.exe -ErrorAction SilentlyContinue
+if ($smi) { & $smi.Source --query-gpu=name,temperature.gpu,utilization.gpu,clocks.sm,power.draw,fan.speed --format=csv,noheader 2>$null | ForEach-Object { W "  NVIDIA GPU (name, temp C, load, clock, power, fan): $_" } }
+else { W '  GPU temperature: only readable on NVIDIA cards (nvidia-smi); CPU temperature is not reliable without extra tools, so it is left out.' }
+
+W ''
+$testErr = @(Get-WinEvent -FilterHashtable @{LogName='System'; StartTime=$testStart} | Where-Object {
+    $_.ProviderName -eq 'Microsoft-Windows-WHEA-Logger' -or $_.Id -eq 4101 -or
+    ($_.ProviderName -eq 'Microsoft-Windows-Kernel-Processor-Power' -and $_.Id -eq 37) -or
+    ($_.Level -le 2 -and $_.ProviderName -match 'nvlddmkm|amdkmdag|amdwddmg|igfx|dxgkrnl|Display') })
+W ("Errors logged during the tests (hardware errors, GPU driver resets, CPU speed limited by firmware): {0}" -f $testErr.Count)
+$testErr | Select-Object -First 10 | ForEach-Object { W ("  {0}  {1} {2}: {3}" -f $_.TimeCreated, $_.ProviderName, $_.Id, ((($_.Message -split "`r?`n") | Select-Object -First 1))) }
+W ("TESTS: {0}   ({1:N0} s)" -f $(if ($skipLoad) { 'PARTIAL, see above' } elseif ($testErr.Count) { 'PROBLEM: errors were logged under load, see above' } else { 'PASSED: no hardware errors, no driver resets, no crash under load' }), ((Get-Date) - $testStart).TotalSeconds)
+W '--- end of report ---'
+[IO.File]::WriteAllText($out, $sb.ToString(), [Text.Encoding]::UTF8)
+if (Test-Path $zip) { Compress-Archive -Path $out -DestinationPath $zip -Update }
 $send = if (Test-Path $zip) { $zip } else { $out }
 
 Write-Host ''
