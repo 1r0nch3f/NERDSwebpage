@@ -94,9 +94,9 @@
 
   <div class="group">Just need a report, or a value check?</div>
   <p class="note">If Mike asked for a report of your computer, or you want to know what your PC is worth, do steps 1 and 2 with this line instead. It lists every part in your computer, tests them, and sends Mike a full read-only report. It takes about 10 minutes and installs nothing. Near the end your PC will run hard for a couple of minutes: that is the part test, so leave it alone until it says the report was sent.</p>
+  <div class="cmd small"><code id="c2">irm https://www.chattnerds.com/report.ps1 | iex</code><button type="button" onclick="cp('c2',this)">Copy</button></div>
   <p class="note"><b>Selling or pricing your PC?</b> Also send Mike a photo of the label on your power supply and one of the inside of the case. No software can read those.</p>
   <p class="note"><b>Streaming or camera problem?</b> Answer <b>Y</b> when it asks, then open your game and OBS (or Streamlabs) and play like normal. The report waits for your game, measures it, and sends itself; you don't need to come back to the window. Otherwise answer <b>N</b>.</p>
-  <div class="cmd small"><code id="c2">irm https://www.chattnerds.com/report.ps1 | iex</code><button type="button" onclick="cp('c2',this)">Copy</button></div>
 
   <div class="group">Good to know</div>
   <p class="note"><b>You stay in control.</b> Mike can only connect with the password created on your computer, or when you click <b>Accept</b> on your screen, and you'll see everything he does. When the job is done, paste the same line again and choose <b>Remove NERDS Remote Support</b>. After that, nobody can connect.</p>
