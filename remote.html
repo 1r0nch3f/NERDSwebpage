@@ -90,10 +90,12 @@
   <div class="step"><span class="n">2</span><span><span class="t">Copy and paste this line</span><span class="s">Click <b>Copy</b>, then click inside the Terminal window, <b>right-click</b> to paste, and press <b>Enter</b>.</span></span></div>
   <div class="cmd"><code id="c1">irm https://www.chattnerds.com/remote.ps1 | iex</code><button type="button" onclick="cp('c1',this)">Copy</button></div>
   <div class="step"><span class="n">3</span><span><span class="t">That's it</span><span class="s">It takes about a minute. Mike gets your connection info automatically, and it's also shown on your screen. Leave the computer on and he'll connect.</span></span></div>
-  <p class="note">The line installs the official, signed <b>RustDesk</b> remote support app and connects it to NERDS only. It also offers to send Mike a read-only report of your computer (hardware, errors and crash logs, no personal files; takes 2-5 minutes). There's nothing to download and nothing for Windows to block.</p>
+  <p class="note">The line installs the official, signed <b>RustDesk</b> remote support app and connects it to NERDS only. It also offers to send Mike a read-only report of your computer (every part in it, errors and crash logs, plus a quick test of the parts; no personal files; takes about 10 minutes). There's nothing to download and nothing for Windows to block.</p>
 
-  <div class="group">Just need a report?</div>
-  <p class="note">If Mike asked for a report of your computer but doesn't need to connect, do steps 1 and 2 with this line instead. It sends Mike a full read-only report (takes 2-5 minutes) and installs nothing. <b>Streaming or camera problem?</b> Answer <b>Y</b> when it asks, then open your game and OBS (or Streamlabs) and play like normal. The report waits for your game, measures it, and sends itself; you don't need to come back to the window.</p>
+  <div class="group">Just need a report, or a value check?</div>
+  <p class="note">If Mike asked for a report of your computer, or you want to know what your PC is worth, do steps 1 and 2 with this line instead. It lists every part in your computer, tests them, and sends Mike a full read-only report. It takes about 10 minutes and installs nothing. Near the end your PC will run hard for a couple of minutes: that is the part test, so leave it alone until it says the report was sent.</p>
+  <p class="note"><b>Selling or pricing your PC?</b> Also send Mike a photo of the label on your power supply and one of the inside of the case. No software can read those.</p>
+  <p class="note"><b>Streaming or camera problem?</b> Answer <b>Y</b> when it asks, then open your game and OBS (or Streamlabs) and play like normal. The report waits for your game, measures it, and sends itself; you don't need to come back to the window. Otherwise answer <b>N</b>.</p>
   <div class="cmd small"><code id="c2">irm https://www.chattnerds.com/report.ps1 | iex</code><button type="button" onclick="cp('c2',this)">Copy</button></div>
 
   <div class="group">Good to know</div>
