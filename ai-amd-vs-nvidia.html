@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GD8KXQQMB6');
+</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AMD or NVIDIA for Local AI? ROCm 10 Changes the Answer - NERDS PC</title>
@@ -65,30 +74,24 @@
 .art a{color:#e53935}
 .art .src{font-size:13px;color:#9a9a9a;margin-top:24px}
 </style>
+<!-- NX-HEAD -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/nerds.css">
+<!-- /NX-HEAD -->
 </head>
 <body>
-<nav class="nav">
-<div class="nav-inner">
-<a class="nav-brand" href="welcome.html">NERDS<span>.</span></a>
-<button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
-<div class="nav-links">
-<a href="welcome.html">Home</a>
-<a href="amd.html">AMD Builds</a>
-<a href="intel.html">Intel Builds</a>
-<a href="gpu.html">GPUs</a>
-<a href="parts.html">Parts</a>
-<a href="storage.html">Storage</a>
-<a href="coolers.html">Coolers</a>
-<a href="build-service.html">Build Service</a>
-<a href="builds.html">Builds</a>
-<a href="repair-services.html">Repair</a>
-<a href="business-it.html">Business IT</a>
-<a href="points.html">Leaderboard</a>
-<a href="about.html">About</a>
-<a href="contact.html">Contact</a>
-</div>
-</div>
-</nav>
+<!-- NX-NAV -->
+<nav class="nx-nav" id="nx-nav"><div class="nx-wrap">
+<a class="nx-brand" href="index.html"><img src="assets/nerds-mascot.png" alt="NERDS mascot">NERDS<b>.</b></a>
+<div class="nx-links"><a href="repair-services.html">Repair</a><a href="builds.html">Custom PCs</a><a href="business-it.html">Business IT</a><a href="websites.html">Websites</a><a href="ai-services.html" class="on">AI</a><a href="about.html">About</a><a class="nx-mtext" href="sms:+14235215694">Text 423-521-5694</a></div>
+<a class="nx-btn nx-hot" href="sms:+14235215694">Text Us</a>
+<button class="nx-burger" onclick="document.getElementById('nx-nav').classList.toggle('open')" aria-label="Menu">Menu</button>
+</div></nav>
+<!-- /NX-NAV -->
+
+
+
+
 <div class="wrap"><div class="art"><h1>AMD or NVIDIA for Local AI<span class="dot">?</span></h1>
 <p class="meta">ROCm 10 just changed the answer &middot; October 2026</p>
 <p>For years, if you asked me what to buy for running AI on your own machine, the answer was easy: NVIDIA. Not because their cards were always faster, but because their software, CUDA, was the only thing everything just worked on. AMD's version, ROCm, was Linux-only, picky about which cards it supported, and a headache to set up.</p>
@@ -123,7 +126,7 @@
 </ul>
 <p>The honest answer is that it depends on what you want to run. That's the conversation I have with every customer before I spec a build. Check out the <a href="gpu-ai.html">AI GPU lineup</a> and the <a href="ai-workstation.html">AI workstation builds</a>, or text me and I'll match the card to the job.</p>
 <p class="src">Sources: <a href="https://rocm.docs.amd.com/en/latest/about/release-notes.html" target="_blank" rel="noopener">AMD ROCm 10.1.0 release notes</a> &middot; <a href="https://newsroom.amd.com/news/rocm-10-software-ai-native-developer-experiences/" target="_blank" rel="noopener">AMD Newsroom: ROCm 10</a> &middot; <a href="https://www.phoronix.com/review/amd-radeon-ai-pro-r9700/3" target="_blank" rel="noopener">Phoronix: Radeon AI PRO R9700 benchmarks</a> (tested on ROCm 7)</p>
-</div><div class="foot-cta"><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get A Quote</a></div><p class="disclaim">AI and workstation GPU prices change week to week with availability and market pricing. Contact me for a current quote before finalizing a build.</p></div>
+</div><div class="foot-cta"><a class="btn" href="quote.html">Get A Quote</a></div><p class="disclaim">AI and workstation GPU prices change week to week with availability and market pricing. Contact me for a current quote before finalizing a build.</p></div>
 <!-- NERDS MERCH SHOP FOOTER -->
 <div style="background:#000;border-top:1px solid #2a2c31;padding:24px 16px;text-align:center;">
   <a href="https://nerds-vzh-shop.fourthwall.com" target="_blank" rel="noopener"
@@ -134,6 +137,25 @@
     Shirts, hoodies &amp; more &middot; nerds-vzh-shop.fourthwall.com
   </div>
 </div>
+<!-- NX-CTA -->
+<section class="nx-cta"><h2>Got a tech problem?</h2>
+<a class="nx-phone" href="sms:+14235215694">423-521-5694</a>
+<p>Text it. Multiple conversations at once, no hold music, no phone tag.</p>
+<div class="nx-row"><a class="nx-btn nx-hot" href="sms:+14235215694">Text Us Now</a><a class="nx-btn nx-ghost" href="quote.html">Get a Quote</a></div></section>
+<!-- /NX-CTA -->
+<!-- NX-FOOT -->
+<footer class="nx-foot"><div class="nx-wrap">
+<div class="nx-cols">
+<div><a class="nx-brand" href="index.html"><img src="assets/nerds-mascot.png" alt="">NERDS<b>.</b></a>
+<p>Owner-operated computer repair, custom PCs, business IT, AI and websites. Serving Dalton, GA and the surrounding areas.</p></div>
+<div><h4>Services</h4><a href="repair-services.html">Repair</a><a href="builds.html">Custom PCs</a><a href="business-it.html">Business IT</a><a href="websites.html">Websites</a><a href="ai-services.html">AI</a><a href="3d-printing.html">3D Printing</a></div>
+<div><h4>Shop</h4><a href="amd.html">AMD builds</a><a href="intel.html">Intel builds</a><a href="gpu.html">Graphics cards</a><a href="parts.html">All parts</a><a href="points.html">Stream leaderboard</a></div>
+<div><h4>Help</h4><a href="intake.html">Drop-off form</a><a href="faq.html">FAQ</a><a href="warranty.html">Warranty</a><a href="contact.html">Contact</a><a href="quote.html">Get a quote</a></div>
+</div>
+<div>info@chattnerds.com &middot; <a style="display:inline" href="sms:+14235215694">423-521-5694</a> &middot; &copy; 2026 NERDS Custom Computers &middot; <a style="display:inline" href="privacy.html">Privacy</a></div>
+</div></footer>
+<script src="assets/nerds-chat.js" defer></script>
+<!-- /NX-FOOT -->
 <!-- NERDS-TAWK-CHAT -->
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">

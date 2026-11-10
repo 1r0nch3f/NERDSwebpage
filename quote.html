@@ -91,131 +91,133 @@
   .success-box p { color: #a8a8a8; }
   .back-link { display: inline-block; margin-top: 24px; color: #8fcdf0; text-decoration: none; font-size: 14px; }
 </style>
+<!-- NX-HEAD -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/nerds.css">
+<!-- /NX-HEAD -->
 </head>
 <body>
-<nav class="site-nav">
-  <div class="site-nav-inner">
-    <a href="https://www.chattnerds.com/" class="site-nav-logo">NERDS PC</a>
-    <button class="site-nav-toggle" onclick="document.querySelector('.site-nav-links').classList.toggle('open')">&#9776;</button>
-    <div class="site-nav-links">
-      <a href="https://www.chattnerds.com/">Home</a>
-      <a href="https://www.chattnerds.com/build-service.html">PC Builds</a>
-      <a href="https://www.chattnerds.com/ai-services.html">AI Services</a>
-      <a href="https://www.chattnerds.com/3d-printing.html">3D Printing</a>
-      <a href="https://www.chattnerds.com/builds.html">Builds</a>
-      <a href="https://www.chattnerds.com/about.html">About</a>
-      <a href="https://www.chattnerds.com/faq.html">FAQ</a>
-      <a href="https://www.chattnerds.com/contact.html">Contact</a>
-      <a href="https://www.chattnerds.com/quote.html" class="site-nav-cta">Get a Quote</a>
-    </div>
+<!-- NX-NAV -->
+<nav class="nx-nav" id="nx-nav"><div class="nx-wrap">
+<a class="nx-brand" href="index.html"><img src="assets/nerds-mascot.png" alt="NERDS mascot">NERDS<b>.</b></a>
+<div class="nx-links"><a href="repair-services.html">Repair</a><a href="builds.html">Custom PCs</a><a href="business-it.html">Business IT</a><a href="websites.html">Websites</a><a href="ai-services.html">AI</a><a href="about.html">About</a><a class="nx-mtext" href="sms:+14235215694">Text 423-521-5694</a></div>
+<a class="nx-btn nx-hot" href="sms:+14235215694">Text Us</a>
+<button class="nx-burger" onclick="document.getElementById('nx-nav').classList.toggle('open')" aria-label="Menu">Menu</button>
+</div></nav>
+<!-- /NX-NAV -->
+
+
+
+<style>
+#quote-form,#form-view{background:none!important;border:0!important;padding:0!important;box-shadow:none!important;margin:0!important}
+.q-wrap{max-width:1200px;margin:0 auto;padding:60px 20px 20px;display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:start}
+.q-side h1{font:700 clamp(40px,5.4vw,70px)/1.02 Oswald,sans-serif;text-transform:uppercase;margin:12px 0 16px;color:#fff}
+.q-side h1 em{font-style:normal;color:var(--nx-cyan)}
+.q-kick{font:500 13px "IBM Plex Mono",monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--nx-cyan)}
+.q-side>p{color:#cfd3db;font-size:18px;margin:0 0 24px}
+.q-points{list-style:none;padding:0;margin:0 0 26px;display:grid;gap:12px}
+.q-points li{display:flex;gap:12px;align-items:flex-start;color:#e3e6ec}
+.q-points li:before{content:"\2713";flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-weight:700;font-size:13px;color:#000;background:var(--nx-cyan)}
+.q-next{padding:22px 24px;border-radius:18px;background:var(--nx-card);border:1px solid var(--nx-line);margin-bottom:18px}
+.q-next h3{font:600 18px Oswald,sans-serif;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;color:#fff}
+.q-next ol{margin:0;padding-left:20px;color:var(--nx-mut)}.q-next li{margin:4px 0}
+.q-text{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:18px 22px;border-radius:18px;border:1px solid rgba(216,0,24,.45);background:rgba(216,0,24,.08)}
+.q-text b{color:#fff}.q-text span{color:var(--nx-mut);font-size:14px;display:block}
+.q-card{padding:32px 30px;border-radius:22px;background:rgba(18,19,26,.9);border:1px solid color-mix(in srgb,var(--nx-cyan) 40%,var(--nx-line));box-shadow:0 40px 90px -40px rgba(24,192,216,.55)}
+.q-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.q-f{margin-bottom:20px}
+.q-l{display:block;font:600 14px Oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;color:#fff;margin-bottom:8px}
+.q-l i{font-style:normal;color:var(--nx-red2)}
+.q-card input[type=text],.q-card input[type=email],.q-card input[type=tel],.q-card textarea{width:100%;box-sizing:border-box;padding:13px 15px;border-radius:12px;border:1px solid var(--nx-line);background:#0b0c10;color:#fff;font:15px "Open Sans",sans-serif;transition:border-color .2s,box-shadow .2s}
+.q-card textarea{min-height:110px;resize:vertical}
+.q-card input:focus,.q-card textarea:focus{outline:none;border-color:var(--nx-cyan);box-shadow:0 0 0 3px rgba(24,192,216,.18)}
+.q-chips{display:flex;flex-wrap:wrap;gap:8px}
+.q-chip{position:relative}
+.q-chip input{position:absolute;opacity:0;pointer-events:none}
+.q-chip span{display:inline-block;padding:10px 16px;border-radius:999px;border:1px solid var(--nx-line);background:#0b0c10;color:#d7dae1;font:600 14px "Open Sans",sans-serif;cursor:pointer;transition:all .15s;user-select:none}
+.q-chip span:hover{border-color:var(--nx-cyan)}
+.q-chip input:checked+span{background:var(--nx-cyan);border-color:var(--nx-cyan);color:#000}
+.q-chip input:focus-visible+span{box-shadow:0 0 0 3px rgba(24,192,216,.35)}
+.q-submit{width:100%;padding:16px;border:0;border-radius:999px;background:var(--nx-red);color:#fff;font:700 17px Oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;cursor:pointer;box-shadow:0 10px 34px -8px rgba(216,0,24,.9);transition:transform .15s}
+.q-submit:hover{transform:translateY(-2px)}.q-submit:disabled{opacity:.6;cursor:wait;transform:none}
+.q-note{text-align:center;color:var(--nx-mut);font-size:13px;margin:12px 0 0}
+.q-err{display:none;margin:0 0 14px;padding:12px 14px;border-radius:12px;background:rgba(216,0,24,.12);border:1px solid rgba(216,0,24,.5);color:#ffd5d9;font-size:14px}
+.q-ok{display:none;text-align:center;padding:40px 10px}
+.q-ok h2{font:700 44px Oswald,sans-serif;text-transform:uppercase;margin:0 0 10px;color:var(--nx-cyan)}.q-ok p{color:#cfd3db}
+@media (max-width:900px){.q-wrap{grid-template-columns:1fr;padding-top:36px}.q-row{grid-template-columns:1fr}.q-card{padding:24px 18px}}
+</style>
+
+<div class="q-wrap">
+  <div class="q-side">
+    <span class="q-kick">Custom PC quote</span>
+    <h1>Let's build<br><em>your rig.</em></h1>
+    <p>Tell us what you'll use it for and what you want to spend. You get a real answer from the person who builds it, not a sales script.</p>
+    <ul class="q-points">
+      <li>Custom builds from $624</li>
+      <li>Every build stress-tested and benchmarked before it goes home</li>
+      <li>Lifetime labor warranty for as long as you own it</li>
+      <li>Bring your own parts and save, or we source everything</li>
+    </ul>
+    <div class="q-next"><h3>What happens next</h3><ol><li>We read your request and get back to you within 1 business day.</li><li>You get a parts list and a price, the way you asked to be contacted.</li><li>You say go, we build, test, and hand it over.</li></ol></div>
+    <div class="q-text"><div><b>Rather just text?</b><span>Send what you're thinking and we'll go from there.</span></div><a class="nx-btn nx-hot" href="sms:+14235215694">Text 423-521-5694</a></div>
   </div>
-</nav>
 
-<div class="container">
-
-  <div id="form-view">
-    <h1 class="page-title">Get a Custom PC Quote</h1>
-    <p class="page-sub">Tell us what you need it for and your budget. We'll get back to you directly, no sales script.</p>
-
-    <form id="quote-form" action="https://formspree.io/f/xrewykkv" method="POST">
-      <div class="field">
-        <label class="field-label" for="name">Name <span class="req">*</span></label>
-        <input type="text" id="name" name="name" required>
+  <div class="q-card">
+    <div id="form-view">
+    <form id="quote-form" action="https://formspree.io/f/xrewykkv" method="POST" novalidate>
+      <input type="hidden" name="_subject" value="New custom PC quote request (chattnerds.com)">
+      <div class="q-err" id="q-err"></div>
+      <div class="q-row">
+        <div class="q-f"><label class="q-l" for="name">Name <i>*</i></label><input type="text" id="name" name="name" autocomplete="name" required></div>
+        <div class="q-f"><label class="q-l" for="phone">Cell phone</label><input type="tel" id="phone" name="phone" autocomplete="tel"></div>
       </div>
-
-      <div class="field">
-        <label class="field-label" for="email">Email <span class="req">*</span></label>
-        <input type="email" id="email" name="email" required>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="phone">Cell Phone Number</label>
-        <input type="tel" id="phone" name="phone">
-      </div>
-
-      <div class="field">
-        <label class="field-label">How do you wish to be reached? <span class="req">*</span></label>
-        <div class="checkbox-row">
-          <label class="checkbox-option"><input type="checkbox" name="contact_method" value="Email"> Email</label>
-          <label class="checkbox-option"><input type="checkbox" name="contact_method" value="Text"> Text</label>
-          <label class="checkbox-option"><input type="checkbox" name="contact_method" value="Call"> Call</label>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label">What do you plan to use the PC for? <span class="req">*</span></label>
-        <div class="radio-row">
-          <label class="radio-option"><input type="radio" name="use_case" value="Gaming" required> Gaming</label>
-          <label class="radio-option"><input type="radio" name="use_case" value="School"> School</label>
-          <label class="radio-option"><input type="radio" name="use_case" value="Coding"> Coding</label>
-          <label class="radio-option"><input type="radio" name="use_case" value="AI or 3D Rendering"> AI / 3D Rendering</label>
-          <label class="radio-option"><input type="radio" name="use_case" value="Video Editing"> Video Editing</label>
-          <label class="radio-option"><input type="radio" name="use_case" value="Other"> Other</label>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="budget">Budget Range</label>
-        <select id="budget" name="budget">
-          <option value="">Select a range</option>
-          <option value="Under $800">Under $800</option>
-          <option value="$800 - $1,200">$800 - $1,200</option>
-          <option value="$1,200 - $1,800">$1,200 - $1,800</option>
-          <option value="$1,800+">$1,800+</option>
-          <option value="Not sure yet">Not sure yet</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="timeline">Timeline</label>
-        <select id="timeline" name="timeline">
-          <option value="">Select a timeline</option>
-          <option value="ASAP">ASAP</option>
-          <option value="Within 2 weeks">Within 2 weeks</option>
-          <option value="Within a month">Within a month</option>
-          <option value="Just exploring">Just exploring</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="details">Anything else we should know?</label>
-        <textarea id="details" name="details" placeholder="Games/software you use, existing parts you want to keep, size constraints, etc."></textarea>
-      </div>
-
-      <button type="submit" class="submit-btn">Send My Quote Request</button>
-      <p class="form-note">We'll respond within 1 business day. No spam, no mailing lists.</p>
+      <div class="q-f"><label class="q-l" for="email">Email <i>*</i></label><input type="email" id="email" name="email" autocomplete="email" required></div>
+      <div class="q-f"><span class="q-l">How should we reach you? <i>*</i></span><div class="q-chips"><label class="q-chip"><input type="checkbox" name="contact_method" value="Text"><span>Text</span></label><label class="q-chip"><input type="checkbox" name="contact_method" value="Call"><span>Call</span></label><label class="q-chip"><input type="checkbox" name="contact_method" value="Email"><span>Email</span></label></div></div>
+      <div class="q-f"><span class="q-l">What's it for? <i>*</i></span><div class="q-chips"><label class="q-chip"><input type="radio" name="use_case" value="Gaming" required><span>Gaming</span></label><label class="q-chip"><input type="radio" name="use_case" value="School"><span>School</span></label><label class="q-chip"><input type="radio" name="use_case" value="Coding"><span>Coding</span></label><label class="q-chip"><input type="radio" name="use_case" value="AI or 3D Rendering"><span>AI / 3D Rendering</span></label><label class="q-chip"><input type="radio" name="use_case" value="Video Editing"><span>Video Editing</span></label><label class="q-chip"><input type="radio" name="use_case" value="Other"><span>Other</span></label></div></div>
+      <div class="q-f"><span class="q-l">Budget</span><div class="q-chips"><label class="q-chip"><input type="radio" name="budget" value="Under $800"><span>Under $800</span></label><label class="q-chip"><input type="radio" name="budget" value="$800 - $1,200"><span>$800 - $1,200</span></label><label class="q-chip"><input type="radio" name="budget" value="$1,200 - $1,800"><span>$1,200 - $1,800</span></label><label class="q-chip"><input type="radio" name="budget" value="$1,800+"><span>$1,800+</span></label><label class="q-chip"><input type="radio" name="budget" value="Not sure yet"><span>Not sure yet</span></label></div></div>
+      <div class="q-f"><span class="q-l">Timeline</span><div class="q-chips"><label class="q-chip"><input type="radio" name="timeline" value="ASAP"><span>ASAP</span></label><label class="q-chip"><input type="radio" name="timeline" value="Within 2 weeks"><span>Within 2 weeks</span></label><label class="q-chip"><input type="radio" name="timeline" value="Within a month"><span>Within a month</span></label><label class="q-chip"><input type="radio" name="timeline" value="Just exploring"><span>Just exploring</span></label></div></div>
+      <div class="q-f"><label class="q-l" for="details">Anything else?</label><textarea id="details" name="details" placeholder="Games or software you use, parts you want to keep, size limits, colors, RGB or no RGB..."></textarea></div>
+      <button type="submit" class="q-submit" id="q-btn">Send my quote request</button>
+      <p class="q-note">We usually reply within 1 business day. No spam, no mailing lists.</p>
     </form>
+    </div>
+    <div class="q-ok" id="success-view"><h2>Got it!</h2><p>Your quote request is in. We'll reach out the way you asked to be contacted.</p><p><a class="nx-btn nx-ghost" href="builds.html">See our builds while you wait</a></p></div>
   </div>
-
-  <div id="success-view" class="success-box">
-    <h2>Got It</h2>
-    <p>Thanks — your quote request is in. We'll reach out the way you asked to be contacted.</p>
-    <a class="back-link" href="https://www.chattnerds.com/">&larr; Back to NERDS PC</a>
-  </div>
-
 </div>
 
 <script>
-  const form = document.getElementById('quote-form');
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const data = new FormData(form);
-    fetch(form.action, {
-      method: 'POST',
-      body: data,
-      headers: { 'Accept': 'application/json' }
-    }).then(response => {
-      if (response.ok) {
-        document.getElementById('form-view').style.display = 'none';
-        document.getElementById('success-view').style.display = 'block';
-      } else {
-        alert('Something went wrong sending your request. Please email info@chattnerds.com directly, or try again.');
-      }
-    }).catch(() => {
-      alert('Something went wrong sending your request. Please email info@chattnerds.com directly, or try again.');
-    });
+(function(){
+  var form=document.getElementById('quote-form'), err=document.getElementById('q-err'), btn=document.getElementById('q-btn');
+  function fail(m){err.textContent=m;err.style.display='block';err.scrollIntoView({behavior:'smooth',block:'center'});}
+  form.addEventListener('submit',function(e){
+    e.preventDefault(); err.style.display='none';
+    if(!form.elements['name'].value.trim()) return fail('Please add your name.');
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.elements['email'].value.trim())) return fail('Please add a valid email address.');
+    if(!form.querySelector('input[name=contact_method]:checked')) return fail('Pick at least one way for us to reach you.');
+    if(!form.querySelector('input[name=use_case]:checked')) return fail('Tell us what the PC is for.');
+    var c=form.querySelector('input[name=contact_method][value=Text]:checked')||form.querySelector('input[name=contact_method][value=Call]:checked');
+    if(c && !form.elements['phone'].value.trim()) return fail('Add your cell number so we can text or call you.');
+    btn.disabled=true; btn.textContent='Sending...';
+    fetch(form.action,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}})
+      .then(function(r){ if(r.ok){document.getElementById('form-view').style.display='none';document.getElementById('success-view').style.display='block';} else throw 0; })
+      .catch(function(){btn.disabled=false;btn.textContent='Send my quote request';fail('Something went wrong sending your request. Text us at 423-521-5694 or email info@chattnerds.com and we will take care of you.');});
   });
+})();
 </script>
+
+<!-- NX-FOOT -->
+<footer class="nx-foot"><div class="nx-wrap">
+<div class="nx-cols">
+<div><a class="nx-brand" href="index.html"><img src="assets/nerds-mascot.png" alt="">NERDS<b>.</b></a>
+<p>Owner-operated computer repair, custom PCs, business IT, AI and websites. Serving Dalton, GA and the surrounding areas.</p></div>
+<div><h4>Services</h4><a href="repair-services.html">Repair</a><a href="builds.html">Custom PCs</a><a href="business-it.html">Business IT</a><a href="websites.html">Websites</a><a href="ai-services.html">AI</a><a href="3d-printing.html">3D Printing</a></div>
+<div><h4>Shop</h4><a href="amd.html">AMD builds</a><a href="intel.html">Intel builds</a><a href="gpu.html">Graphics cards</a><a href="parts.html">All parts</a><a href="points.html">Stream leaderboard</a></div>
+<div><h4>Help</h4><a href="intake.html">Drop-off form</a><a href="faq.html">FAQ</a><a href="warranty.html">Warranty</a><a href="contact.html">Contact</a><a href="quote.html">Get a quote</a></div>
+</div>
+<div>info@chattnerds.com &middot; <a style="display:inline" href="sms:+14235215694">423-521-5694</a> &middot; &copy; 2026 NERDS Custom Computers &middot; <a style="display:inline" href="privacy.html">Privacy</a></div>
+</div></footer>
+<script src="assets/nerds-chat.js" defer></script>
+<!-- /NX-FOOT -->
 <!-- NERDS-TAWK-CHAT -->
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
