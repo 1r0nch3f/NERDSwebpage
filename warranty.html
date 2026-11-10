@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GD8KXQQMB6');
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Warranty and Support - NERDS PC</title>
@@ -72,31 +81,22 @@
 .btn{display:inline-block;text-align:center;background:#e53935;color:#fff;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:13px;border-radius:8px;font-size:15px;transition:background .15s}
 .btn:hover{background:#c62828}
 </style>
+<!-- NX-HEAD -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/nerds.css">
+<!-- /NX-HEAD -->
 </head>
 <body>
+<!-- NX-NAV -->
+<nav class="nx-nav" id="nx-nav"><div class="nx-wrap">
+<a class="nx-brand" href="index.html"><img src="assets/nerds-mascot.png" alt="NERDS mascot">NERDS<b>.</b></a>
+<div class="nx-links"><a href="repair-services.html">Repair</a><a href="builds.html">Custom PCs</a><a href="business-it.html">Business IT</a><a href="websites.html">Websites</a><a href="ai-services.html">AI</a><a href="about.html" class="on">About</a><a class="nx-mtext" href="sms:+14235215694">Text 423-521-5694</a></div>
+<a class="nx-btn nx-hot" href="sms:+14235215694">Text Us</a>
+<button class="nx-burger" onclick="document.getElementById('nx-nav').classList.toggle('open')" aria-label="Menu">Menu</button>
+</div></nav>
+<!-- /NX-NAV -->
 
-<nav class="nav">
-<div class="nav-inner">
-<a class="nav-brand" href="welcome.html">NERDS<span>.</span></a>
-<button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
-<div class="nav-links">
-<a href="welcome.html">Home</a>
-<a href="amd.html">AMD Builds</a>
-<a href="intel.html">Intel Builds</a>
-<a href="gpu.html">GPUs</a>
-<a href="parts.html">Parts</a>
-<a href="storage.html">Storage</a>
-<a href="coolers.html">Coolers</a>
-<a href="build-service.html">Build Service</a>
-<a href="builds.html">Builds</a>
-<a href="repair-services.html">Repair</a>
-<a href="business-it.html">Business IT</a>
-<a href="points.html">Leaderboard</a>
-<a href="about.html">About</a>
-<a href="contact.html">Contact</a>
-</div>
-</div>
-</nav>
+
 
 
 
@@ -122,10 +122,29 @@
   <div class="foot">
     <h3>Questions About a Build or Your Warranty?</h3>
     <p>Reach out and I will walk you through it. No runaround.</p>
-    <a class="primary" href="contact.html" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
-    <a class="ghost" href="https://docs.google.com/forms/d/e/1FAIpQLScc8gr_9tLmQ2XPqmuJJxDYdnM6b33WJ7IrYgxZgo_iD7GKbQ/viewform" onclick="window.open(this.href,'_blank');return false;">Get a Build Quote</a>
+    <a class="primary" href="contact.html">Contact Me</a>
+    <a class="ghost" href="quote.html">Get a Build Quote</a>
   </div>
 </div>
+<!-- NX-CTA -->
+<section class="nx-cta"><h2>Got a tech problem?</h2>
+<a class="nx-phone" href="sms:+14235215694">423-521-5694</a>
+<p>Text it. Multiple conversations at once, no hold music, no phone tag.</p>
+<div class="nx-row"><a class="nx-btn nx-hot" href="sms:+14235215694">Text Us Now</a><a class="nx-btn nx-ghost" href="quote.html">Get a Quote</a></div></section>
+<!-- /NX-CTA -->
+<!-- NX-FOOT -->
+<footer class="nx-foot"><div class="nx-wrap">
+<div class="nx-cols">
+<div><a class="nx-brand" href="index.html"><img src="assets/nerds-mascot.png" alt="">NERDS<b>.</b></a>
+<p>Owner-operated computer repair, custom PCs, business IT, AI and websites. Serving Dalton, GA and the surrounding areas.</p></div>
+<div><h4>Services</h4><a href="repair-services.html">Repair</a><a href="builds.html">Custom PCs</a><a href="business-it.html">Business IT</a><a href="websites.html">Websites</a><a href="ai-services.html">AI</a><a href="3d-printing.html">3D Printing</a></div>
+<div><h4>Shop</h4><a href="amd.html">AMD builds</a><a href="intel.html">Intel builds</a><a href="gpu.html">Graphics cards</a><a href="parts.html">All parts</a><a href="points.html">Stream leaderboard</a></div>
+<div><h4>Help</h4><a href="intake.html">Drop-off form</a><a href="faq.html">FAQ</a><a href="warranty.html">Warranty</a><a href="contact.html">Contact</a><a href="quote.html">Get a quote</a></div>
+</div>
+<div>info@chattnerds.com &middot; <a style="display:inline" href="sms:+14235215694">423-521-5694</a> &middot; &copy; 2026 NERDS Custom Computers &middot; <a style="display:inline" href="privacy.html">Privacy</a></div>
+</div></footer>
+<script src="assets/nerds-chat.js" defer></script>
+<!-- /NX-FOOT -->
 <!-- NERDS-TAWK-CHAT -->
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">

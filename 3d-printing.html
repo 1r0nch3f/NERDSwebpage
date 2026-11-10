@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GD8KXQQMB6');
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D Printing - NERDS PC</title>
@@ -160,31 +169,31 @@
 .btn{display:inline-block;text-align:center;background:#e53935;color:#fff;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:13px;border-radius:8px;font-size:15px;transition:background .15s}
 .btn:hover{background:#c62828}
 </style>
+<style>
+.p3-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:6px 0 10px}
+.p3-split img{width:100%;height:320px;object-fit:cover;border-radius:16px;border:1px solid #23252e;display:block}
+.p3-vids{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+.p3-vid{position:relative;border-radius:16px;overflow:hidden;border:1px solid #23252e;background:#000}
+.p3-vid video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.p3-vid span{position:absolute;left:10px;bottom:10px;padding:5px 11px;border-radius:999px;background:rgba(5,5,7,.8);font:600 12px Oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;color:#fff}
+@media(max-width:760px){.p3-split,.p3-vids{grid-template-columns:1fr}.p3-split img{height:240px}}
+</style>
+<!-- NX-HEAD -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/nerds.css">
+<!-- /NX-HEAD -->
 </head>
 <body>
+<!-- NX-NAV -->
+<nav class="nx-nav" id="nx-nav"><div class="nx-wrap">
+<a class="nx-brand" href="index.html"><img src="assets/nerds-mascot.png" alt="NERDS mascot">NERDS<b>.</b></a>
+<div class="nx-links"><a href="repair-services.html">Repair</a><a href="builds.html">Custom PCs</a><a href="business-it.html">Business IT</a><a href="websites.html">Websites</a><a href="ai-services.html">AI</a><a href="about.html">About</a><a class="nx-mtext" href="sms:+14235215694">Text 423-521-5694</a></div>
+<a class="nx-btn nx-hot" href="sms:+14235215694">Text Us</a>
+<button class="nx-burger" onclick="document.getElementById('nx-nav').classList.toggle('open')" aria-label="Menu">Menu</button>
+</div></nav>
+<!-- /NX-NAV -->
 
-<nav class="nav">
-<div class="nav-inner">
-<a class="nav-brand" href="welcome.html">NERDS<span>.</span></a>
-<button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
-<div class="nav-links">
-<a href="welcome.html">Home</a>
-<a href="amd.html">AMD Builds</a>
-<a href="intel.html">Intel Builds</a>
-<a href="gpu.html">GPUs</a>
-<a href="parts.html">Parts</a>
-<a href="storage.html">Storage</a>
-<a href="coolers.html">Coolers</a>
-<a href="build-service.html">Build Service</a>
-<a href="builds.html">Builds</a>
-<a href="repair-services.html">Repair</a>
-<a href="business-it.html">Business IT</a>
-<a href="points.html">Leaderboard</a>
-<a href="about.html">About</a>
-<a href="contact.html">Contact</a>
-</div>
-</div>
-</nav>
+
 
 
 
@@ -235,6 +244,25 @@
   </div>
 
   <!-- HOW IT WORKS -->
+  <h2 class="section-heading">Custom Fan Covers</h2>
+  <p class="intro">Your name, your logo, your favorite game. I design fan covers and grills to fit your exact fans and case, then print them in-house in the colors you pick. They make a build look like nobody else's.</p>
+  <div class="p3-split">
+    <img src="assets/print/fan-cover-butterfly.jpg" alt="Custom pink butterfly fan cover with the owner's name" loading="lazy">
+    <img src="assets/print/fan-grill-bottom.jpg" alt="Custom butterfly bottom grill on a pink PC case" loading="lazy">
+  </div>
+
+  <h2 class="section-heading">Watch It Print</h2>
+  <div class="p3-vids">
+    <div class="p3-vid"><video muted loop playsinline preload="none" poster="assets/print/fan-grill-timelapse.jpg" data-src="assets/print/fan-grill-timelapse.mp4"></video><span>Butterfly fan grill</span></div>
+    <div class="p3-vid"><video muted loop playsinline preload="none" poster="assets/print/helldiver-timelapse.jpg" data-src="assets/print/helldiver-timelapse.mp4"></video><span>Helldiver faceplate</span></div>
+    <div class="p3-vid"><video muted loop playsinline preload="none" poster="assets/print/zelda-pot-timelapse.jpg" data-src="assets/print/zelda-pot-timelapse.mp4"></video><span>Zelda pot</span></div>
+  </div>
+  <script>
+  (function(){var vo=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;
+    if(e.isIntersecting){if(!v.src&&v.dataset.src)v.src=v.dataset.src;v.play().catch(function(){});}else v.pause();});},{threshold:.35});
+    document.querySelectorAll('video[data-src]').forEach(function(v){vo.observe(v);});})();
+  </script>
+
   <h2 class="section-heading">How It Works</h2>
 
   <div class="step-card step-1">
@@ -356,10 +384,29 @@
   <div class="cta-box">
     <h3>Got Something You Need Printed?</h3>
     <p>Send me a message with what you need. A file, a photo, a sketch, or just a description. I will get back to you with a quote.</p>
-    <a href="contact.html" class="cta-btn" onclick="window.open(this.href,'_blank');return false;">Contact Me</a>
+    <a href="contact.html" class="cta-btn">Contact Me</a>
   </div>
 
 </div>
+<!-- NX-CTA -->
+<section class="nx-cta"><h2>Got a tech problem?</h2>
+<a class="nx-phone" href="sms:+14235215694">423-521-5694</a>
+<p>Text it. Multiple conversations at once, no hold music, no phone tag.</p>
+<div class="nx-row"><a class="nx-btn nx-hot" href="sms:+14235215694">Text Us Now</a><a class="nx-btn nx-ghost" href="quote.html">Get a Quote</a></div></section>
+<!-- /NX-CTA -->
+<!-- NX-FOOT -->
+<footer class="nx-foot"><div class="nx-wrap">
+<div class="nx-cols">
+<div><a class="nx-brand" href="index.html"><img src="assets/nerds-mascot.png" alt="">NERDS<b>.</b></a>
+<p>Owner-operated computer repair, custom PCs, business IT, AI and websites. Serving Dalton, GA and the surrounding areas.</p></div>
+<div><h4>Services</h4><a href="repair-services.html">Repair</a><a href="builds.html">Custom PCs</a><a href="business-it.html">Business IT</a><a href="websites.html">Websites</a><a href="ai-services.html">AI</a><a href="3d-printing.html">3D Printing</a></div>
+<div><h4>Shop</h4><a href="amd.html">AMD builds</a><a href="intel.html">Intel builds</a><a href="gpu.html">Graphics cards</a><a href="parts.html">All parts</a><a href="points.html">Stream leaderboard</a></div>
+<div><h4>Help</h4><a href="intake.html">Drop-off form</a><a href="faq.html">FAQ</a><a href="warranty.html">Warranty</a><a href="contact.html">Contact</a><a href="quote.html">Get a quote</a></div>
+</div>
+<div>info@chattnerds.com &middot; <a style="display:inline" href="sms:+14235215694">423-521-5694</a> &middot; &copy; 2026 NERDS Custom Computers &middot; <a style="display:inline" href="privacy.html">Privacy</a></div>
+</div></footer>
+<script src="assets/nerds-chat.js" defer></script>
+<!-- /NX-FOOT -->
 <!-- NERDS-TAWK-CHAT -->
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
