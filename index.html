@@ -185,6 +185,14 @@ section{padding:80px 0}
 .stream{background:linear-gradient(90deg,#1a0d22,#0d1a20);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:46px 0}
 .stream .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
 .stream h3{font-size:32px}.stream p{color:var(--mut);margin:6px 0 0}
+.reviews{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.review{margin:0;padding:30px;border-radius:var(--radius);background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;gap:16px}
+.review .stars{color:var(--yellow);font-size:20px;letter-spacing:3px}
+.review blockquote{margin:0;font-size:18px;line-height:1.6;color:#e3e6ec}
+.review figcaption{margin-top:auto;color:var(--mut);font-size:15px}
+.review figcaption strong{color:var(--fg);display:block;font:600 18px Oswald;letter-spacing:.5px}
+.gscore{margin-top:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.gscore .big5{font:700 30px Oswald;color:var(--fg)}.gscore .big5 span{color:var(--yellow);letter-spacing:2px;margin-left:10px;font-size:22px}
 .btn-twitch{background:#9146ff;color:#fff}
 
 /* BIG CTA */
@@ -203,7 +211,7 @@ html.js .reveal.in{opacity:1;transform:none}
 @media (max-width:960px){
   .hero .wrap,.web .wrap,.feature{grid-template-columns:1fr}
   .mascot{order:-1}.mascot img{width:220px}
-  .tiles{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}
+  .tiles{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}.reviews{grid-template-columns:1fr}
   .browser{transform:none}
 }
 @media (max-width:720px){
@@ -374,6 +382,24 @@ html.js .reveal.in{opacity:1;transform:none}
       <div><a class="btn btn-ghost" href="showcase/emiko-7f3k2a.html">See the build</a></div>
     </div>
   </div>
+</div></section>
+
+<section style="padding-top:0"><div class="wrap">
+  <div class="sec-head reveal"><h2>What customers say</h2><p>Real reviews from our Google Business Profile.</p></div>
+  <div class="reviews">
+    <figure class="review reveal">
+      <div class="stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <blockquote>&ldquo;Mike at Computer Nerds helped me sell two high-end GPUs, and he made the whole process easy. He was thorough about screening buyers before anyone came to see the hardware, so I only dealt with serious people, and everything went smoothly from start to finish. Most importantly, I felt I could trust him throughout. I&rsquo;d work with him again without hesitation. Highly recommended.&rdquo;</blockquote>
+      <figcaption><strong>Julio Cachay</strong>Owner, Dynamic Horizons Software LLC, Chattanooga, TN</figcaption>
+    </figure>
+    <figure class="review reveal">
+      <div class="stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <blockquote>&ldquo;I have been using Mike for several years. He is dependable and reasonable with his pricing. I will highly recommend him as he has always given excellency in his work for me.&rdquo;</blockquote>
+      <figcaption><strong>Larry Ewing</strong>Google review</figcaption>
+    </figure>
+  </div>
+  <div class="gscore reveal"><div class="big5">5.0 on Google<span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+  <a class="btn btn-ghost" href="https://g.page/r/Cd9quwK_GrF0EAI/review">Read or leave a Google review</a></div>
 </div></section>
 
 <div class="stream"><div class="wrap">
