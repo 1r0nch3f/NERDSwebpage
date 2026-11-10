@@ -1,5 +1,5 @@
-/* NERDS chat bubble (NERD Brain). Replaces the Tawk look with our own.
-   Shows only when the chat server answers its health check; otherwise stays hidden and Tawk keeps working.
+/* NERDS chat bubble (NERD Brain). Tawk was removed 2026-11-10.
+   Health check OK -> live chat. Server unreachable -> "Contact us" panel with Text / Call / Quote only.
    Server: nerd-ai (my-agent/nerds-chat). Vault: NERDS Website Chat. */
 (function () {
   if (window.__nerdsChat) return; window.__nerdsChat = 1;
@@ -54,7 +54,7 @@
 
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 
-  function build() {
+  function build(online) {
     var st = el("style"); st.textContent = css; document.head.appendChild(st);
     var btn = el("button", "nc-btn", '<img src="' + MASCOT + '" alt=""><span>Chat with us</span><span class="nc-dot"></span>');
     btn.setAttribute("aria-label", "Open chat with NERD Brain");
@@ -76,7 +76,7 @@
     function add(text, who) { var m = el("div", "nc-m " + (who === "me" ? "nc-me" : "nc-bot")); m.textContent = text; log.appendChild(m); log.scrollTop = log.scrollHeight; return m; }
     function history() { try { return JSON.parse(store("nerdsChatLog") || "[]"); } catch (e) { return []; } }
     function remember(text, who) { var h = history(); h.push([who, text]); store("nerdsChatLog", JSON.stringify(h.slice(-40))); }
-    function restore() { var h = history(); if (!h.length) { add(GREET, "bot"); return; } h.forEach(function (x) { add(x[1], x[0]); }); chips.style.display = "none"; }
+    var restore = function () { var h = history(); if (!h.length) { add(GREET, "bot"); return; } h.forEach(function (x) { add(x[1], x[0]); }); chips.style.display = "none"; }
 
     function talk(text) {
       text = (text || "").trim(); if (!text || busy) return;
@@ -99,22 +99,21 @@
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && p.classList.contains("open")) close(); });
     form.addEventListener("submit", function (e) { e.preventDefault(); talk(input.value); });
     chips.addEventListener("click", function (e) { if (e.target.tagName === "BUTTON") talk(e.target.textContent); });
+    if (!online) {                     // chat server unreachable: still give visitors a way to reach Mike
+      btn.querySelector("span").textContent = "Contact us";
+      btn.querySelector(".nc-dot").style.cssText = "background:#a3a8b4;box-shadow:none";
+      p.querySelector(".nc-head small").innerHTML = "<i style=\"background:#a3a8b4\"></i>Chat is offline right now";
+      chips.style.display = "none"; form.style.display = "none";
+      restore = function () { add("Our chat assistant is offline for a moment. Text or call Mike at " + PHONE + " and he'll get right back to you, or send a quote request.", "bot"); };
+    }
     window.NERDSChat = { open: open, close: close };
-  }
-
-  function hideTawk() {
-    window.Tawk_API = window.Tawk_API || {};
-    var hide = function () { try { window.Tawk_API.hideWidget(); } catch (e) {} };
-    var prev = window.Tawk_API.onLoad;
-    window.Tawk_API.onLoad = function () { if (prev) try { prev(); } catch (e) {} hide(); };
-    hide();
   }
 
   function start() {
     var ctl = window.AbortController ? new AbortController() : null, timer = setTimeout(function () { if (ctl) ctl.abort(); }, 5000);
     fetch(API + "/health", { signal: ctl ? ctl.signal : undefined })
-      .then(function (r) { clearTimeout(timer); if (!r.ok) throw 0; hideTawk(); build(); })
-      .catch(function () { clearTimeout(timer); /* server unreachable: stay hidden, Tawk keeps working */ });
+      .then(function (r) { clearTimeout(timer); if (!r.ok) throw 0; build(true); })
+      .catch(function () { clearTimeout(timer); build(false); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();
