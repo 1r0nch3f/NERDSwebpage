@@ -75,13 +75,54 @@ Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-
     $p = Get-ItemProperty $_.PSPath
     if ($p.DriverDesc -and $p.'HardwareInformation.qwMemorySize') { $vram[$p.DriverDesc] = [math]::Round($p.'HardwareInformation.qwMemorySize' / 1GB, 1) }
 }
+# Card identity check (test kit check from 2026-11-09, ported 2026-11-11): the chip's PCI device ID is fused into the card,
+# so it names the real model whatever the box, sticker or listing says. It is held against Windows' name for the card and
+# the real VRAM, using gpu-db.json from chattnerds.com (pci.ids + published specs, built by the kit's GpuDb\build-gpu-db.py).
+# GPU-Z can't ship here (license), so bus width and shader count are not checked; the kit checks those.
+# Model keys must match key() in build-gpu-db.py.
+function Get-GpuModelKey([string]$n) {
+    if (-not $n) { return $null }
+    $s = ' ' + (($n.ToUpper() -replace '\(TM\)|\(R\)|&NBSP;|[\[\]]', ' ') -replace '\s+', ' ') + ' '
+    if ($s -match '\b(RTX|GTX)\s*(\d{4})\b(?:\s+(TI SUPER|TI|SUPER|D V2|D))?\b') { return (@($Matches[1], $Matches[2], $Matches[3]) | Where-Object { $_ }) -join ' ' }
+    if ($s -match '\bRX\s*(\d{4})\b(?:\s+(XTX|XT|GRE))?\b') { return 'RX ' + ((@($Matches[1], $Matches[2]) | Where-Object { $_ }) -join ' ') }
+    if ($s -match '\bARC\s*([AB]\d{3})\b') { return 'ARC ' + $Matches[1] }
+    $null
+}
+function Get-GpuIdentity([string]$name, [string]$ven, [string]$dev, $gb) {
+    $chip = "$($ven):$($dev)"
+    if (-not $gpuDb) { return 'UNVERIFIED - the card database (chattnerds.com/gpu-db.json) could not be downloaded' }
+    $id = $gpuDb.ids.$chip
+    if (-not $id) { return "UNVERIFIED - chip $chip is not in the card database" }
+    $key = Get-GpuModelKey $name
+    if (-not $key) { return "UNVERIFIED - chip $chip is '$($id.name)', model not recognised from '$name'" }
+    $show = ($key -replace ' TI\b', ' Ti') -replace ' SUPER\b', ' Super'
+    $p = @()
+    if (@($id.models).Count -and @($id.models) -notcontains $key) { $p += "chip $chip is '$($id.name)', but Windows calls the card $name" }
+    $vars = @($gpuDb.specs.$key | Where-Object { $_ })
+    $gbI = $(if ($gb) { [int][math]::Round([double]$gb) })
+    if ($vars.Count -and $gbI -and -not @($vars | Where-Object { $_.vram -eq $gbI }).Count) {
+        $p += "card has $gbI GB, a real $show has $((@($vars | ForEach-Object { $_.vram }) | Sort-Object -Unique) -join ' or ') GB"
+    }
+    if ($p.Count) { return 'MISMATCH - ' + ($p -join '; ') }
+    if (-not $vars.Count) { return "UNVERIFIED - chip $chip matches $show, but no published spec is on file for it" }
+    if (-not $gbI) { return "UNVERIFIED - chip $chip matches $show, VRAM not readable" }
+    "GENUINE - chip $chip = $show, $gbI GB = published spec"
+}
+$gpuDb = $null
+try {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+    $gpuDb = Invoke-RestMethod 'https://www.chattnerds.com/gpu-db.json' -UseBasicParsing -TimeoutSec 20
+} catch { $gpuDb = $null }
+$igpuRe = 'UHD|Iris|HD Graphics|Intel\(R\) Graphics|^AMD Radeon\(TM\) Graphics$|^AMD Radeon Graphics$|Radeon\(TM\) \d{3}M'
 foreach ($g in Get-CimInstance Win32_VideoController | Where-Object { $_.PNPDeviceID -like 'PCI\*' }) {
-    $maker = 'unknown'; $ids = ''
+    $maker = 'unknown'; $ids = ''; $gVen = ''; $gDev = ''
     if ($g.PNPDeviceID -match 'VEN_([0-9A-F]{4})&DEV_([0-9A-F]{4})&SUBSYS_([0-9A-F]{4})([0-9A-F]{4})') {
+        $gVen = $Matches[1]; $gDev = $Matches[2]
         $maker = $(if ($subVendor[$Matches[4]]) { $subVendor[$Matches[4]] } else { "vendor id $($Matches[4])" })
         $ids = "VEN_$($Matches[1]) DEV_$($Matches[2]) SUBSYS_$($Matches[3])$($Matches[4])"
     }
     W ("GPU          : {0}   {1} GB   card made by {2}   ({3})" -f $g.Name, $(if ($vram[$g.Name]) { $vram[$g.Name] } else { '?' }), $maker, $ids)
+    if ($gVen -and $g.Name -notmatch $igpuRe) { W ("  identity   : {0}" -f (Get-GpuIdentity $g.Name $gVen $gDev $vram[$g.Name])) }
 }
 
 # Drive SMART read straight from the drive (2026-11-09): Windows' reliability counters leave power-on hours blank on many
