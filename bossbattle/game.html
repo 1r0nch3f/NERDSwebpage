@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NERDS Boss Battle (free edition)</title>
+<!--
+  NERDS Boss Battle (free edition) by NERDS Computer Repair, https://www.chattnerds.com/bossbattle/
+  Twitch chat game for OBS / Streamlabs: browser source, 1920x300, transparent.
+  URL: game.html?channel=YOURTWITCHNAME   (?demo=1 = fake viewers for a preview)
+  Free to use on your stream. Please keep the NERDS credit on screen.
+-->
+<script src="assets/techs/roster.js" onerror="window.TECH_ROSTER = null"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+  html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+  body { width: 1920px; height: 300px; position: relative; }
+  canvas { position: absolute; left: 0; top: 0; }
+  #world { width: 1920px; height: 300px; image-rendering: pixelated; }
+  .bsod { position: absolute; width: 56px; height: 56px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.7)); }
+  /* 960x150 world at 2x: chunky but detailed pixel art */
+</style>
+</head>
+<body>
+<canvas id="world" width="960" height="150"></canvas>
+<canvas id="actors" width="1920" height="300"></canvas>
+<canvas id="ui" width="1920" height="300"></canvas>
+<div id="emotes" style="position:absolute;left:0;top:0;width:1920px;height:300px;pointer-events:none"></div>
+<script>
+'use strict';
+const Q = new URLSearchParams(location.search);
+const CHANNEL = (Q.get('channel') || '').toLowerCase().replace(/[^a-z0-9_]/g, '');
+const DEMO = Q.has('demo');
+
+const W = 960, H = 150, S = 2, FLOOR = 135, BOSS_X = 836;
+const wc = document.getElementById('world'); let w = wc.getContext('2d');
+const uc = document.getElementById('ui'), u = uc.getContext('2d');
+w.imageSmoothingEnabled = false;
+
+const CYAN = '#19e3ff';
+const rnd = (a, b) => a + Math.random() * (b - a);
+const ri = (a, b) => Math.floor(rnd(a, b + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const now = () => performance.now();
+const norm = s => s.toLowerCase().replace(/\s+/g, ' ').trim();
+
+// ---------------------------------------------------------------- techs
+const SKIN = ['#f6d3b3', '#e8b98f', '#c98e5f', '#a8703f', '#7a4a26', '#4e2f1a'];
+const HAIR = ['#1b1210', '#3b2416', '#6b4423', '#a0632b', '#d9b25a', '#e8e0d0', '#8a2424', '#2b2b6a'];
+const STYLES = { f: ['long', 'ponytail', 'bun', 'bob'], m: ['short', 'buzz', 'spiky', 'bald'] };
+const CLASSES = {
+  hardware: { name: 'Hardware', shirt: '#e0a020', dmg: [6, 9], shot: 'wrench' },
+  software: { name: 'Software', shirt: '#2a9df4', dmg: [5, 8], shot: 'code' },
+  network:  { name: 'Network',  shirt: '#9b59d0', dmg: [5, 8], shot: 'packet' },
+  data:     { name: 'Data Recovery', shirt: '#2ecc71', dmg: [3, 6], shot: 'spark' },
+};
+const BOTS = new Set(['nightbot', 'streamelements', 'streamlabs', 'moobot', 'fossabot', 'wizebot', 'sery_bot',
+  'commanderroot', 'soundalerts', 'kofistreambot', 'pokemoncommunitygame', 'streamstickers', 'blerp', 'botrixoficial',
+  'nerdbrain_bot', 'nerdbrainbot', 'nerdbrain_bo', 'own3d', 'lattemotte', 'electricallongboard', 'anotherttvviewer',
+  'drapsnatt', 'creatisbot', 'streamholics', 'aliceydra', 'regressz', 'rogueg1rl', 'tarsai', 'v_and_k']);
+const isBot = login => BOTS.has(login) || /bot$/.test(login) || /^justinfan/.test(login);
+
+const techs = new Map();   // login -> tech
+let joinSeq = 0;
+
+// Deterministic per-username random, so a viewer gets the same tech every stream.
+function seeded(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 100000) / 100000; };
+}
+// AI-rendered roster (assets/techs/roster.js sets window.TECH_ROSTER = [{id, g, cls, file}]); code-drawn techs if absent
+// optional walk cycle per tech: e.walk = ['f1_w1.png', ...] (Qwen-Image Edit frames, same pixel scale as e.file)
+const loadImg = src => { const im = new Image(); im.src = src; return im; };
+const ROSTER = (window.TECH_ROSTER || []).map(e => Object.assign({ img: loadImg('assets/techs/' + e.file), walkImg: (e.walk || []).map(f => loadImg('assets/techs/' + f)) }, e));
+const TECH_H = 88;                       // on-screen height of a roster sprite (px, 1920x300 page)
+// Tech set: viewers pick TECH 1 or TECH 2 (!crew 1 / !crew 2 / !tech 1 / !tech 2). Shown only as
+// "TECH 1" / "TECH 2", never as gender. Set 1 = the first 8 roster techs, set 2 = the other 8. Remembered per login.
+let techSet = {};
+try { techSet = JSON.parse(localStorage.getItem('nerds-boss-techset') || '{}'); } catch (e) { techSet = {}; }
+const saveTechSet = () => { if (DEMO) return; try { localStorage.setItem('nerds-boss-techset', JSON.stringify(techSet)); } catch (e) {} };
+const SET_G = { 1: 'f', 2: 'm' };
+function makeLook(t) {
+  const r = seeded(t.id);
+  if (ROSTER.length) {
+    const seededG = r() < 0.5 ? 'f' : 'm';
+    const g = SET_G[techSet[t.id]] || seededG;
+    const pool = ROSTER.filter(e => e.g === g).length ? ROSTER.filter(e => e.g === g) : ROSTER;
+    const e = pool[Math.floor(r() * pool.length)];
+    t.g = e.g; t.cls = e.cls; t.img = e.img; t.walkImg = e.walkImg; t.rosterId = e.id;
+    t.skin = SKIN[0]; t.hair = HAIR[0]; t.style = STYLES[t.g][0]; t.beard = false;   // unused with a roster sprite
+    return;
+  }
+  const sp = a => a[Math.floor(r() * a.length)];
+  t.g = r() < 0.5 ? 'f' : 'm';
+  t.cls = sp(Object.keys(CLASSES));
+  t.skin = sp(SKIN);
+  t.hair = sp(HAIR);
+  t.style = sp(STYLES[t.g]);
+  t.beard = t.g === 'm' && r() < 0.35;
+}
+
+// Opt-in crew: type !crew ONCE to join for good, !crewout to leave. Only crew members ever appear
+// (chatting or lurking). Remembered in the OBS browser's localStorage; the demo never saves.
+let crew = new Set();
+try { crew = new Set(JSON.parse(localStorage.getItem('nerds-boss-crew') || '[]')); } catch (e) { crew = new Set(); }
+const saveCrew = () => { if (DEMO) return; try { localStorage.setItem('nerds-boss-crew', JSON.stringify([...crew])); } catch (e) {} };
+
+function join(login, display, chatter) {
+  if (isBot(login) || !crew.has(login)) return null;
+  let t = techs.get(login);
+  if (!t) {
+    t = { id: login, name: display || login, x: -12, hp: 100, down: false, downUntil: 0, nextAct: now() + rnd(1500, 4000),
+          lastHeal: 0, dmg: 0, atkT: 0, hurtT: 0, dodgeT: 0, dodged: false, phase: Math.random() * 10,
+          chatter: false, lastSeen: now(), seq: joinSeq++ };
+    makeLook(t);
+    techs.set(login, t);
+    if (phase === 'fight') { bossMax += 120; bossHP += 120; }
+    layout();
+  }
+  if (display) t.name = display;
+  if (chatter && !t.chatter) { t.chatter = true; layout(); }
+  t.lastSeen = now();
+  return t;
+}
+
+// ON-CALL techs: NERDS staff NPCs fill the crew up to
+// ONCALL_TARGET while real viewers are few, and clock out one per real tech that joins. Labelled "ON-CALL n" in a
+// different color. They fight and blue screen like anyone, but never add boss HP, never count for ENRAGED or MVP.
+const ONCALL_TARGET = 4;
+const realTechs = () => [...techs.values()].filter(t => !t.npc);
+function spawnOnCall(n) {
+  const id = '__oncall' + n;
+  if (techs.has(id)) return;
+  const t = { id, name: 'ON-CALL ' + n, npc: true, x: -12, hp: 100, down: false, downUntil: 0, nextAct: now() + rnd(1500, 4000),
+              lastHeal: 0, dmg: 0, atkT: 0, hurtT: 0, dodgeT: 0, dodged: false, phase: Math.random() * 10,
+              chatter: false, lastSeen: now(), seq: 1e6 + n };
+  makeLook(t); techs.set(id, t); layout();
+}
+function maintainOnCall() {
+  const want = Math.max(0, ONCALL_TARGET - realTechs().length);
+  const have = [...techs.values()].filter(t => t.npc).sort((a, b) => a.seq - b.seq);
+  if (have.length < want) { for (let n = 1; have.length < want && n <= ONCALL_TARGET; n++) if (!techs.has('__oncall' + n)) { spawnOnCall(n); have.push(techs.get('__oncall' + n)); } }
+  else if (have.length > want) {
+    for (const t of have.slice(want).reverse()) { if (t.emote) t.emote.remove(); techs.delete(t.id); float(t.name + ' CLOCKED OUT', t.x, FLOOR - 60, '#9fb3c8', 11); }
+    layout();
+  }
+}
+
+function leave(login) {
+  const t = techs.get(login);
+  if (t && !t.chatter) { if (t.emote) t.emote.remove(); techs.delete(login); layout(); }
+}
+
+function layout() {
+  // chatters first (they're the ones talking), then lurkers; 24 drawn, 2 rows
+  // stable spots: chatters first, then join order (chatting again never reshuffles the lane)
+  const list = [...techs.values()].sort((a, b) => ((a.npc ? 1 : 0) - (b.npc ? 1 : 0)) || (b.chatter - a.chatter) || (a.seq - b.seq)).slice(0, 24);
+  const shown = new Set(list);
+  // fill from the boss backwards: spot 0 is the one closest to the boss, so a small crew fights up front
+  list.forEach((t, i) => { const row = i >= 12 ? 1 : 0; t.row = row; t.home = 110 + (11 - (i % 12)) * 52 + row * 26; t.tx = t.home + (t.wx || 0); t.shown = true; });
+  for (const t of techs.values()) if (!shown.has(t)) t.shown = false;
+}
+const shownTechs = () => [...techs.values()].filter(t => t.shown);
+
+// ---------------------------------------------------------------- bosses
+const BOSSES = [
+  { key: 'bsod',  name: 'The Blue Screen Beast',  attack: 'STOP CODE', snipe: 'FATAL EXCEPTION', beam: '#5b93ff', crit: 'IRQL_NOT_LESS_OR_EQUAL', fixes: ['SFC /SCANNOW', 'CHKDSK /F', 'DISM /RESTOREHEALTH', 'UPDATE THE DRIVER'], draw: drawBSOD },
+  { key: 'lich',  name: 'The Ransomware Lich',    attack: 'ENCRYPTION WAVE', snipe: 'ENCRYPTED', beam: '#2ecc71', crit: 'PAY THE RANSOM', fixes: ['RESTORE BACKUP', 'SAFE MODE', 'UNPLUG ETHERNET', 'WIPE AND REINSTALL'], draw: drawLich },
+  { key: 'therm', name: 'The Thermal Throttler',  attack: 'HEAT SPIKE', snipe: 'MELTDOWN', beam: '#ff7a00', crit: 'CPU AT 105 C', fixes: ['REPASTE', 'CLEAN THE FANS', 'UNDERVOLT', 'NEW COOLER'], draw: drawTherm },
+  { key: 'dust',  name: 'The Dust Bunny King',    attack: 'DUST STORM', snipe: 'CLOGGED', beam: '#c8c8c8', crit: 'FAN SEIZED', fixes: ['COMPRESSED AIR', 'CLEAN THE FILTERS', 'BLOW IT OUT', 'DUST FILTERS IN'], draw: drawDust },
+  // 6 more. artOnly: no code-drawn fallback, so they join the rotation only once their PNG loads.
+  { key: 'hydra',    name: 'The Popup Hydra',          attack: 'POPUP STORM', snipe: 'TOOLBAR INSTALLED', beam: '#ff4fd8', crit: 'YOU WON A FREE IPHONE', fixes: ['RUN MALWAREBYTES', 'RESET THE BROWSER', 'REMOVE THE EXTENSIONS', 'AD BLOCKER ON'], draw: drawBSOD, artOnly: true },
+  { key: 'blob',     name: 'The Bloatware Blob',       attack: 'STARTUP SLOG', snipe: '100% DISK', beam: '#7dff4a', crit: 'NOT RESPONDING', fixes: ['DISABLE STARTUP APPS', 'UNINSTALL THE TRIALS', 'CLEAN BOOT', 'FRESH WINDOWS'], draw: drawBSOD, artOnly: true },
+  { key: 'phantom',  name: 'The Packet Loss Phantom',  attack: 'LAG SPIKE', snipe: 'DISCONNECTED', beam: '#5ee6ff', crit: '999 PING', fixes: ['REBOOT THE ROUTER', 'USE ETHERNET', 'NEW CAT6 CABLE', 'UPDATE THE NIC DRIVER'], draw: drawBSOD, artOnly: true },
+  { key: 'golem',    name: 'The Power Surge Golem',    attack: 'BROWNOUT', snipe: 'NO POST', beam: '#ffe14d', crit: 'POWER SURGE', fixes: ['SWAP THE PSU', 'SURGE PROTECTOR', 'RESEAT THE 24-PIN', 'CHECK THE RAILS'], draw: drawBSOD, artOnly: true },
+  { key: 'mummy',    name: 'The Click of Death Mummy', attack: 'BAD SECTORS', snipe: 'DRIVE NOT FOUND', beam: '#ffb347', crit: 'CLICK CLICK CLICK', fixes: ['CLONE IT NOW', 'CHECK SMART', 'BACK UP FIRST', 'SWAP TO AN SSD'], draw: drawBSOD, artOnly: true },
+  { key: 'overlord', name: 'The Update Overlord',      attack: 'RESTART REQUIRED', snipe: 'STUCK AT 99%', beam: '#3fa9ff', crit: 'DO NOT TURN OFF YOUR PC', fixes: ['PAUSE UPDATES', 'RUN THE TROUBLESHOOTER', 'CLEAR THE UPDATE CACHE', 'WAIT IT OUT'], draw: drawBSOD, artOnly: true },
+];
+// next boss in the rotation, skipping art-only bosses whose image hasn't loaded (not rendered yet / missing file)
+const bossReady = b => !b.artOnly || (BOSS_IMG[b.key] && BOSS_IMG[b.key].complete && BOSS_IMG[b.key].naturalWidth > 0);
+// SHUFFLED rotation: every ready boss once, in random order, before any
+// repeats; a new round never opens with the boss that just fought. The last boss is saved so a reload (the source shuts
+// down when hidden) never opens with the same one again.
+let bossBag = [];
+function nextBossIdx(i) {
+  const ready = BOSSES.map((b, j) => j).filter(j => bossReady(BOSSES[j]));
+  if (!ready.length) return 0;
+  bossBag = bossBag.filter(j => ready.includes(j) && j !== i);
+  if (!bossBag.length) {
+    bossBag = ready.slice();
+    for (let k = bossBag.length - 1; k > 0; k--) { const r = Math.floor(Math.random() * (k + 1)); [bossBag[k], bossBag[r]] = [bossBag[r], bossBag[k]]; }
+    if (bossBag.length > 1 && bossBag[0] === i) bossBag.push(bossBag.shift());
+  }
+  const j = bossBag.shift();
+  if (!DEMO) try { localStorage.setItem('nerds-boss-last', BOSSES[j].key); } catch (e) {}
+  return j;
+}
+let levels = {};
+try { levels = JSON.parse(localStorage.getItem('nerds-boss-levels') || '{}'); } catch (e) { levels = {}; }
+const lvl = b => levels[b.key] || 1;
+// AI-rendered bosses (assets/bosses/<key>.png); the code-drawn boss is used if the file is missing
+const BOSS_IMG = {};
+for (const b of BOSSES) { const im = new Image(); im.src = 'assets/bosses/' + b.key + '.png'; BOSS_IMG[b.key] = im; }
+const BOSS_H = 200;                       // on-screen boss height (px, 1920x300 page)
+let bossAtkT = 0, bossDeadT = 0, bossWon = false;
+// thrown items: usb + cat are AI-rendered, ram is the NERDS RAM Chips icon; code-drawn shots if a file is missing
+const ITEM_KEYS = ['usb', 'cat', 'ram'];
+const ITEM_IMG = {};
+for (const k of ITEM_KEYS) ITEM_IMG[k] = loadImg('assets/items/' + k + '.png');
+const ITEM_H = 30;                       // on-screen item height (px, 1920x300 page); crits 1.5x + gold glow
+const CRIT = 0.1;                         // auto crit chance, the same for techs and the boss
+// LAST TECH STANDING: the only tech left alive (of 2+) crits 30 points more often (10% -> 40%)
+const lastStanding = t => !t.down && shownTechs().length > 1 && aliveTechs().length === 1;
+const critFor = t => CRIT + (lastStanding(t) ? 0.3 : 0);
+// BLAZE OF GLORY: boss below half HP, a hit that would kill a tech has a 1% chance to instead
+// freeze the fight, raise the tech in flames and throw one 5000% (50x) item before they blue screen. ?blaze=1 forces it (testing).
+const BLAZE_CHANCE = Q.has('blaze') ? 1 : 0.01, BLAZE_RISE = 1500, BLAZE_X = 50;
+let blaze = null, blazeFlashT = 0, bossStagT = 0;
+const sparks = [];
+// the boss gets deadlier with every alive tech over 4: 1 rage per extra tech, capped at 20
+const rage = () => Math.min(20, Math.max(0, aliveTechs().filter(t => !t.npc).length - 4));
+
+// ---------------------------------------------------------------- game state
+let phase = 'lobby', bossIdx = 0, boss = BOSSES[0], bossHP = 1, bossMax = 1, bossHitT = 0;
+let lobbyEnd = 0, fightEnd = 0, nextAtk = 0, telegraph = null, banner = null;
+let nextSnipe = 0, snipe = null, nextChip = 0;
+const beams = [];
+let phaseEnd = 0, shake = 0;
+const shots = [], floaters = [];
+const BREAK_MS = DEMO ? 6000 : 20000;
+
+function float(text, x, y, color, size) { floaters.push({ text, x, y, color, size: size || 14, t0: now() }); }
+
+function startLobby(announce) {
+  phase = 'lobby'; boss = BOSSES[bossIdx]; bossHP = bossMax = 1; telegraph = null; snipe = null; bossDeadT = 0; bossWon = false;
+  lobbyEnd = now() + BREAK_MS;
+  for (const t of techs.values()) { t.down = false; t.deadT = 0; t.hp = 100; t.dmg = 0; }
+  if (announce) banner = { title: boss.name.toUpperCase() + ' DETECTED', sub: 'TYPE !crew ONCE TO JOIN THE REPAIR CREW', until: now() + 5000, color: CYAN };
+}
+
+function startFight() {
+  phase = 'fight';
+  const n = Math.max(1, shownTechs().filter(t => !t.npc).length);
+  bossMax = bossHP = Math.round((120 + 220 * n) * (1 + 0.15 * (lvl(boss) - 1)));
+  fightEnd = now() + 5 * 60000;
+  nextAtk = now() + rnd(12000, 18000);
+  nextSnipe = now() + rnd(15000, 22000); snipe = null; nextChip = now() + rnd(5000, 8000);
+  for (const t of techs.values()) { t.dmg = 0; t.nextAct = now() + rnd(500, 3000); t.revives = t.cls === 'data' ? 1 : 0; }
+  banner = { title: 'TICKET OPENED: ' + boss.name.toUpperCase(), sub: shownTechs().length + ' TECHS ON THE JOB', until: now() + 4000, color: CYAN };
+}
+
+function endFight(win) {
+  phase = 'end'; telegraph = null; snipe = null; bossDeadT = now(); bossWon = !win;
+  const mvp = realTechs().sort((a, b) => b.dmg - a.dmg)[0];
+  if (win) {
+    levels[boss.key] = lvl(boss) + 1;
+    try { localStorage.setItem('nerds-boss-levels', JSON.stringify(levels)); } catch (e) {}
+    banner = { title: 'TICKET CLOSED: ' + boss.name.toUpperCase() + ' FIXED',
+               sub: mvp && mvp.dmg ? 'MVP: ' + mvp.name + ' (' + mvp.dmg + ' DAMAGE)' : '', until: now() + 10000, color: '#7dff9a' };
+    phaseEnd = now() + 10000; bossIdx = nextBossIdx(bossIdx);
+  } else {
+    // a boss that beats the crew still rotates out, so the lane stays fresh; it keeps its level
+    bossIdx = nextBossIdx(bossIdx);
+    banner = { title: 'SYSTEM CRASHED', sub: boss.name.toUpperCase() + ' WINS  //  NEXT UP: ' + BOSSES[bossIdx].name.toUpperCase(), until: now() + 9000, color: '#ff5050' };
+    phaseEnd = now() + 9000;
+  }
+}
+
+function fire(t, crit, mega) {
+  const [a, b] = CLASSES[t.cls].dmg;
+  const dmg = mega ? ri(a, b) * BLAZE_X : crit ? ri(20, 32) : ri(a, b);
+  t.atkT = now();
+  if (crit) float(pick(boss.fixes) + '!', t.x, FLOOR - 52 - (t.row ? ROW_Y : 0), '#ffe14d', 13);
+  // thrown in an arc from hand height to the boss's chest, spinning
+  const x0 = t.x + 9, y0 = FLOOR - 24 - (t.row ? ROW_Y : 0), x1 = BOSS_X - 34, y1 = FLOOR - 52 + rnd(-10, 10);
+  shots.push({ x: x0, y: y0, x0, y0, x1, y1, t0: now(), dur: (x1 - x0) / 280 * 1000, arc: 18 + (x1 - x0) * 0.07,
+               spin: rnd(9, 15), item: pick(ITEM_KEYS), type: CLASSES[t.cls].shot, dmg, crit, owner: t });
+  if (mega) { const s = shots[shots.length - 1]; s.mega = true; s.crit = true; s.dur = 650; s.arc = 30; s.spin = 22; }
+}
+
+// SUMMON THE NERD: broadcaster-only !summon, or a 0.0003% roll on a lethal hit once the boss is under
+// half HP (part of the Blaze of Glory roll). the NERDS mascot (the Fight Night judge) comes in at boss size, freezes the
+// fight, revives every blue-screened tech, slams the boss for 40% of its max HP, thumbs up, fades out. Art: assets/nerd/nerd.png
+// (pixel sprite, rendered later); until then the judge art (nerd-ref.png) is drawn pixelated.
+const NERD_CHANCE = Q.has('nerd') ? 1 : 0.000003, NERD_HIT = 0.4;
+const NERD_IMG = loadImg('assets/nerd/nerd.png'), NERD_REF = loadImg('assets/nerd/nerd-ref.png');
+let nerd = null;
+function summonNerd(tn, why) {
+  if (phase !== 'fight' || nerd || blaze) return false;
+  nerd = { t0: tn, why, revived: false, hitT: 0 };
+  telegraph = null; snipe = null;
+  for (const o of aliveTechs()) { o.dodged = false; o.dodgeT = 0; }
+  banner = { title: 'THE NERD HAS BEEN SUMMONED', sub: why, until: tn + 1400, color: '#19e3ff' };   // short flash, then he's in full view
+  blazeFlashT = tn; shake = tn + 600;
+  return true;
+}
+
+// lethal boss hit: maybe the NERD (0.0003%), maybe a Blaze of Glory, else the tech dies
+function lethal(v, tn) {
+  if (phase === 'fight' && !blaze && !nerd && bossHP < bossMax / 2 && Math.random() < NERD_CHANCE) {
+    v.hp = 1; v.hurtT = 0;
+    if (summonNerd(tn, v.name.toUpperCase() + ' CALLED FOR BACKUP')) return;
+  }
+  if (phase === 'fight' && !blaze && !nerd && bossHP < bossMax / 2 && Math.random() < BLAZE_CHANCE) {
+    blaze = { t: v, t0: tn, fired: false, hitT: 0 };
+    v.hp = 1; v.blazing = true; v.hurtT = 0; telegraph = null; snipe = null;
+    for (const o of aliveTechs()) { o.dodged = false; o.dodgeT = 0; }
+    banner = { title: 'BLAZE OF GLORY', sub: v.name.toUpperCase() + ' REFUSES TO BLUE SCREEN', until: tn + 3800, color: '#ff9a1a' };
+    shake = tn + 400;
+    return;
+  }
+  die(v, tn);
+}
+
+// boss crit: same 10% chance + gold look as a tech crit, shouts the boss's crit line
+function bossCrit(v) { float(boss.crit + '!', v.x, FLOOR - 56 - (v.row ? ROW_Y : 0), '#ffe14d', 13); }
+function bossHit(v, dmg, crit, tn) {
+  v.hp -= dmg; v.hurtT = tn;
+  if (crit) float('-' + dmg, v.x + rnd(-6, 6), FLOOR - 40, '#ffe14d', 18);
+  if (v.hp <= 0) lethal(v, tn);
+}
+
+function aliveTechs() { return shownTechs().filter(t => !t.down); }
+
+function die(t, tn) {
+  if (t.down) return;
+  t.hp = 0; t.down = true; t.deadT = tn; t.dodgeT = 0;
+  if (snipe && snipe.t === t) snipe = null;
+  const recent = floaters.filter(f => f.brick && tn - f.t0 < 600).length;   // stagger mass deaths so they stay readable
+  float(t.name + ' BLUE SCREENED', t.x, FLOOR - 50 - (recent % 3) * 9, '#ff6060', recent ? 11 : 15);
+  floaters[floaters.length - 1].brick = true;
+}
+
+function setTechSet(login, n) {
+  techSet[login] = n; saveTechSet();
+  const t = techs.get(login);
+  if (t) makeLook(t);                                     // swap the sprite right away (keeps hp, spot, damage)
+}
+
+// ---------------------------------------------------------------- chat (!crew / !tech / !crewout only; attacking never needs a command)
+function onChat(login, display, text) {
+  // Forgiving parse. Strip Twitch's
+  // invisible repeat-message chars, then accept !crew1, crew 2, !tech1, tech 1, !tech 11 (first digit counts).
+  const clean = String(text || '').replace(/[^ -~]/g, ' ').trim().toLowerCase();
+  let cmd = clean.split(/\s+/)[0];
+  let arg = clean.split(/\s+/)[1];
+  const loose = clean.match(/^!?(crew|tech) ?([12])/);
+  if (loose) { cmd = '!' + loose[1]; arg = loose[2]; }
+  if (cmd === '!crew') {
+    if (isBot(login)) return;
+    const isNew = !crew.has(login);
+    if (arg === '1' || arg === '2') setTechSet(login, +arg);
+    crew.add(login); saveCrew();
+    const t = join(login, display, true);
+    if (t && isNew) float((t.name + ' JOINED THE CREW').toUpperCase(), t.tx, FLOOR - 60, CYAN, 14);
+    return;
+  }
+  if (cmd === '!summon') {                                // broadcaster only
+    if (login === CHANNEL) summonNerd(now(), 'BY ORDER OF ' + (display || login).toUpperCase());
+    return;
+  }
+  if (cmd === '!tech' && (arg === '1' || arg === '2')) {
+    if (!crew.has(login)) return;                         // join first with !crew
+    setTechSet(login, +arg);
+    const t = join(login, display, true);
+    if (t) float((t.name + ' IS NOW TECH ' + arg).toUpperCase(), t.x, FLOOR - 60, CYAN, 13);
+    return;
+  }
+  if (cmd === '!crewout') {
+    crew.delete(login); saveCrew();
+    const t = techs.get(login);
+    if (t) { float((t.name + ' LEFT THE CREW').toUpperCase(), t.x, FLOOR - 60, '#9fb3c8', 12); if (t.emote) t.emote.remove(); techs.delete(login); layout(); }
+    return;
+  }
+  // plain chat only keeps a crew member active; it does NOT trigger an attack (a chat bonus
+  // rewards one-word spam, and blue-screened viewers would keep typing without knowing it does nothing)
+  join(login, display, true);
+}
+
+// ---------------------------------------------------------------- update
+let last = now();
+function update() {
+  if (!DEMO) maintainOnCall();
+  const tn = now(), dt = Math.min(0.1, (tn - last) / 1000); last = tn;
+  for (const t of techs.values()) {
+    if (t.tx === undefined) layout();
+    // idle wander: every few seconds a tech strolls a short way around its spot (so the walk cycle shows)
+    if (!t.down && t.home !== undefined && tn > (t.nextWander || 0)) {
+      if (t.nextWander) { t.wx = Math.random() < 0.35 ? 0 : rnd(-16, 16); t.tx = t.home + t.wx; }
+      t.nextWander = tn + rnd(5000, 12000);
+    }
+    const d = t.tx - t.x;
+    t.walking = Math.abs(d) > 0.5 && !t.down;
+    if (t.walking) { t.dir = Math.sign(d); t.x += t.dir * Math.min(Math.abs(d), (Math.abs(d) > 30 ? 105 : 30) * dt); }
+  }
+  for (let i = shots.length - 1; i >= 0; i--) {
+    const s = shots[i];
+    const k = Math.min(1, (tn - s.t0) / s.dur);
+    s.x = s.x0 + (s.x1 - s.x0) * k; s.y = s.y0 + (s.y1 - s.y0) * k - s.arc * Math.sin(Math.PI * k);
+    if (k >= 1) {
+      shots.splice(i, 1);
+      sparks.push({ x: s.x, y: s.y, t0: tn, crit: s.crit });
+      if (phase !== 'fight') continue;
+      bossHP = Math.max(0, bossHP - s.dmg); s.owner.dmg += s.dmg; bossHitT = tn;
+      if (s.mega) {
+        float('-' + s.dmg, BOSS_X - 20, FLOOR - 92, '#ff9a1a', 40); float('5000%!', BOSS_X - 20, FLOOR - 112, '#ffe14d', 22);
+        shake = tn + 900; bossStagT = tn; blazeFlashT = tn; if (blaze) blaze.hitT = tn;
+        for (let k = 0; k < 3; k++) sparks.push({ x: s.x + rnd(-10, 10), y: s.y + rnd(-10, 10), t0: tn + k * 90, crit: true, big: true });
+      } else
+      float('-' + s.dmg, BOSS_X - 10 + rnd(-12, 12), FLOOR - 80 + rnd(-8, 8), s.crit ? '#ffe14d' : '#fff', s.crit ? 20 : 14);
+    }
+  }
+  // chatters drop off 20 min after their last message (lurkers leave on PART)
+  for (const [k, t] of techs) if (t.chatter && tn - t.lastSeen > 20 * 60000) { if (t.emote) t.emote.remove(); techs.delete(k); layout(); }
+
+  if (phase === 'lobby') {
+    if (tn > lobbyEnd) { if (aliveTechs().length) startFight(); else lobbyEnd = tn + 5000; }
+  } else if (phase === 'fight' && nerd) {
+    const k = tn - nerd.t0;
+    if (!nerd.revived && k > 1600) {
+      nerd.revived = true; let n = 0;
+      for (const o of shownTechs()) { if (o.down) { o.down = false; o.deadT = 0; n++; } o.hp = 100; }
+      float(n ? 'THE NERD RESTORED ' + n + (n === 1 ? ' TECH' : ' TECHS') : 'THE NERD PATCHED THE WHOLE CREW', 480, FLOOR - 70, '#7dff9a', 16);
+    }
+    if (!nerd.hitT && k > 2600) {
+      nerd.hitT = tn; const dmg = Math.round(bossMax * NERD_HIT);
+      bossHP = Math.max(0, bossHP - dmg); bossHitT = tn; bossStagT = tn; shake = tn + 1000; blazeFlashT = tn;
+      float('-' + dmg, BOSS_X - 20, FLOOR - 92, '#19e3ff', 44); float('NERD SMASH!', BOSS_X - 20, FLOOR - 114, '#ffffff', 22);
+      for (let j = 0; j < 4; j++) sparks.push({ x: BOSS_X - 30 + rnd(-20, 20), y: FLOOR - 60 + rnd(-30, 30), t0: tn + j * 80, crit: true, big: true });
+    }
+    if (k > 5200) {
+      fightEnd += k; nerd = null;
+      if (bossHP <= 0) endFight(true);
+    }
+  } else if (phase === 'fight' && blaze) {
+    // time freezes for everyone but the hero: rise, throw, impact, then they go down a legend
+    const b = blaze, v = b.t;
+    if (!b.fired && tn - b.t0 > BLAZE_RISE) { b.fired = true; fire(v, true, true); blazeFlashT = tn; }
+    if (b.hitT && tn - b.hitT > 700) {
+      v.blazing = false; blaze = null;
+      die(v, tn);
+      float((v.name + ' WENT OUT IN A BLAZE OF GLORY').toUpperCase(), v.x, FLOOR - 64, '#ff9a1a', 15);
+      fightEnd += tn - b.t0;                        // the frozen time doesn't eat the clock
+      if (bossHP <= 0) endFight(true);
+      else if (!aliveTechs().length) endFight(false);
+    }
+  } else if (phase === 'fight') {
+    for (const t of aliveTechs()) {
+      if (t.walking || tn < t.nextAct) continue;
+      t.nextAct = tn + rnd(2500, 5000);
+      if (t.cls === 'data' && tn - t.lastHeal > 8000) {
+        const pool = shownTechs().filter(o => o !== t);
+        const target = (t.revives > 0 && pool.find(o => o.down && tn - o.deadT > 1500)) || pool.filter(o => !o.down && o.hp < 70).sort((a, b) => a.hp - b.hp)[0];
+        if (target) {
+          t.lastHeal = tn; t.atkT = tn;
+          if (target.down) { t.revives--; target.down = false; target.deadT = 0; target.hp = 50; float(target.name + ' DATA RECOVERED', target.x, FLOOR - 48, '#7dff9a'); }
+          else { target.hp = Math.min(100, target.hp + 35); float('+35', target.x, FLOOR - 44, '#7dff9a'); }
+          continue;
+        }
+      }
+      fire(t, Math.random() < critFor(t));
+    }
+    const rg = rage();
+    if (!telegraph && tn > nextAtk) {
+      telegraph = { start: tn, until: tn + 4000, crit: Math.random() < CRIT };
+      const dodge = Math.max(0.2, 0.5 - 0.015 * rg);
+      for (const t of aliveTechs()) { t.dodged = Math.random() < dodge; t.dodgeAt = tn + rnd(1200, 3600); }
+    }
+    if (telegraph) {
+      for (const t of aliveTechs()) if (t.dodged && !t.dodgeT && tn > t.dodgeAt) t.dodgeT = tn;
+      if (tn > telegraph.until) {
+        const crit = telegraph.crit;
+        if (crit) float(boss.crit + '!', BOSS_X - 40, FLOOR - 100, '#ffe14d', 16);
+        for (const t of aliveTechs()) {
+          if (t.dodged) { float('DODGED', t.x, FLOOR - 46, '#9fe'); }
+          else bossHit(t, Math.round(ri(30, 50) * (1 + 0.04 * rg) * (crit ? 1.5 : 1)), crit, tn);
+          t.dodged = false; t.dodgeT = 0;
+        }
+        shake = tn + (crit ? 800 : 500); telegraph = null; nextAtk = tn + rnd(16000, 26000) / (1 + 0.08 * rg);
+      }
+    }
+    if (tn > nextChip) {
+      nextChip = tn + rnd(4500, 8000) / (1 + 0.08 * rg);
+      const pool = aliveTechs().filter(t => !t.walking);
+      for (let h = 0; h < 1 + Math.floor(rg / 8) && pool.length; h++) {       // 1 target, 2 at 8+ rage, 3 at 16+
+        const v = pool.splice(Math.floor(Math.random() * pool.length), 1)[0], crit = Math.random() < CRIT;
+        beams.push({ x: v.x, y: FLOOR - 18 - (v.row ? ROW_Y : 0), t0: tn, c: crit ? '#ffe14d' : boss.beam, w: crit ? 3 : 1 });
+        if (crit) bossCrit(v);
+        bossHit(v, crit ? ri(20, 32) : Math.round(ri(6, 14) * (1 + 0.03 * rg)), crit, tn);
+      }
+    }
+    if (!snipe && tn > nextSnipe && aliveTechs().length) {
+      const v = pick(aliveTechs());
+      snipe = { t: v, start: tn, at: tn + 2500 };
+    }
+    if (snipe && tn > snipe.at) {
+      const v = snipe.t;
+      if (!v.down) {
+        beams.push({ x: v.x, y: FLOOR - 18 - (v.row ? ROW_Y : 0), t0: tn, c: boss.beam, w: 4 }); bossAtkT = tn;
+        if (Math.random() < 0.3) { v.dodgeT = tn; float('DODGED IT', v.x, FLOOR - 46, '#9fe'); }
+        else lethal(v, tn);
+        shake = tn + 250;
+      }
+      snipe = null; nextSnipe = tn + rnd(22000, 34000) / (1 + 0.06 * rg);
+    }
+    if (bossHP <= 0) endFight(true);
+    else if (shownTechs().length && !aliveTechs().length) endFight(false);
+    else if (tn > fightEnd) endFight(false);
+  } else if (phase === 'end' && tn > phaseEnd) {
+    startLobby(true);
+  }
+  if (banner && tn > banner.until) banner = null;
+  for (let i = floaters.length - 1; i >= 0; i--) if (tn - floaters[i].t0 > 1600) floaters.splice(i, 1);
+}
+
+// ---------------------------------------------------------------- drawing helpers
+const R = (x, y, ww, hh, c) => { w.fillStyle = c; w.fillRect(Math.round(x), Math.round(y), ww, hh); };
+function shade(hex, k) {
+  const n = parseInt(hex.slice(1, 7), 16);
+  const f = v => Math.max(0, Math.min(255, Math.round(v * k)));
+  return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(v => f(v).toString(16).padStart(2, '0')).join('');
+}
+// 4-direction dark outline around every opaque pixel (the Stream Heroes-style crisp edge)
+function outlined(src, color) {
+  const sil = document.createElement('canvas'); sil.width = src.width; sil.height = src.height;
+  const s = sil.getContext('2d'); s.drawImage(src, 0, 0); s.globalCompositeOperation = 'source-in'; s.fillStyle = color; s.fillRect(0, 0, sil.width, sil.height);
+  const c = document.createElement('canvas'); c.width = src.width + 2; c.height = src.height + 2;
+  const x = c.getContext('2d');
+  for (const [dx, dy] of [[0, 1], [2, 1], [1, 0], [1, 2]]) x.drawImage(sil, dx, dy);
+  x.drawImage(src, 1, 1);
+  return c;
+}
+function paint(ctx, rows, pal, oy) {
+  rows.forEach((row, y) => { for (let x = 0; x < row.length; x++) { const c = pal[row[x]]; if (c) { ctx.fillStyle = c; ctx.fillRect(x, y + (oy || 0), 1, 1); } } });
+}
+function groundShadow(x, base, rx) {
+  w.fillStyle = 'rgba(0,0,0,0.38)'; w.beginPath(); w.ellipse(x, base - 0.5, rx, rx * 0.28, 0, 0, Math.PI * 2); w.fill();
+}
+
+// ---------------------------------------------------------------- background (960x150)
+const bgCanvas = document.createElement('canvas'); bgCanvas.width = W; bgCanvas.height = H;
+const LEDS = [];
+(function buildBG() {
+  const b = bgCanvas.getContext('2d');
+  const R2 = (x, y, ww, hh, c) => { b.fillStyle = c; b.fillRect(x, y, ww, hh); };
+  for (let y = 0; y < FLOOR; y++) {
+    const k = y / FLOOR;
+    b.fillStyle = `rgba(${Math.round(10 + 12 * k)},${Math.round(16 + 18 * k)},${Math.round(30 + 28 * k)},0.95)`; b.fillRect(0, y, W, 1);
+  }
+  // back wall panel seams
+  for (let x = 0; x < W; x += 120) { R2(x, 0, 1, FLOOR, 'rgba(255,255,255,0.03)'); }
+  R2(0, 30, W, 1, 'rgba(255,255,255,0.04)');
+  for (let x = 24; x < W - 30; x += 156) {
+    // server rack with highlight/shadow sides
+    R2(x, 40, 60, FLOOR - 40, '#18202d');
+    R2(x, 40, 60, 2, '#34445e'); R2(x, 40, 2, FLOOR - 40, '#2b3850'); R2(x + 58, 40, 2, FLOOR - 40, '#0e131b');
+    for (let y = 46; y < FLOOR - 6; y += 8) {
+      R2(x + 4, y, 52, 6, '#0f151e'); R2(x + 4, y, 52, 1, '#263247'); R2(x + 4, y + 5, 52, 1, '#0a0e14');
+      for (let v = x + 24; v < x + 52; v += 3) R2(v, y + 2, 2, 2, '#141b26');           // vents
+      LEDS.push({ x: x + 7 + ri(0, 2) * 4, y: y + 2, c: pick(['#2ecc71', '#19e3ff', '#ffb400', '#2ecc71', '#2ecc71']), p: rnd(300, 1600), o: rnd(0, 2000) });
+      LEDS.push({ x: x + 19, y: y + 2, c: '#2ecc71', p: rnd(120, 400), o: rnd(0, 400) });
+    }
+    // pegboard with tools
+    const px = x + 74;
+    if (px + 64 < W - 150) {
+      R2(px, 50, 64, 40, '#2a2219'); R2(px, 50, 64, 1, '#4a3b2c'); R2(px, 89, 64, 1, '#17120d');
+      for (let yy = 53; yy < 88; yy += 5) for (let xx = px + 3; xx < px + 62; xx += 5) R2(xx, yy, 1, 1, '#1a140f');
+      R2(px + 8, 56, 2, 16, '#9aa4ae'); R2(px + 6, 55, 6, 2, '#c4ccd4'); R2(px + 7, 72, 4, 9, '#c0392b'); R2(px + 7, 72, 1, 9, '#e0584a');
+      R2(px + 22, 56, 3, 22, '#9aa4ae'); R2(px + 22, 56, 1, 22, '#c4ccd4'); R2(px + 19, 53, 9, 4, '#9aa4ae'); R2(px + 21, 54, 5, 2, '#2a2219');
+      b.strokeStyle = '#f1c40f'; b.lineWidth = 2; b.beginPath(); b.arc(px + 44, 66, 8, 0, Math.PI * 2); b.stroke();
+      b.strokeStyle = '#c9a20c'; b.beginPath(); b.arc(px + 44, 66, 5, 0, Math.PI * 2); b.stroke();
+      R2(px + 43, 74, 2, 10, '#f1c40f');
+    }
+  }
+  // floor: anti-static mat with tile seams + gradient
+  for (let y = FLOOR; y < H; y++) { const k = (y - FLOOR) / (H - FLOOR); b.fillStyle = `rgb(${Math.round(30 - 10 * k)},${Math.round(36 - 12 * k)},${Math.round(46 - 14 * k)})`; b.fillRect(0, y, W, 1); }
+  for (let x = 0; x < W; x += 24) R2(x, FLOOR + 1, 1, H - FLOOR, 'rgba(0,0,0,0.25)');
+  R2(0, FLOOR, W, 1, CYAN); R2(0, FLOOR + 1, W, 1, 'rgba(25,227,255,0.35)');
+})();
+
+function drawBG(tn) {
+  w.drawImage(bgCanvas, 0, 0);
+  for (const l of LEDS) if (((tn + l.o) % l.p) < l.p * 0.6) { R(l.x, l.y, 2, 2, l.c); }
+}
+
+// ---------------------------------------------------------------- tech sprites (16x32 maps, outlined, cached)
+const BODY_M = [
+  '................', '................', '................',
+  '......ssss......', '.....ssssss.....', '....ssssssss....', '....ssssssss....', '....sssssses....',
+  '....ssssssss....', '....sssssssS....', '.....ssssmm.....', '......ssss......', '.......SS.......',
+  '....cccccccc....', '...cccccccbcc...', '..scccccccccccs.', '..sCcccccccccCs.', '..sCcccccccccCs.',
+  '..sCcccccccccCs.', '..s.cccccccccs..', '..S.CCCCCCCCC.S.', '....kkkkkkkk....',
+  '....pppppppp....', '....ppp..ppp....', '....ppp..ppp....', '....ppP..ppP....', '....ppP..ppP....',
+  '....ppP..ppP....', '....ppP..ppP....', '...kkkk.kkkkk...', '...kkkk.kkkkk...', '................'];
+const BODY_F = [
+  '................', '................', '................',
+  '......ssss......', '.....ssssss.....', '....ssssssss....', '....sssssso.....', '....sssssses....',
+  '....ssssssss....', '....sssssssS....', '.....ssssrr.....', '......ssss......', '.......SS.......',
+  '.....cccccc.....', '....cccccbcc....', '...sccccccccs....', '...sCcccccccs...', '...sCcccccccCs..',
+  '...s.ccccccCs...', '...s.cccccc.s...', '...S.CCCCCCCS...', '....kkkkkkkk....',
+  '....pppppppp....', '....ppp..ppp....', '....ppp..ppp....', '....ppP..ppP....', '....ppP..ppP....',
+  '....ppP..ppP....', '....ppP..ppP....', '...kkkk.kkkkk...', '...kkkk.kkkkk...', '................'];
+const LEGS_WALK = ['....pppppppp....', '...ppp....ppp...', '...ppp....ppp...', '..ppP......ppP..', '..ppP......ppP..',
+                   '..ppP......ppP..', '..ppP......ppP..', '.kkkk......kkkkk', '.kkkk......kkkkk'];
+const HAIR_MAP = {
+  short:    [2, ['.....hhhhh......', '....hhhhhhhh....', '...hhhhhhhhhh...', '...hhhHhhhhh....', '...hhh..........', '...hh...........', '...hh...........']],
+  buzz:     [3, ['.....HHHH.......', '....hhhhhhhh....', '....hh..........']],
+  spiky:    [1, ['.....h.h.h......', '....hhhhhhh.....', '...hhhhhhhhhh...', '...hhhhhhhhhh...', '...hhh..........', '...hh...........']],
+  bald:     [4, ['......ww........']],
+  long:     [2, ['.....hhhhhh.....', '....hhhhhhhh....', '...hhhhhhhhhh...', '...hhhhhHhhhh...', '..hhhh..........', '..hhh...........', '..hhh...........',
+                 '..hhh...........', '..hhhh..........', '..hhhh..........', '..hhhhh.........', '..hhhh..........', '...hh...........']],
+  ponytail: [2, ['.....hhhhhh.....', '....hhhhhhhh....', '...hhhhhhhhhh...', '...hhhhhHhhh....', '..hhhh..........', '.hHh............', 'hhh.............',
+                 'hh..............', 'hhh.............', '.hh.............', '.h..............']],
+  bun:      [0, ['..hhh...........', '.hhHhh..........', '.hhhhhhhhhh.....', '..hhhhhhhhhh....', '...hhhhhhhhhh...', '...hhhhHhhhh....', '...hhh..........', '...hh...........']],
+  bob:      [2, ['.....hhhhhh.....', '....hhhhhhhh....', '...hhhhhhhhhh...', '...hhhhhhhhhhh..', '..hhhh......hh..', '..hhhh......h...', '..hhhh..........',
+                 '..hhhh..........', '...hhh..........']],
+};
+const BEARD = [8, ['....h.......h...', '....hhhhhhhhh...', '.....hhhhhhh....', '......hhhh......']];
+const TOOL_MAP = {
+  hardware: [13, ['.............g.g', '.............ggg', '..............g.', '..............g.', '..............g.', '..............G.', '..............G.', '..............G.']],
+  software: [17, ['...........dddd.', '...........dBBd.', '...........dBBd.', '..........ggggg.']],
+  network:  [17, ['.............yy.', '............y..y', '............y..y', '.............yy.']],
+  data:     [15, ['..............v.', '..............w.', '..............w.', '..............w.', '.......w........', '......www.......', '.......w........']],
+};
+const spriteCache = new Map();
+function techSprite(t, walk) {
+  const key = t.id + '|' + t.g + t.cls + t.style + (t.beard ? 1 : 0) + '|' + walk;
+  let c = spriteCache.get(key);
+  if (c) return c;
+  const raw = document.createElement('canvas'); raw.width = 16; raw.height = 32;
+  const x = raw.getContext('2d');
+  const shirt = CLASSES[t.cls].shirt;
+  const darkHair = parseInt(t.hair.slice(1, 3), 16) < 70;
+  const pal = { s: t.skin, S: shade(t.skin, 0.82), e: '#15151a', o: '#15151a', m: shade(t.skin, 0.62), r: '#b5485a',
+    h: t.hair, H: darkHair ? shade(t.hair, 1.9) : shade(t.hair, 0.72), c: shirt, C: shade(shirt, 0.72), b: CYAN,
+    p: '#2f3a4e', P: '#1f2736', k: '#15181d', g: '#b9c2cb', G: '#6d757e', d: '#22252b', B: CYAN, y: '#f1c40f', w: '#f4f4f4', v: '#2ecc71' };
+  const body = (t.g === 'f' ? BODY_F : BODY_M).slice();
+  if (walk) for (let i = 0; i < LEGS_WALK.length; i++) body[22 + i] = LEGS_WALK[i];
+  paint(x, body, pal);
+  const hm = HAIR_MAP[t.style]; paint(x, hm[1], pal, hm[0]);
+  if (t.beard) paint(x, BEARD[1], pal, BEARD[0]);
+  const tm = TOOL_MAP[t.cls]; paint(x, tm[1], pal, tm[0]);
+  c = outlined(raw, '#0b0e13');
+  spriteCache.set(key, c);
+  return c;
+}
+
+const ROW_Y = 8;
+const ac = document.getElementById('actors').getContext('2d');
+ac.imageSmoothingEnabled = true; ac.imageSmoothingQuality = 'high';
+function drawActor(t, tn) {
+  const wk = t.walkImg, cycle = t.walking && !t.down && wk && wk.length && wk.every(i => i.complete && i.naturalWidth);
+  const img = cycle ? wk[Math.floor(tn / 130 + t.phase * 7) % wk.length] : t.img;
+  const sc = TECH_H / t.img.height, w2 = img.width * sc, h2 = img.height * sc;   // frames share the base sprite's pixel scale
+  const X = t.x * S, B = (FLOOR - (t.row ? ROW_Y : 0)) * S;
+  ac.fillStyle = 'rgba(0,0,0,0.38)'; ac.beginPath(); ac.ellipse(X, B - 1, Math.max(14, w2 * 0.3), 5, 0, 0, Math.PI * 2); ac.fill();
+  ac.save();
+  if (t.down) {
+    const k = Math.min(1, (tn - t.deadT) / 450);
+    ac.globalAlpha = 1 - 0.3 * k;
+    ac.filter = k >= 1 ? 'grayscale(1) sepia(1) hue-rotate(185deg) saturate(3) brightness(0.75)' : 'none';
+    ac.translate(X - w2 * 0.1 * k, B); ac.rotate(-Math.PI / 2 * k);
+    ac.drawImage(img, -w2 / 2, -h2, w2, h2);
+    ac.restore(); return;
+  }
+  const hurt = t.hurtT && tn - t.hurtT < 500 && Math.floor((tn - t.hurtT) / 80) % 2 === 0;
+  if (hurt) ac.filter = 'brightness(2.4) saturate(0.3)';
+  const jump = t.dodgeT && tn - t.dodgeT < 900 ? Math.sin((tn - t.dodgeT) / 900 * Math.PI) * 26 : 0;
+  const atk = t.atkT && tn - t.atkT < 220 ? Math.sin((tn - t.atkT) / 220 * Math.PI) : 0;
+  // with real walk frames: just a light step bob; without: the old bounce + tilt
+  const bounce = t.walking ? Math.abs(Math.sin(tn / 110 + t.phase)) * (cycle ? 2 : 5) : 0;
+  const tilt = t.walking ? (cycle ? 0 : Math.sin(tn / 110 + t.phase) * 0.05) : atk * 0.12;
+  const breathe = t.walking ? 1 : 1 + 0.018 * Math.sin(tn / 600 + t.phase);
+  const face = t.walking && t.dir < 0 ? -1 : 1;                                  // face the way they walk
+  let rise = 0, jitter = 0;
+  if (t.blazing && blaze) {
+    const k = Math.min(1, (tn - blaze.t0) / BLAZE_RISE);
+    rise = 34 * Math.sin(k * Math.PI / 2); jitter = rnd(-1.5, 1.5);
+    ac.filter = 'drop-shadow(0 0 10px #ff7a00) drop-shadow(0 0 4px #ffe14d) brightness(' + (1.15 + 0.25 * Math.sin(tn / 60)) + ')';
+  }
+  ac.translate(X + atk * 10 + jitter, B - jump - bounce - rise); ac.rotate(tilt); ac.scale(face, breathe);
+  ac.drawImage(img, -w2 / 2, -h2, w2, h2);
+  ac.restore();
+}
+function drawBossActor(tn) {
+  const im = BOSS_IMG[boss.key];
+  if (!(im && im.complete && im.naturalWidth)) return false;
+  const h2 = BOSS_H, w2 = im.width * h2 / im.height, X = BOSS_X * S, B = FLOOR * S;
+  ac.fillStyle = 'rgba(0,0,0,0.42)'; ac.beginPath(); ac.ellipse(X, B - 2, w2 * 0.36, 9, 0, 0, Math.PI * 2); ac.fill();
+  ac.save();
+  let dx = 0, dy = 0, rot = 0, alpha = 1, sy = 1 + 0.022 * Math.sin(tn / 700);
+  if (boss.key === 'lich') dy -= 8 + Math.sin(tn / 500) * 6;                    // the lich floats
+  if (bossAtkT && tn - bossAtkT < 350) dx -= Math.sin((tn - bossAtkT) / 350 * Math.PI) * 26;   // lurch at the kill beam
+  if (bossStagT && tn - bossStagT < 700) { const k = (tn - bossStagT) / 700; dx += Math.sin(k * Math.PI) * 44; rot += Math.sin(k * Math.PI) * 0.12; }  // Blaze of Glory stagger
+  if (phase === 'end' && bossDeadT) {
+    const k = Math.min(1, (tn - bossDeadT) / 900);
+    if (!bossWon) { rot = 0.5 * k; dy += 30 * k; alpha = 1 - 0.85 * k; }        // fixed: topple + fade
+    else dy -= Math.abs(Math.sin((tn - bossDeadT) / 180)) * 12;                // boss won: gloat bounce
+  }
+  if (bossHitT && tn - bossHitT < 90) ac.filter = 'brightness(2.2)';
+  else if (telegraph && Math.floor(tn / 150) % 2) ac.filter = 'sepia(1) saturate(5) hue-rotate(-35deg) brightness(0.95)';
+  ac.globalAlpha = alpha;
+  ac.translate(X + dx, B + dy); ac.rotate(rot); ac.scale(1, sy);
+  ac.drawImage(im, -w2 / 2, -h2, w2, h2);
+  ac.restore();
+  return true;
+}
+function drawTech(t, tn) {
+  if (t.img && t.img.complete && t.img.naturalWidth) return drawActor(t, tn);
+  const x = Math.round(t.x), base = FLOOR - (t.row ? ROW_Y : 0);
+  const walk = t.walking && Math.floor(tn / 150) % 2 === 1;
+  const spr = techSprite(t, walk);
+  if (t.down) {
+    const k = Math.min(1, (tn - t.deadT) / 450);
+    groundShadow(x, base, 15);
+    w.save(); w.globalAlpha = 1 - 0.45 * k; w.filter = k >= 1 ? 'grayscale(1) sepia(1) hue-rotate(185deg) saturate(3) brightness(0.75)' : 'none';
+    w.translate(x, base); w.rotate(-Math.PI / 2 * k); w.drawImage(spr, -9 + 9 * k, -32 + 15 * k); w.restore();
+    return;
+  }
+  if (t.hurtT && tn - t.hurtT < 700 && Math.floor((tn - t.hurtT) / 90) % 2) return;
+  let jump = 0;
+  if (t.dodgeT && tn - t.dodgeT < 900) jump = Math.round(Math.sin((tn - t.dodgeT) / 900 * Math.PI) * 10);
+  const lunge = t.atkT && tn - t.atkT < 160 ? 3 : 0;
+  const bob = !t.walking && Math.floor(tn / 520 + t.phase) % 2 ? 1 : 0;
+  groundShadow(x, base, jump ? 6 : 8);
+  w.drawImage(spr, x - 9 + lunge, base - 32 - jump + bob);
+}
+
+function drawShot(s, tn) {
+  const im = ITEM_IMG[s.item];
+  if (im && im.complete && im.naturalWidth) {                                   // thrown USB / Cat cable / RAM stick
+    const h2 = ITEM_H * (s.item === 'ram' ? 1.3 : 1) * (s.mega ? 3 : s.crit ? 1.5 : 1), w2 = im.width * h2 / im.height;
+    if (s.mega) {                                                                // flame trail behind the 5000% throw
+      const k0 = (tn - s.t0) / s.dur;
+      for (let j = 1; j <= 10; j++) {
+        const k = k0 - j * 0.035; if (k < 0) break;
+        const px = s.x0 + (s.x1 - s.x0) * k, py = s.y0 + (s.y1 - s.y0) * k - s.arc * Math.sin(Math.PI * k);
+        ac.globalAlpha = 0.75 * (1 - j / 11); ac.fillStyle = j < 4 ? '#ffe14d' : j < 7 ? '#ff9a1a' : '#e0401a';
+        ac.beginPath(); ac.arc(px * S, py * S + rnd(-3, 3), 26 - j * 2, 0, Math.PI * 2); ac.fill();
+      }
+      ac.globalAlpha = 1;
+    }
+    ac.save();
+    if (s.mega) ac.filter = 'drop-shadow(0 0 14px #ff7a00) drop-shadow(0 0 6px #ffe14d) brightness(1.3)';
+    else if (s.crit) ac.filter = 'drop-shadow(0 0 6px #ffe14d) drop-shadow(0 0 3px #fff)';
+    ac.translate(s.x * S, s.y * S); ac.rotate((tn - s.t0) / 1000 * s.spin);
+    ac.drawImage(im, -w2 / 2, -h2 / 2, w2, h2);
+    ac.restore();
+    return;
+  }
+  const x = Math.round(s.x), y = Math.round(s.y);
+  if (s.crit) { w.fillStyle = 'rgba(255,225,77,0.35)'; w.beginPath(); w.arc(x, y, 6, 0, Math.PI * 2); w.fill(); R(x - 3, y - 3, 6, 6, '#ffe14d'); R(x - 2, y - 2, 4, 4, '#fff'); return; }
+  switch (s.type) {
+    case 'wrench': { const f = Math.floor(tn / 70) % 2; if (f) { R(x - 4, y, 9, 2, '#b9c2cb'); R(x + 4, y - 2, 2, 6, '#b9c2cb'); } else { R(x, y - 4, 2, 9, '#b9c2cb'); R(x - 2, y - 4, 6, 2, '#b9c2cb'); } break; }
+    case 'code': R(x - 4, y - 2, 2, 6, CYAN); R(x - 5, y - 2, 1, 1, CYAN); R(x - 5, y + 3, 1, 1, CYAN); R(x + 3, y - 2, 2, 6, CYAN); R(x + 5, y - 2, 1, 1, CYAN); R(x + 5, y + 3, 1, 1, CYAN); R(x - 1, y, 2, 2, '#fff'); break;
+    case 'packet': R(x - 3, y - 3, 6, 6, '#f1c40f'); R(x - 2, y - 2, 4, 1, '#fff3b0'); R(x - 9, y - 1, 5, 2, 'rgba(241,196,15,0.45)'); break;
+    case 'spark': R(x - 1, y - 4, 2, 8, '#7dff9a'); R(x - 4, y - 1, 8, 2, '#7dff9a'); R(x, y, 1, 1, '#fff'); break;
+  }
+}
+
+// ---------------------------------------------------------------- bosses
+function bossTint(tn) {
+  if (bossHitT && tn - bossHitT < 90) return '#ffffff';
+  if (telegraph && Math.floor(tn / 150) % 2) return '#ff3030';
+  return null;
+}
+
+// The Blue Screen Beast, native 960x150 art (~76 wide, 100 tall)
+function drawBSOD(cx, base, tn) {
+  groundShadow(cx, base, 34);
+  const st = Math.floor(tn / 500) % 2;
+  const tint = bossTint(tn);
+  // legs + feet
+  for (const [lx, up] of [[-20, st], [10, 1 - st]]) {
+    R(cx + lx, base - 22 + up, 10, 20 - up, '#4a4f57'); R(cx + lx, base - 22 + up, 2, 20 - up, '#6b717b'); R(cx + lx + 8, base - 22 + up, 2, 20 - up, '#30343a');
+    R(cx + lx - 3, base - 4, 16, 4, '#1d2026'); R(cx + lx - 3, base - 4, 16, 1, '#3a3f47');
+  }
+  // cable arms with plugs
+  const sw = Math.round(Math.sin(tn / 400) * 2);
+  R(cx - 52, base - 66, 14, 4, '#3a3f47'); R(cx - 54, base - 66, 4, 24 + sw, '#3a3f47'); R(cx - 58, base - 44 + sw, 12, 8, '#8a9099'); R(cx - 56, base - 36 + sw, 2, 4, '#c9a20c'); R(cx - 50, base - 36 + sw, 2, 4, '#c9a20c');
+  R(cx + 38, base - 66, 14, 4, '#3a3f47'); R(cx + 50, base - 66, 4, 24 - sw, '#3a3f47'); R(cx + 46, base - 44 - sw, 12, 8, '#8a9099'); R(cx + 48, base - 36 - sw, 2, 4, '#c9a20c'); R(cx + 54, base - 36 - sw, 2, 4, '#c9a20c');
+  // CRT case: top light, sides shaded, deep back
+  R(cx - 38, base - 98, 76, 70, '#d8cfb8');
+  R(cx - 38, base - 98, 76, 3, '#efe8d6'); R(cx - 38, base - 98, 3, 70, '#e6dec9');
+  R(cx + 35, base - 98, 3, 70, '#b3a88f'); R(cx - 38, base - 31, 76, 3, '#a89c82');
+  R(cx - 30, base - 28, 60, 6, '#c2b79d'); R(cx - 30, base - 23, 60, 1, '#8f846c');               // base plate
+  // bezel + screen
+  R(cx - 32, base - 92, 64, 52, '#9e937a'); R(cx - 30, base - 90, 60, 48, '#2a2a2a');
+  const scr = tint === '#ff3030' ? '#b01c1c' : '#1f4fd8';
+  R(cx - 28, base - 88, 56, 44, scr);
+  for (let y = base - 88; y < base - 44; y += 2) { w.fillStyle = 'rgba(0,0,0,0.12)'; w.fillRect(cx - 28, y, 56, 1); }
+  w.fillStyle = 'rgba(255,255,255,0.10)'; w.fillRect(cx - 28, base - 88, 56, 10);                  // glass glare
+  const wh = '#ffffff';
+  R(cx - 20, base - 80, 4, 4, wh); R(cx - 20, base - 70, 4, 4, wh);                                // :
+  R(cx - 8, base - 84, 4, 2, wh); R(cx - 11, base - 82, 3, 2, wh); R(cx - 13, base - 80, 3, 12, wh); R(cx - 11, base - 68, 3, 2, wh); R(cx - 8, base - 66, 4, 2, wh); // (
+  R(cx - 20, base - 60, 40, 2, '#cfe0ff'); R(cx - 20, base - 56, 28, 2, '#cfe0ff'); R(cx - 20, base - 52, 34, 2, '#cfe0ff');
+  R(cx + 10, base - 82, 12, 12, '#ffffff'); for (let k = 0; k < 4; k++) R(cx + 12 + k * 2, base - 80 + (k % 2) * 4, 2, 2, scr);   // QR block
+  // power LED + buttons
+  R(cx + 22, base - 36, 4, 2, Math.floor(tn / 600) % 2 ? '#7dff9a' : '#2a8a45'); R(cx + 12, base - 36, 6, 2, '#8f846c'); R(cx + 2, base - 36, 6, 2, '#8f846c');
+  if (tint === '#ffffff') { w.globalAlpha = 0.5; R(cx - 38, base - 98, 76, 76, '#fff'); w.globalAlpha = 1; }
+}
+
+// Placeholder bosses (old 640x100 art) drawn offscreen and scaled 1.5x until they are redrawn.
+const legacyCanvas = document.createElement('canvas'); legacyCanvas.width = 90; legacyCanvas.height = 80;
+const legacyCtx = legacyCanvas.getContext('2d');
+function legacyBoss(fn, cx, base, tn) {
+  groundShadow(cx, base, 34);
+  legacyCtx.clearRect(0, 0, 90, 80);
+  const keep = w; w = legacyCtx; fn(45, 78, tn); w = keep;
+  w.drawImage(legacyCanvas, Math.round(cx - 67), Math.round(base - 117), 135, 120);
+}
+function drawLich(cx, base, tn) { legacyBoss(oldLich, cx, base, tn); }
+function drawTherm(cx, base, tn) { legacyBoss(oldTherm, cx, base, tn); }
+function drawDust(cx, base, tn) { legacyBoss(oldDust, cx, base, tn); }
+
+function oldLich(cx, base, tn) {
+  const bob = Math.round(Math.sin(tn / 500) * 2) - 4;
+  for (let i = 0; i < 34; i++) R(cx - 6 - i / 2.2, base - 42 + i + bob, 12 + i / 1.1, 1, i % 7 === 6 ? '#3a1554' : '#4b1d6b');
+  for (let k = 0; k < 6; k++) R(cx - 20 + k * 7, base - 8 + bob + (k % 2), 4, 2, '#4b1d6b');
+  R(cx - 10, base - 60 + bob, 20, 4, '#2e0f45'); R(cx - 11, base - 57 + bob, 3, 14, '#2e0f45'); R(cx + 8, base - 57 + bob, 3, 14, '#2e0f45');
+  R(cx - 8, base - 56 + bob, 16, 13, '#e8e4d8');
+  const eye = bossTint(tn) === '#ff3030' ? '#ffffff' : '#ff2a2a';
+  R(cx - 5, base - 52 + bob, 3, 3, eye); R(cx + 2, base - 52 + bob, 3, 3, eye);
+  R(cx - 4, base - 46 + bob, 8, 1, '#555'); R(cx - 3, base - 45 + bob, 1, 2, '#555'); R(cx, base - 45 + bob, 1, 2, '#555'); R(cx + 3, base - 45 + bob, 1, 2, '#555');
+  R(cx - 30, base - 36 + bob, 9, 8, '#f1c40f'); R(cx - 29, base - 41 + bob, 1, 5, '#c9a20c'); R(cx - 23, base - 41 + bob, 1, 5, '#c9a20c'); R(cx - 29, base - 41 + bob, 7, 1, '#c9a20c');
+  R(cx - 26, base - 34 + bob, 2, 3, '#5a4500');
+  R(cx - 21, base - 33 + bob, 8, 2, '#4b1d6b');
+  for (let k = 0; k < 3; k++) { const yy = base - 30 - ((tn / 20 + k * 30) % 40) + bob; R(cx + 18 + k * 5, yy, 2, 3, '#2ecc71'); R(cx + 17 + k * 5, yy + 1, 4, 1, '#2ecc71'); }
+  if (bossTint(tn) === '#ffffff') { w.globalAlpha = 0.5; R(cx - 22, base - 60 + bob, 44, 56, '#fff'); w.globalAlpha = 1; }
+}
+
+function oldTherm(cx, base, tn) {
+  const st = Math.floor(tn / 400) % 2;
+  R(cx - 10, base - 9 + st, 3, 9 - st, '#d4a017'); R(cx + 7, base - 9 + (1 - st), 3, 9 - (1 - st), '#d4a017');
+  for (let i = 0; i < 9; i++) { R(cx - 17 + i * 4, base - 47, 2, 3, '#d4a017'); R(cx - 17 + i * 4, base - 12, 2, 3, '#d4a017'); }
+  for (let i = 0; i < 8; i++) { R(cx - 22, base - 42 + i * 4, 3, 2, '#d4a017'); R(cx + 19, base - 42 + i * 4, 3, 2, '#d4a017'); }
+  R(cx - 19, base - 44, 38, 33, '#2d2d2d');
+  const heat = 0.35 + 0.25 * Math.sin(tn / 300);
+  R(cx - 14, base - 39, 28, 23, '#a9b0b8');
+  w.globalAlpha = bossTint(tn) === '#ff3030' ? 0.75 : heat; R(cx - 14, base - 39, 28, 23, '#ff3b1f'); w.globalAlpha = 1;
+  R(cx - 9, base - 32, 5, 2, '#3a0000'); R(cx + 4, base - 32, 5, 2, '#3a0000');
+  R(cx - 10, base - 35, 4, 1, '#3a0000'); R(cx + 6, base - 35, 4, 1, '#3a0000'); R(cx - 6, base - 34, 1, 1, '#3a0000'); R(cx + 5, base - 34, 1, 1, '#3a0000');
+  R(cx - 5, base - 24, 10, 2, '#3a0000');
+  for (let k = 0; k < 6; k++) {
+    const h = 5 + Math.round(4 * Math.abs(Math.sin(tn / 140 + k * 1.7)));
+    R(cx - 16 + k * 6, base - 47 - h, 5, h, '#ff7a00'); R(cx - 15 + k * 6, base - 47 - Math.round(h * 0.6), 3, Math.round(h * 0.6), '#ffd000');
+  }
+  if (bossTint(tn) === '#ffffff') { w.globalAlpha = 0.5; R(cx - 22, base - 58, 44, 58, '#fff'); w.globalAlpha = 1; }
+}
+
+function oldDust(cx, base, tn) {
+  const sq = Math.round(Math.sin(tn / 350));
+  R(cx - 13, base - 66 + sq, 6, 20, '#9a9a9a'); R(cx - 11, base - 63 + sq, 2, 14, '#d98a9a');
+  R(cx + 7, base - 66 + sq, 6, 20, '#9a9a9a'); R(cx + 9, base - 63 + sq, 2, 14, '#d98a9a');
+  for (let dy = -22; dy <= 22; dy++) {
+    const hw = Math.round(Math.sqrt(1 - (dy / 23) ** 2) * (25 + sq));
+    R(cx - hw, base - 23 + dy, hw * 2, 1, '#9a9a9a');
+    if ((dy + Math.floor(tn / 200)) % 3 === 0) { R(cx - hw - 1, base - 23 + dy, 1, 1, '#b8b8b8'); R(cx + hw, base - 23 + dy, 1, 1, '#b8b8b8'); }
+  }
+  R(cx - 9, base - 53 + sq, 18, 5, '#f1c40f'); R(cx - 9, base - 56 + sq, 2, 3, '#f1c40f'); R(cx - 1, base - 57 + sq, 2, 4, '#f1c40f'); R(cx + 7, base - 56 + sq, 2, 3, '#f1c40f');
+  R(cx - 1, base - 52 + sq, 2, 2, '#c0392b');
+  const eye = bossTint(tn) === '#ff3030' ? '#ffffff' : '#e0202a';
+  R(cx - 9, base - 34, 4, 4, eye); R(cx + 5, base - 34, 4, 4, eye);
+  R(cx - 4, base - 25, 8, 2, '#5a5a5a'); R(cx - 3, base - 23, 2, 2, '#fff'); R(cx + 1, base - 23, 2, 2, '#fff');
+  for (let k = 0; k < 4; k++) { const ph = (tn / 900 + k / 4) % 1; R(cx - 30 - ph * 30, base - 10 - ph * 20 - k * 3, 2, 2, '#b8b8b8'); }
+  if (bossTint(tn) === '#ffffff') { w.globalAlpha = 0.5; R(cx - 26, base - 66, 52, 66, '#fff'); w.globalAlpha = 1; }
+}
+
+
+// ---------------------------------------------------------------- UI text
+function txt(s, x, y, size, color, align, weight) {
+  u.font = (weight || 400) + ' ' + size + 'px Silkscreen, monospace';
+  u.textAlign = align || 'left'; u.textBaseline = 'alphabetic';
+  u.lineJoin = 'round'; u.lineWidth = Math.max(3, size / 4); u.strokeStyle = 'rgba(0,0,0,0.9)';
+  u.strokeText(s, x, y); u.fillStyle = color; u.fillText(s, x, y);
+}
+
+// Animated BSOD channel emote over each blue-screened tech (DOM img, so the GIF actually animates)
+const emoteLayer = document.getElementById('emotes');
+function syncEmotes(tn) {
+  for (const t of techs.values()) {
+    const show = t.down && t.shown && tn - t.deadT > 450;
+    if (show && !t.emote) {
+      const im = document.createElement('img'); im.src = 'assets/bsod-anim.gif'; im.className = 'bsod';
+      emoteLayer.appendChild(im); t.emote = im;
+    } else if (!show && t.emote) { t.emote.remove(); t.emote = null; }
+    if (t.emote) {
+      const base = (FLOOR - (t.row ? ROW_Y : 0)) * S;
+      t.emote.style.left = Math.round(t.x * S - 28) + 'px'; t.emote.style.top = Math.round(base - 58) + 'px';
+    }
+  }
+}
+
+const nerdPix = document.createElement('canvas'), nerdPixCtx = nerdPix.getContext('2d');
+function drawNerd(tn) {
+  const sprite = NERD_IMG.complete && NERD_IMG.naturalWidth ? NERD_IMG : NERD_REF;
+  if (!(sprite.complete && sprite.naturalWidth)) return;
+  const k = tn - nerd.t0, real = sprite === NERD_IMG;
+  // judge art: crop out the blank card (left 42%), keep him + the thumbs up; pixel sprite: whole image
+  const sx = real ? 0 : sprite.naturalWidth * 0.42, sw = sprite.naturalWidth - sx, sh = sprite.naturalHeight;
+  const H2 = BOSS_H * 1.05, W2 = sw * H2 / sh, cx = 980;
+  if (!real) {                                                 // 8-bit it down: ~64 px tall, then blown up with no smoothing
+    const ph = 64, pw = Math.round(sw * ph / sh);
+    if (nerdPix.width !== pw) { nerdPix.width = pw; nerdPix.height = ph; nerdPixCtx.imageSmoothingEnabled = true; nerdPixCtx.drawImage(sprite, sx, 0, sw, sh, 0, 0, pw, ph); }
+  }
+  const rise = Math.min(1, k / 1400), fade = k > 4200 ? Math.max(0, 1 - (k - 4200) / 1000) : 1;
+  const lunge = nerd.hitT && tn - nerd.hitT < 400 ? Math.sin((tn - nerd.hitT) / 400 * Math.PI) * 90 : 0;
+  const B = FLOOR * S + (1 - rise * (2 - rise)) * H2;           // rises up out of the floor (ease-out)
+  ac.save(); ac.globalAlpha = fade;
+  ac.filter = 'drop-shadow(0 0 14px #19e3ff) drop-shadow(0 0 4px #ffffff)';
+  ac.imageSmoothingEnabled = false;
+  if (real) ac.drawImage(sprite, cx - W2 / 2 + lunge, B - H2, W2, H2);
+  else ac.drawImage(nerdPix, cx - W2 / 2 + lunge, B - H2, W2, H2);
+  ac.restore(); ac.imageSmoothingEnabled = true;
+}
+
+function drawUI(tn) {
+  syncEmotes(tn);
+  u.clearRect(0, 0, 1920, 300);
+  if (blazeFlashT && tn - blazeFlashT < 300) { u.fillStyle = 'rgba(255,190,80,' + (0.45 * (1 - (tn - blazeFlashT) / 300)) + ')'; u.fillRect(0, 0, 1920, 300); }
+  txt('NERDS TECH SUPPORT', 16, 30, 22, CYAN, 'left', 700);
+  txt('POWERED BY NERDS  //  CHATTNERDS.COM', 372, 30, 12, '#8fa3b5', 'left', 700);
+  if (!CHANNEL && !DEMO) txt('SETUP: ADD ?channel=YOURTWITCHNAME TO THE END OF THE URL', 960, 150, 22, '#ffe14d', 'center', 700);
+  const n = shownTechs().filter(t => !t.npc).length, oc = shownTechs().length - n;
+  txt(n ? n + (n === 1 ? ' TECH' : ' TECHS') + (oc ? ' + ' + oc + ' ON-CALL' : '') + ' ON THE CREW  //  TYPE !crew ONCE TO JOIN' : 'WAITING FOR TECHS  //  TYPE !crew ONCE TO JOIN', 16, 54, 14, '#cfd8e3');
+  if (phase === 'lobby' && n) txt('NEXT REPAIR IN ' + Math.max(0, Math.ceil((lobbyEnd - tn) / 1000)) + 's', 16, 76, 16, '#ffe14d');
+  if (phase === 'fight') {
+    const left = Math.max(0, Math.ceil((fightEnd - tn) / 1000));
+    txt('TIME ' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0'), 16, 76, 16, '#cfd8e3');
+  }
+  // boss panel
+  const bx = 1890;
+  txt(boss.name.toUpperCase(), bx - 70, 32, 18, '#fff', 'right', 700);
+  const bw = 420, by = 42;
+  u.fillStyle = 'rgba(0,0,0,0.8)'; u.fillRect(bx - 70 - bw, by, bw, 14);
+  const frac = phase === 'fight' ? bossHP / bossMax : 1;
+  u.fillStyle = frac > 0.5 ? '#3ddc5a' : frac > 0.25 ? '#ffb400' : '#ff4040';
+  u.fillRect(bx - 70 - bw + 2, by + 2, Math.max(0, (bw - 4) * frac), 10);
+  if (phase === 'fight') txt(bossHP + ' / ' + bossMax, bx - 70, by + 32, 12, '#cfd8e3', 'right');
+  const rg = phase === 'fight' ? rage() : 0;
+  if (rg) txt('ENRAGED +' + rg, bx - 70 - bw, by + 32, 12, Math.floor(tn / 400) % 2 ? '#ff5050' : '#ff9a3c', 'left', 700);
+  // level shield
+  u.fillStyle = '#e8edf2'; u.beginPath();
+  u.moveTo(bx - 52, 18); u.lineTo(bx - 8, 18); u.lineTo(bx - 8, 46); u.lineTo(bx - 30, 64); u.lineTo(bx - 52, 46); u.closePath(); u.fill();
+  u.strokeStyle = '#111'; u.lineWidth = 3; u.stroke();
+  u.font = '700 20px Silkscreen, monospace'; u.textAlign = 'center'; u.fillStyle = '#111'; u.fillText(String(lvl(boss)), bx - 30, 47);
+  // tech name tags
+  let i = 0;
+  for (const t of shownTechs()) {
+    i++;
+    const x = t.x * S, base = (FLOOR - (t.row ? ROW_Y : 0)) * S;
+    const tall = t.img && t.img.complete && t.img.naturalWidth ? TECH_H + 12 : 78;
+    const y = base - (t.down ? 84 : tall) - ((i % 2) ? 0 : 16);
+    txt(t.name, x, y, 13, t.down ? '#8a929c' : t.npc ? '#7fd8ff' : '#fff', 'center');
+    if (t.down) txt('BLUE SCREENED', x, y + 14, 10, '#5b93ff', 'center');
+    else if (t.blazing) txt('BLAZE OF GLORY', x, y - 16, 12, Math.floor(tn / 120) % 2 ? '#ffe14d' : '#ff7a00', 'center', 700);
+    else if (phase === 'fight' && lastStanding(t)) txt('LAST TECH STANDING', x, y - 16, 11, Math.floor(tn / 300) % 2 ? '#ff5050' : '#ffb400', 'center', 700);
+    if (!t.down && phase === 'fight') {
+      u.fillStyle = 'rgba(0,0,0,0.8)'; u.fillRect(x - 16, y + 4, 32, 5);
+      u.fillStyle = t.hp > 50 ? '#3ddc5a' : t.hp > 25 ? '#ffb400' : '#ff4040'; u.fillRect(x - 15, y + 5, 30 * t.hp / 100, 3);
+    }
+  }
+  if (techs.size > 24) txt('+' + (techs.size - 24) + ' MORE ON CALL', 16, 290, 12, '#9fb3c8');
+  if (snipe && !snipe.t.down) {
+    txt(boss.snipe + '  >>  ' + snipe.t.name.toUpperCase(), 960, telegraph ? 74 : 46, 20, Math.floor(tn / 200) % 2 ? '#ff4040' : '#ffffff', 'center', 700);
+  }
+  // attack warning
+  if (telegraph) {
+    txt('!! ' + boss.attack + ' INCOMING !!', 960, 46, 24, Math.floor(tn / 250) % 2 ? '#ff4040' : '#ffe14d', 'center', 700);
+  }
+  // banner
+  if (banner) {
+    u.fillStyle = 'rgba(0,0,0,0.75)'; u.fillRect(560, 40, 800, 80);
+    u.strokeStyle = banner.color; u.lineWidth = 3; u.strokeRect(560, 40, 800, 80);
+    txt(banner.title, 960, 76, 24, banner.color, 'center', 700);
+    if (banner.sub) txt(banner.sub, 960, 104, 14, '#fff', 'center');
+  }
+  // floaters
+  for (const f of floaters) {
+    const k = (tn - f.t0) / 1600;
+    u.globalAlpha = 1 - k;
+    const half = f.text.length * f.size * 0.4 + 6;                              // keep long lines (IRQL_...) on screen
+    txt(f.text, Math.max(half, Math.min(1920 - half, f.x * S)), f.y * S - k * 40, f.size, f.color, 'center', 700);
+    u.globalAlpha = 1;
+  }
+}
+
+// ---------------------------------------------------------------- main loop
+function frame() {
+  const tn = now();
+  update();
+  const sx = shake > tn ? Math.round(rnd(-2, 2)) : 0;
+  w.setTransform(1, 0, 0, 1, sx, 0);
+  ac.setTransform(1, 0, 0, 1, sx * S, 0); ac.clearRect(-20, 0, 1960, 300);
+  drawBG(tn);
+  const list = shownTechs();
+  for (const t of list) if (t.row) drawTech(t, tn);
+  for (const t of list) if (!t.row) drawTech(t, tn);
+  if (!drawBossActor(tn)) boss.draw(BOSS_X, FLOOR, tn);
+  if (nerd) drawNerd(tn);
+  if (blaze) {                                                                   // Blaze of Glory flames
+    const v = blaze.t, k = Math.min(1, (tn - blaze.t0) / BLAZE_RISE), X = v.x * S, B = (FLOOR - (v.row ? ROW_Y : 0)) * S - 34 * Math.sin(k * Math.PI / 2);
+    for (let j = 0; j < 22; j++) {
+      const ph = (tn / 380 + j * 0.137) % 1, fx = X + Math.sin(j * 7.3 + tn / 200) * 26 * (1 - ph * 0.5), fy = B - ph * (TECH_H + 30);
+      ac.globalAlpha = (1 - ph) * 0.85 * Math.min(1, k * 3); ac.fillStyle = ph < 0.3 ? '#ffe14d' : ph < 0.65 ? '#ff9a1a' : '#e0401a';
+      ac.beginPath(); ac.ellipse(fx, fy, 7 * (1 - ph) + 3, 12 * (1 - ph) + 4, 0, 0, Math.PI * 2); ac.fill();
+    }
+    ac.globalAlpha = 1;
+  }
+  for (const s of shots) drawShot(s, tn);
+  for (let i = sparks.length - 1; i >= 0; i--) {                                 // hit spark where an item lands
+    const p = sparks[i], k = (tn - p.t0) / (p.big ? 450 : 260);
+    if (k >= 1) { sparks.splice(i, 1); continue; }
+    if (k < 0) continue;
+    const g = p.big ? 3 : 1;
+    const r0 = ((p.crit ? 10 : 6) + k * (p.crit ? 30 : 18)) * g, r1 = r0 + (p.crit ? 14 : 9) * (1 - k) * g;
+    ac.save(); ac.globalAlpha = 1 - k; ac.strokeStyle = p.crit ? '#ffe14d' : '#ffffff'; ac.lineWidth = p.crit ? 4 : 3;
+    ac.beginPath();
+    for (let a = 0; a < 8; a++) { const th = a * Math.PI / 4 + 0.4; ac.moveTo(p.x * S + Math.cos(th) * r0, p.y * S + Math.sin(th) * r0); ac.lineTo(p.x * S + Math.cos(th) * r1, p.y * S + Math.sin(th) * r1); }
+    ac.stroke(); ac.restore();
+  }
+  for (let i = beams.length - 1; i >= 0; i--) {
+    const b = beams[i], age = tn - b.t0;
+    if (age > 260) { beams.splice(i, 1); continue; }
+    w.globalAlpha = 1 - age / 260; w.strokeStyle = b.c; w.lineWidth = b.w;
+    w.beginPath(); w.moveTo(BOSS_X - 40, FLOOR - 66); w.lineTo(b.x, b.y); w.stroke();
+    if (b.w > 2) { w.strokeStyle = '#fff'; w.lineWidth = 1; w.beginPath(); w.moveTo(BOSS_X - 40, FLOOR - 66); w.lineTo(b.x, b.y); w.stroke(); }
+    w.globalAlpha = 1;
+  }
+  if (snipe && !snipe.t.down) {
+    const v = snipe.t, x = Math.round(v.x), tallW = v.img && v.img.naturalWidth ? TECH_H / S + 4 : 38, top = FLOOR - (v.row ? ROW_Y : 0) - tallW, bot = FLOOR - (v.row ? ROW_Y : 0) + 2;
+    const c = Math.floor(tn / 120) % 2 ? '#ff3030' : '#ffe14d', g = (v.img && v.img.naturalWidth ? 18 : 12) - Math.round(4 * (tn - snipe.start) / 2500);
+    for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      const cx = x + sx * g, cy = (sy < 0 ? top : bot);
+      R(cx - (sx > 0 ? 4 : 0), cy, 5, 1, c); R(sx > 0 ? cx : cx, cy - (sy > 0 ? 4 : 0), 1, 5, c);
+    }
+  }
+  w.setTransform(1, 0, 0, 1, 0, 0);
+  drawUI(tn);
+  requestAnimationFrame(frame);
+}
+
+// ---------------------------------------------------------------- Twitch chat (anonymous, read-only)
+function connectChat() {
+  if (!CHANNEL) return;
+  let ws;
+  try { ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443'); } catch (e) { return setTimeout(connectChat, 10000); }
+  ws.onopen = () => {
+    ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership');
+    ws.send('PASS SCHMOOPIIE');
+    ws.send('NICK justinfan' + ri(10000, 99999));
+    ws.send('JOIN #' + CHANNEL);
+  };
+  ws.onmessage = e => {
+    for (const line of String(e.data).split('\r\n')) {
+      if (!line) continue;
+      if (line.startsWith('PING')) { ws.send('PONG :tmi.twitch.tv'); continue; }
+      let m = line.match(/^(?:@(\S+) )?:(\w+)!\S+ PRIVMSG #\S+ :(.*)$/);
+      if (m) {
+        const tags = {};
+        (m[1] || '').split(';').forEach(kv => { const i = kv.indexOf('='); if (i > 0) tags[kv.slice(0, i)] = kv.slice(i + 1); });
+        onChat(m[2].toLowerCase(), (tags['display-name'] || m[2]).replace(/\\s/g, ' '), m[3]);
+        continue;
+      }
+      m = line.match(/^:(\w+)!\S+ (JOIN|PART) #\S+$/);
+      if (m) { const login = m[1].toLowerCase(); if (m[2] === 'JOIN') join(login, null, false); else leave(login); }
+    }
+  };
+  ws.onclose = () => setTimeout(connectChat, 5000);
+}
+
+// ---------------------------------------------------------------- demo mode
+function runDemo() {
+  const crew = ['PixelPriya', 'WrenchWendy', 'ByteBrandon', 'CableCarla', 'DriverDave', 'RAMona', 'SataSam',
+                'KernelKeisha', 'PingPedro', 'FanFatima', 'lurker_larry', 'quietquinn'];
+  crew.forEach((n, i) => setTimeout(() => (i >= 10 ? (onChat(n.toLowerCase(), n, '!crew'), techs.get(n.toLowerCase()).chatter = false)
+                                                     : onChat(n.toLowerCase(), n, '!crew')), 300 + i * 400));
+  setInterval(() => { const n = pick(crew.slice(0, 10)); if (Math.random() < 0.3) onChat(n.toLowerCase(), n, 'hi'); }, 1500);
+}
+
+// first boss: wait (max 2 s) for the boss art so all 10 can open, then a random pick that isn't the last one shown
+const imgsReady = Promise.race([
+  Promise.all(Object.values(BOSS_IMG).map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; }))),
+  new Promise(r => setTimeout(r, 2000))]);
+Promise.all([imgsReady, document.fonts ? document.fonts.ready : 0]).then(() => {
+  let last = -1;
+  try { last = BOSSES.findIndex(b => b.key === localStorage.getItem('nerds-boss-last')); } catch (e) {}
+  bossIdx = nextBossIdx(last);
+  startLobby(true);
+  requestAnimationFrame(frame);
+});
+if (DEMO) runDemo(); else connectChat();
+</script>
+</body>
+</html>

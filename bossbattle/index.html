@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD8KXQQMB6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GD8KXQQMB6');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Twitch Chat Game: NERDS Boss Battle</title>
+<meta name="description" content="A free Twitch chat game for OBS and Streamlabs. Your viewers join a crew of repair techs and fight PC-problem bosses on your stream. No login, no bot, one link.">
+<meta property="og:title" content="Free Twitch Chat Game: NERDS Boss Battle">
+<meta property="og:description" content="Your viewers join a crew of repair techs and fight PC-problem bosses on your stream. Free, no login, no bot, one link.">
+<meta property="og:image" content="https://www.chattnerds.com/assets/og-card.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/nerds.css">
+<style>
+  body { background: #0e0e10; color: #e6e6e6; font-family: 'Open Sans', Arial, sans-serif; line-height: 1.7; }
+  .bb { max-width: 980px; margin: 0 auto; padding: 0 16px 48px; }
+  .bb h1 { font-family: 'Oswald', sans-serif; font-size: 44px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #fff; margin: 40px 0 8px; line-height: 1.15; }
+  .bb h1 span { color: #19e3ff; }
+  .bb .lead { font-size: 17px; color: #cfcfcf; margin-bottom: 22px; }
+  .bb h2 { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 500; text-transform: uppercase; color: #fff; margin: 34px 0 12px; padding-bottom: 8px; border-bottom: 3px solid #19e3ff; }
+  .bb p, .bb li { font-size: 15px; color: #cfcfcf; }
+  .bb ol, .bb ul { margin: 0 0 12px 22px; }
+  .bb li { margin-bottom: 6px; }
+  .bb a { color: #19e3ff; }
+  .bb code { font-family: 'IBM Plex Mono', monospace; background: #1b1d22; padding: 1px 6px; border-radius: 4px; color: #fff; font-size: 14px; }
+  .stage { position: relative; width: 100%; aspect-ratio: 1920 / 300; background: #15171c; border: 1px solid #2a2d33; border-radius: 10px; overflow: hidden; }
+  .stage iframe { position: absolute; left: 0; top: 0; width: 1920px; height: 300px; border: 0; transform-origin: 0 0; background: transparent; }
+  .cap { font-size: 13px; color: #8a8f98; margin-top: 6px; }
+  .builder { background: #15171c; border: 1px solid #2a2d33; border-radius: 10px; padding: 18px; margin-top: 8px; }
+  .builder label { display: block; font-weight: 600; color: #fff; margin-bottom: 6px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .row input { flex: 1 1 220px; min-width: 0; padding: 10px 12px; border-radius: 8px; border: 1px solid #3a3e46; background: #0e0e10; color: #fff; font-size: 16px; }
+  .row button { padding: 10px 18px; border-radius: 8px; border: 0; background: #19e3ff; color: #0e0e10; font-weight: 700; font-size: 15px; cursor: pointer; }
+  .url { margin-top: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #fff; background: #0e0e10; border: 1px dashed #3a3e46; border-radius: 8px; padding: 10px 12px; word-break: break-all; }
+  .ok { color: #3ddc5a; font-size: 14px; min-height: 20px; margin-top: 6px; }
+  .cmds { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 6px 0 12px; }
+  .cmds code { justify-self: start; }
+  .cta { background: linear-gradient(135deg, #10262c, #15171c); border: 1px solid #19e3ff55; border-radius: 10px; padding: 20px; margin-top: 34px; }
+  .cta h3 { font-family: 'Oswald', sans-serif; font-size: 22px; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+  .cta a.btn { display: inline-block; margin-top: 8px; padding: 10px 18px; border-radius: 8px; background: #e53935; color: #fff; font-weight: 700; text-decoration: none; }
+  @media (max-width: 700px) { .bb h1 { font-size: 32px; } .cmds { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<nav class="nx-nav" id="nx-nav"><div class="nx-wrap">
+<a class="nx-brand" href="../index.html"><img src="../assets/nerds-mascot.png" alt="NERDS mascot">NERDS<b>.</b></a>
+<div class="nx-links"><a href="../repair-services.html">Repair</a><a href="../builds.html">Custom PCs</a><a href="../business-it.html">Business IT</a><a href="../websites.html">Websites</a><a href="../ai-services.html">AI</a><a href="../about.html">About</a><a class="nx-mtext" href="sms:+14235215694">Text 423-521-5694</a></div>
+<a class="nx-btn nx-hot" href="sms:+14235215694">Text Us</a>
+<button class="nx-burger" onclick="document.getElementById('nx-nav').classList.toggle('open')" aria-label="Menu">Menu</button>
+</div></nav>
+
+<main class="bb">
+  <h1>NERDS Boss Battle: <span>a free chat game for your stream</span></h1>
+  <p class="lead">Your viewers join a crew of repair techs and fight PC-problem bosses like the Blue Screen Beast and the Thermal Throttler, right along the bottom of your stream. It runs on its own. No login, no bot, nothing to install. Just one link in OBS.</p>
+
+  <div class="stage" id="stage"><iframe id="demo" src="game.html?demo=1" title="Boss Battle demo" loading="lazy"></iframe></div>
+  <p class="cap">Live demo with pretend viewers. On your stream it sits on a transparent background over your scene.</p>
+
+  <h2>1. Get your link</h2>
+  <div class="builder">
+    <label for="ch">Your Twitch channel name</label>
+    <div class="row">
+      <input id="ch" type="text" placeholder="yourtwitchname" autocomplete="off" spellcheck="false">
+      <button id="copy" type="button">Copy link</button>
+    </div>
+    <div class="url" id="url">https://www.chattnerds.com/bossbattle/game.html?channel=yourtwitchname</div>
+    <div class="ok" id="ok"></div>
+  </div>
+
+  <h2>2. Add it to OBS or Streamlabs</h2>
+  <ol>
+    <li>In your scene, add a new <b>Browser</b> source.</li>
+    <li>Paste your link into the URL box.</li>
+    <li>Set the width to <code>1920</code> and the height to <code>300</code>.</li>
+    <li>Drag it to the bottom of your scene. On a 1080p canvas it fits as is. On a 4K canvas, scale it to 200%.</li>
+  </ol>
+  <p>That's it. It connects to your chat by itself when the source is showing.</p>
+
+  <h2>How your viewers play</h2>
+  <div class="cmds">
+    <code>!crew</code><span>Join the crew once. The game remembers them from then on.</span>
+    <code>!crew 1</code><span>Join as a TECH 1 look (or <code>!crew 2</code> for TECH 2). <code>!tech 1</code> / <code>!tech 2</code> switches later.</span>
+    <code>!crewout</code><span>Leave the crew.</span>
+    <code>!summon</code><span>Broadcaster only: calls in THE NERD to save the crew.</span>
+  </div>
+  <p>After that it's hands-off. Techs fight on their own, throw USB sticks, network cables and RAM, land random crits, and get BLUE SCREENED when the boss gets them. Ten bosses rotate and level up as your crew beats them. If only a couple of people are in, on-call techs fill the crew so the fight still looks good.</p>
+
+  <h2>Good to know</h2>
+  <ul>
+    <li><b>Free.</b> Use it on your stream as long as you like. Please leave the "Powered by NERDS" credit on screen.</li>
+    <li><b>Twitch only</b> for now. It reads your public Twitch chat and never posts anything.</li>
+    <li><b>Test it offline:</b> add <code>&amp;demo=1</code> to your link to fill the crew with pretend viewers.</li>
+    <li>Common chat bots (Nightbot, StreamElements and similar) are ignored automatically.</li>
+  </ul>
+
+  <div class="cta">
+    <h3>Want your own version?</h3>
+    <p>We build custom chat games, emotes and alerts for streamers: your bosses, your colors, your channel. See it all running live on Fridays at <a href="https://www.twitch.tv/nerdsllc">twitch.tv/nerdsllc</a>.</p>
+    <a class="btn" href="sms:+14235215694">Text 423-521-5694</a>
+  </div>
+</main>
+
+<footer class="nx-foot"><div class="nx-wrap">
+<div>info@chattnerds.com &middot; <a style="display:inline" href="sms:+14235215694">423-521-5694</a> &middot; &copy; 2026 NERDS Custom Computers &middot; <a style="display:inline" href="../privacy.html">Privacy</a></div>
+</div></footer>
+
+<script>
+(function () {
+  var stage = document.getElementById('stage'), fr = document.getElementById('demo');
+  function fit() { fr.style.transform = 'scale(' + (stage.clientWidth / 1920) + ')'; }
+  window.addEventListener('resize', fit); fit();
+  var ch = document.getElementById('ch'), url = document.getElementById('url'), ok = document.getElementById('ok');
+  var base = 'https://www.chattnerds.com/bossbattle/game.html?channel=';
+  function clean() { return ch.value.trim().replace(/^.*twitch\.tv\//i, '').toLowerCase().replace(/[^a-z0-9_]/g, ''); }
+  ch.addEventListener('input', function () { url.textContent = base + (clean() || 'yourtwitchname'); ok.textContent = ''; });
+  document.getElementById('copy').addEventListener('click', function () {
+    var c = clean();
+    if (!c) { ok.style.color = '#ffb400'; ok.textContent = 'Type your channel name first.'; ch.focus(); return; }
+    var text = base + c;
+    function done() { ok.style.color = '#3ddc5a'; ok.textContent = 'Copied. Paste it into a Browser source.'; }
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () { ok.textContent = text; });
+    else { ok.textContent = text; }
+  });
+})();
+</script>
+</body></html>
