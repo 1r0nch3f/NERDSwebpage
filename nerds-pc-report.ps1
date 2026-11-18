@@ -1046,6 +1046,119 @@ else {
     $gfx3d = @(WinSat @('d3d'))
     W ''
     W ("Graphics render check (winsat d3d): {0}" -f $(if ($gfx3d -match 'Direct3D') { 'PASSED, the card rendered every Direct3D test (Windows caps the speed numbers, so this proves it works, not how fast it is)' } else { 'FAILED or did not run: ' + ($gfx3d -join ' ') }))
+
+    # ---- GPU full-load test (2026-11-17, after a black-screen case where the CPU tests passed but the GPU's 8-pin sagged under load) ----
+    # Load = a heavy WebGL page in Microsoft Edge (on every Windows 10/11 PC, no download, no license). Throttle flags from nvidia-smi on NVIDIA.
+    # Windows cannot read the 8-pin / slot 12 V rails; that stays a by-hand HWMonitor check (line printed below).
+    $gsecs = $(if ($env:NERDS_TEST_GPU_SECONDS) { [int]$env:NERDS_TEST_GPU_SECONDS } else { 90 })
+    $edge = @("${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe", "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+    W ''
+    W ("GPU full-load test (heavy WebGL page in Microsoft Edge, {0} s):" -f $gsecs)
+    $gpuBad = @(); $gpuPartial = ''
+    if (-not $edge) { $gpuPartial = 'Microsoft Edge not found, GPU load test skipped'; W "  skipped: $gpuPartial" }
+    else {
+        Step ("Test: graphics card at full load ({0} seconds; a black test window opens and closes by itself)" -f $gsecs)
+        $gdir = Join-Path $env:TEMP 'NERDS-GPU-Test'
+        Remove-Item $gdir -Recurse -Force; [void](New-Item -ItemType Directory -Path $gdir -Force)
+        $ghtml = @'
+<!doctype html><html><head><meta charset="utf-8"><title>NERDS GPU test</title>
+<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}canvas{width:100%;height:100%;display:block}#t{position:fixed;left:12px;top:10px;color:#3f3;font:16px Consolas,monospace;background:#000a;padding:4px 8px}</style></head>
+<body><canvas id="c" width="1920" height="1080"></canvas><div id="t">NERDS GPU test starting...</div>
+<script>
+var c=document.getElementById('c'),t=document.getElementById('t');
+var gl=c.getContext('webgl2',{antialias:false,powerPreference:'high-performance'})||c.getContext('webgl',{antialias:false,powerPreference:'high-performance'});
+if(!gl){t.textContent='NERDS GPU test: WebGL is not available on this PC';document.title='NERDS GPU test NO WEBGL';}
+else{
+var vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}';
+var fs='precision highp float;uniform float u;uniform vec2 r;void main(){vec2 q=gl_FragCoord.xy/r;float a=q.x+u,b=q.y-u,s=0.0;for(int i=0;i<256;i++){a=sin(a*1.3+b)+cos(b*0.7-a);b=cos(a*0.9-b)+sin(b*1.1+a);s+=a*b;}gl_FragColor=vec4(fract(s*0.001),fract(a),fract(b),1.0);}';
+function sh(k,s){var x=gl.createShader(k);gl.shaderSource(x,s);gl.compileShader(x);return x;}
+var pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+var l=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(l);gl.vertexAttribPointer(l,2,gl.FLOAT,false,0,0);
+var uu=gl.getUniformLocation(pr,'u');gl.uniform2f(gl.getUniformLocation(pr,'r'),c.width,c.height);
+var n=1,last=performance.now(),k=0,fr=0;
+function f(now){var dt=now-last;last=now;if(dt<35&&n<600)n++;else if(dt>70&&n>1)n--;for(var i=0;i<n;i++){gl.uniform1f(uu,(k++)*0.001);gl.drawArrays(gl.TRIANGLES,0,3);}
+if((fr++%20)==0){t.textContent='NERDS GPU test running ('+n+' passes per frame). Leave this window open, it closes by itself.';document.title='NERDS GPU test '+n;}requestAnimationFrame(f);}
+requestAnimationFrame(f);}
+</script></body></html>
+'@
+        [IO.File]::WriteAllText((Join-Path $gdir 'gpu.html'), $ghtml, [Text.Encoding]::ASCII)
+        $guri = ([Uri](Join-Path $gdir 'gpu.html')).AbsoluteUri
+        $smiExe = Join-Path $env:SystemRoot 'System32\nvidia-smi.exe'; $hasSmi = Test-Path $smiExe
+        $smiQ = 'temperature.gpu,utilization.gpu,clocks.gr,power.draw,power.limit'; $why = @()
+        if ($hasSmi) {
+            # newer drivers call them clocks_event_reasons, older ones clocks_throttle_reasons; an unknown field fails the whole query
+            foreach ($fam in 'clocks_event_reasons', 'clocks_throttle_reasons') {
+                $q = "$smiQ,$fam.hw_slowdown,$fam.hw_thermal_slowdown,$fam.hw_power_brake_slowdown,$fam.sw_thermal_slowdown"
+                $o = @(& $smiExe "--query-gpu=$q" --format=csv,noheader,nounits 2>&1)
+                if ($LASTEXITCODE -eq 0 -and "$($o[0])" -match '^\s*\d') { $smiQ = $q; $why = 'HW slowdown', 'HW overheat slowdown', 'HW power brake', 'overheat slowdown (driver)'; break }
+            }
+        }
+        $gstart = Get-Date
+        $null = Start-Process $edge -PassThru -ArgumentList @("--user-data-dir=`"$gdir\edge`"", "--app=$guri", '--no-first-run', '--no-default-browser-check', '--disable-sync',
+            '--window-size=900,560', '--window-position=60,60', '--disable-background-timer-throttling', '--disable-renderer-backgrounding',
+            '--disable-backgrounding-occluded-windows', '--ignore-gpu-blocklist', '--disable-gpu-vsync', '--disable-frame-rate-limit', '--force_high_performance_gpu')
+        $guntil = $gstart.AddSeconds($gsecs); $gsamp = @(); $gpuLost = ''
+        Start-Sleep -Seconds 6   # let the page start and ramp up (counts toward the run time)
+        while ((Get-Date) -lt $guntil) {
+            $cs = (Get-Counter '\GPU Engine(*engtype_3D)\Utilization Percentage', '\GPU Adapter Memory(*)\Dedicated Usage' -SampleInterval 2 -MaxSamples 1).CounterSamples
+            $eng = @{}; $ded = @{}
+            foreach ($x in $cs) {
+                if ($x.InstanceName -match 'luid_(0x[0-9a-f]+_0x[0-9a-f]+)_phys_(\d+)_eng_(\d+)') { $kk = "$($Matches[1])|$($Matches[2])|$($Matches[3])"; $eng[$kk] = [double]$eng[$kk] + $x.CookedValue }
+                elseif ($x.InstanceName -match '^luid_(0x[0-9a-f]+_0x[0-9a-f]+)_phys') { $ded[$Matches[1]] = $x.CookedValue }
+            }
+            $gtop = $eng.GetEnumerator() | Sort-Object Value -Descending | Select-Object -First 1
+            $busy = $(if ($gtop) { [int][math]::Min(100, $gtop.Value) } else { $null })
+            $row = [ordered]@{ S = [int]((Get-Date) - $gstart).TotalSeconds; Load = $busy; VramGB = $(if ($gtop) { [double]$ded[($gtop.Key -split '\|')[0]] / 1GB } else { 0 }) }
+            if ($hasSmi -and -not $gpuLost) {
+                $line = "$(@(& $smiExe "--query-gpu=$smiQ" --format=csv,noheader,nounits 2>&1)[0])"
+                if ($line -notmatch '^\s*\d') { $gpuLost = $line.Trim() }
+                else {
+                    $v = $line -split ',\s*'
+                    $row.Temp = [int]$v[0]; $row.NvLoad = [int]$v[1]; $row.MHz = [int]$v[2]; $row.W = [double]$v[3]; $row.Limit = [double]$v[4]
+                    $row.Why = @(for ($i = 0; $i -lt $why.Count; $i++) { if ($v[5 + $i] -match '^\s*Active') { $why[$i] } })
+                }
+            }
+            $gsamp += [pscustomobject]$row
+            Start-Sleep -Seconds 1
+        }
+        Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*NERDS-GPU-Test*' } | Invoke-CimMethod -MethodName Terminate | Out-Null
+        Start-Sleep -Seconds 2
+        Remove-Item $gdir -Recurse -Force
+        $newDumps = @(Get-ChildItem (Join-Path $env:SystemRoot 'LiveKernelReports') -Recurse -Filter *.dmp | Where-Object { $_.LastWriteTime -ge $gstart })
+
+        $ld = @($gsamp | Where-Object { $_.Load -ne $null })
+        if ($ld) {
+            $avgG = ($ld | Measure-Object Load -Average).Average
+            $vg = ($ld | Measure-Object VramGB -Maximum).Maximum
+            W ("  3D load on the busiest graphics adapter: average {0:N0}%, peak {1:N0}%   (that adapter's dedicated VRAM in use: {2:N1} GB{3})" -f $avgG, ($ld | Measure-Object Load -Maximum).Maximum, $vg,
+                $(if ($vg -lt 0.25) { '; near zero = the built-in graphics took the load, NOT the graphics card' } else { ' = the graphics card' }))
+            if ($vg -lt 0.25) { $gpuPartial = 'the load ran on the built-in graphics, not the graphics card' }
+            if ($avgG -lt 60) { $gpuPartial = 'GPU load stayed low'; W '  NOTE: load stayed under 60%, so the card was not fully tested (Edge may have used the built-in graphics, or WebGL was blocked).' }
+        } else { $gpuPartial = 'GPU load counters not available'; W '  GPU load counters not available.' }
+        $nv = @($gsamp | Where-Object { $_.Temp })
+        if ($nv) {
+            $kq = [math]::Max(1, [math]::Min(3, [math]::Floor($nv.Count / 2)))
+            W ("  NVIDIA: temp start {0} C, max {1} C | clock start {2:N0} MHz, end {3:N0} MHz, lowest {4:N0} MHz | power avg {5:N0} W, max {6:N0} W, limit {7:N0} W" -f
+                $nv[0].Temp, ($nv | Measure-Object Temp -Maximum).Maximum, ($nv | Select-Object -First $kq | Measure-Object MHz -Average).Average,
+                ($nv | Select-Object -Last $kq | Measure-Object MHz -Average).Average, ($nv | Measure-Object MHz -Minimum).Minimum,
+                ($nv | Measure-Object W -Average).Average, ($nv | Measure-Object W -Maximum).Maximum, $nv[0].Limit)
+            if ($why) {
+                $hits = $nv | ForEach-Object { $_.Why } | Where-Object { $_ } | Group-Object | ForEach-Object { "$($_.Name) in $($_.Count) of $($nv.Count) samples" }
+                if ($hits) {
+                    W ('  Card slowed itself down: ' + ($hits -join '; '))
+                    if ($hits -match 'power brake|HW slowdown') { $gpuBad += 'GPU hardware slowdown / power brake'; W '  PROBLEM: a hardware slowdown or power brake means the card saw a power-delivery problem (power supply, PCIe cable, 8-pin connector) or overheated. Check the PSU and cables.' }
+                    if ($hits -match 'overheat') { $gpuBad += 'GPU overheating'; W '  PROBLEM: the card overheated (dust, dried thermal paste, dead fans or poor case airflow).' }
+                } else { W '  Card slowdown flags: none (no power-delivery or overheat slowdowns)' }
+            }
+            if (($nv | Measure-Object Temp -Maximum).Maximum -ge 83) { W '  NOTE: the GPU reached 83 C or more. Warm: clean the dust out and check the case fans.' }
+        }
+        if ($gpuLost) { $gpuBad += 'card lost during the test'; W "  PROBLEM: nvidia-smi lost the card mid-test ('$gpuLost'). The card dropped out or the driver reset: classic sign of a failing power supply, cable or card." }
+        if ($newDumps) { $gpuBad += 'GPU crash dump written'; W ('  PROBLEM: Windows wrote GPU crash dump(s) during the test: ' + (($newDumps | ForEach-Object { $_.Name }) -join ', ')) }
+        W ('  samples: ' + (($gsamp | ForEach-Object { "$($_.S)s " + $(if ($_.Load -ne $null) { "$($_.Load)%" } else { '?%' }) + $(if ($_.Temp) { " $($_.Temp)C $($_.MHz)MHz $([int]$_.W)W" } else { '' }) }) -join ', '))
+        W '  Check by hand: Windows cannot read the power supply voltages. To test the PSU, run a GPU stress test with HWMonitor open and watch the'
+        W '  graphics card''s 8-PIN and PCIe +12V rails (NVIDIA) or the motherboard +12V: anything under 11.40 V under load = weak PSU or cable.'
+    }
 }
 
 W ''
@@ -1067,7 +1180,7 @@ $testErr = @(Get-WinEvent -FilterHashtable @{LogName='System'; StartTime=$testSt
     ($_.Level -le 2 -and $_.ProviderName -match 'nvlddmkm|amdkmdag|amdwddmg|igfx|dxgkrnl|Display') })
 W ("Errors logged during the tests (hardware errors, GPU driver resets, CPU speed limited by firmware): {0}" -f $testErr.Count)
 $testErr | Select-Object -First 10 | ForEach-Object { W ("  {0}  {1} {2}: {3}" -f $_.TimeCreated, $_.ProviderName, $_.Id, ((($_.Message -split "`r?`n") | Select-Object -First 1))) }
-W ("TESTS: {0}   ({1:N0} s)" -f $(if ($skipLoad) { 'PARTIAL, see above' } elseif ($testErr.Count) { 'PROBLEM: errors were logged under load, see above' } else { 'PASSED: no hardware errors, no driver resets, no crash under load' }), ((Get-Date) - $testStart).TotalSeconds)
+W ("TESTS: {0}   ({1:N0} s)" -f $(if ($skipLoad) { 'PARTIAL, see above' } elseif ($testErr.Count -or $gpuBad) { 'PROBLEM: ' + ((@($(if ($testErr.Count) { 'errors were logged under load' })) + $gpuBad) -join '; ') + ', see above' } elseif ($gpuPartial) { "PARTIAL: CPU, memory and drives passed; $gpuPartial, see above" } else { 'PASSED: no hardware errors, no driver resets, no crash under load (CPU and GPU)' }), ((Get-Date) - $testStart).TotalSeconds)
 W '--- end of report ---'
 [IO.File]::WriteAllText($out, $sb.ToString(), [Text.Encoding]::UTF8)
 if (Test-Path $zip) { Compress-Archive -Path $out -DestinationPath $zip -Update }
