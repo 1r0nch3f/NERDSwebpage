@@ -21,6 +21,10 @@
   <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
 </defs></svg>
 
 <div class="ribbon">DESIGN PREVIEW: what your shop website could look like. Photos, phone, address, and hours are placeholders.</div>
@@ -29,8 +33,8 @@
   <a class="logo" href="#top"><span class="mark">WL</span><span>WL AUTOMOTIVE</span></a>
   <button class="burger" aria-label="Menu" onclick="document.getElementById('nav').classList.toggle('open')"><svg class="ico"><use href="#i-menu"/></svg></button>
   <nav id="nav">
-    <a class="on" href="#top">Home</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a>
-    <a class="btn sm" href="#contact">Get a Quote</a>
+    <a class="on" href="#top">Home</a><a href="#services">Services</a><a href="#book">Schedule</a><a href="#pay">Pay</a><a href="#contact">Contact</a>
+    <a class="btn sm" href="#book">Book Now</a>
   </nav>
 </div></header>
 
@@ -40,7 +44,7 @@
     <h1>Engines and transmissions. <em>29 years of doing it right.</em></h1>
     <p class="sub">Monroe's engine and transmission shop. Rebuilds, replacements, swaps and the hard-to-find problems other shops send away. Straight answers and a written estimate before any work.</p>
     <div class="cta">
-      <a class="btn" href="#contact">Get a quote</a>
+      <a class="btn" href="#book">Book a diagnosis</a>
       <a class="btn ghost" href="#contact"><svg class="ico"><use href="#i-phone"/></svg> <span class="todo">Phone number</span></a>
     </div>
     <div class="ticks">
@@ -78,10 +82,94 @@
     <div class="eyebrow">Why WL</div><h2>29 years under the hood</h2>
     <p class="lead"><span class="todo">Owner name</span> has been a mechanic for 29 years, with most of that time on engines and transmissions: the jobs where experience is the difference between fixed and fixed twice. <span class="todo">Owner story, what WL stands for</span></p>
     <div class="steps">
-      <div class="step"><div class="n">1</div><h3>Tell us the symptoms</h3><p>Call or send the form. Year, make, model and what it's doing.</p></div>
+      <div class="step"><div class="n">1</div><h3>Book online or call</h3><p>Schedule a diagnosis in a minute, or call any time. The assistant answers when the shop can't.</p></div>
       <div class="step"><div class="n">2</div><h3>We find the problem</h3><p>A real diagnosis, so you aren't paying to replace parts that weren't broken.</p></div>
       <div class="step"><div class="n">3</div><h3>You approve the price</h3><p>Repair, rebuild or replace, laid out in writing. Nothing starts until you say so.</p></div>
-      <div class="step"><div class="n">4</div><h3>Drive it home</h3><p>Pay at pickup, with our warranty behind the work.</p></div>
+      <div class="step"><div class="n">4</div><h3>Pay and drive home</h3><p>Pay from a link on your phone or at pickup, with our warranty behind the work.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="book">
+  <div class="wrap book-grid">
+    <div class="book-side">
+      <div class="eyebrow">Schedule online<span class="demo-tag">Working demo</span></div>
+      <h2>Book a diagnosis in under a minute</h2>
+      <p class="lead">Pick the problem, the vehicle, and a time. On the real site this connects to the shop calendar, so appointments land on the owner's phone.</p>
+      <ul>
+        <li><svg class="ico"><use href="#i-check"/></svg><span>Only shows times the shop is open</span></li>
+        <li><svg class="ico"><use href="#i-check"/></svg><span>The shop gets the vehicle and the symptoms before you arrive</span></li>
+        <li><svg class="ico"><use href="#i-check"/></svg><span>Automatic text reminders</span></li>
+      </ul>
+    </div>
+    <div class="widget" id="widget">
+      <div class="w-head"><b id="wTitle">Book a visit</b><div class="prog" id="prog"><i class="on"></i><i></i><i></i><i></i></div></div>
+      <div class="w-body">
+        <div class="pane on"><h4>What's going on?</h4><div class="opts" id="svcOpts"></div></div>
+        <div class="pane"><h4>Tell us about the vehicle</h4>
+          <div class="row2"><div class="fld"><label for="vy">Year</label><select id="vy"></select></div><div class="fld"><label for="vm">Make</label><input id="vm" placeholder="Ford, Chevy, Toyota"></div></div>
+          <div class="fld"><label for="vmod">Model</label><input id="vmod" placeholder="F-150, Silverado, Camry"></div>
+          <div class="fld"><label for="vn">Symptoms (optional)</label><textarea id="vn" placeholder="Slips going into 3rd, check engine light on"></textarea></div>
+        </div>
+        <div class="pane"><h4>Pick a day and drop-off time</h4><div class="days" id="days"></div><div class="slots" id="slots"></div></div>
+        <div class="pane"><h4>Your details</h4>
+          <div class="row2"><div class="fld"><label for="cn">Name</label><input id="cn" autocomplete="name"></div><div class="fld"><label for="cp">Phone</label><input id="cp" type="tel" autocomplete="tel"></div></div>
+          <div class="summary" id="sum"></div>
+        </div>
+        <div class="pane"><div class="done"><div class="chk"><svg class="ico"><use href="#i-check"/></svg></div>
+          <h4 style="font-size:1.4rem;margin:0 0 6px">You're booked (demo)</h4>
+          <p style="color:var(--muted);margin:0 0 16px" id="doneMsg"></p>
+          <p style="color:var(--muted);font-size:.85rem;margin:0">Demo only. Nothing was sent or saved.</p></div></div>
+      </div>
+      <div class="w-foot"><button class="back" id="bBack" style="visibility:hidden">Back</button><button class="btn" id="bNext" disabled>Continue</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="pay">
+  <div class="wrap pay-grid">
+    <div>
+      <div class="eyebrow">Pay your bill</div>
+      <h2>Approve and pay from your phone</h2>
+      <p class="lead">Estimates and invoices come by text. Approve the work, then pay by card the moment it's done. No phone tag, no paper.</p>
+      <div class="paylist">
+        <span><svg class="ico"><use href="#i-card"/></svg>Card, Apple Pay, and Google Pay</span>
+        <span><svg class="ico"><use href="#i-shield"/></svg>Secure checkout, card numbers never touch the shop</span>
+        <span><svg class="ico"><use href="#i-msg"/></svg>Receipt texted or emailed automatically</span>
+        <span><svg class="ico"><use href="#i-check"/></svg>Financing for big jobs <span class="todo">if owner wants it</span></span>
+      </div>
+    </div>
+    <div class="invoice">
+      <div class="lookup"><input id="invNo" placeholder="Invoice number" value="1042" aria-label="Invoice number"><button class="btn sm" type="button" onclick="document.getElementById('inv').style.display='block'">Find</button></div>
+      <div id="inv">
+        <div class="top"><div><b>Invoice #1042</b><span>Sample, for illustration</span></div><span class="badge">READY TO PAY</span></div>
+        <div class="ln"><span>Transmission rebuild, parts</span><b>$0,000.00</b></div>
+        <div class="ln"><span>Labor</span><b>$000.00</b></div>
+        <div class="ln"><span>Tax</span><b>$00.00</b></div>
+        <div class="tot"><span>Total</span><span>$0,000.00</span></div>
+        <button class="btn" type="button" onclick="this.textContent='Demo only, no payment taken'">Pay invoice</button>
+        <div class="methods"><span>VISA</span><span>MASTERCARD</span><span>APPLE PAY</span><span>GOOGLE PAY</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="white" id="voice">
+  <div class="wrap voice-grid">
+    <div>
+      <div class="eyebrow">24/7 phone assistant<span class="demo-tag">Hear it</span></div>
+      <h2>Every call answered, even with both hands in a transmission</h2>
+      <p class="lead">When the shop can't pick up, an AI assistant does. It answers in a natural voice, gets the caller's name, vehicle, and problem, and sends it straight to the owner's phone. No more missed jobs to voicemail.</p>
+      <ul class="vlist">
+        <li><svg class="ico"><use href="#i-check"/></svg><span>Answers nights, weekends, and lunch breaks</span></li>
+        <li><svg class="ico"><use href="#i-check"/></svg><span>Knows the shop's hours, services, and how booking works</span></li>
+        <li><svg class="ico"><use href="#i-check"/></svg><span>Every call summarized and texted to the owner</span></li>
+      </ul>
+    </div>
+    <div class="phone">
+      <div class="ph-top"><div class="av">WL</div><div><b>WL Automotive</b><small id="callState">Sample call</small></div><div class="wave" id="wave"><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="chat" id="chat"></div>
+      <button class="btn" type="button" id="playCall"><svg class="ico"><use href="#i-mic"/></svg> Play a sample call</button>
     </div>
   </div>
 </section>
@@ -127,16 +215,94 @@
 <div class="band"><div class="wrap">
   <h2>Engine or transmission trouble?</h2>
   <p>29 years of experience, one phone call away.</p>
-  <div class="cta"><a class="btn" href="#contact">Get a quote</a><a class="btn ghost" href="#contact">Call <span class="todo">phone</span></a></div>
+  <div class="cta"><a class="btn" href="#book">Book a diagnosis</a><a class="btn ghost" href="#contact">Call <span class="todo">phone</span></a></div>
 </div></div>
 </main>
 
 <footer><div class="wrap">
   <div><b>WL Automotive</b>Engine and transmission repair.<br><span class="todo">Street address</span>, Monroe, GA</div>
   <div><b>Contact</b><span class="todo">Phone</span><br><span class="todo">Email</span></div>
-  <div><b>Pages</b><a href="#services">Services</a><br><a href="#about">About</a><br><a href="#contact">Contact</a></div>
+  <div><b>Pages</b><a href="#services">Services</a><br><a href="#book">Schedule</a><br><a href="#pay">Pay your bill</a><br><a href="#contact">Contact</a></div>
 </div><div class="wrap legal"><span>&copy; 2026 WL Automotive</span><span>Design preview by NERDS Computer Repair</span></div></footer>
 
-<div class="callbar"><a class="btn" href="#contact"><svg class="ico"><use href="#i-phone"/></svg>Call</a><a class="btn dark" href="#contact" style="border:1px solid #3a4353">Get a Quote</a></div>
+<div class="callbar"><a class="btn" href="#contact"><svg class="ico"><use href="#i-phone"/></svg>Call</a><a class="btn dark" href="#book" style="border:1px solid #3a4353">Book Now</a></div>
+<script>
+(function(){
+  var now = new Date();
+  function fmt(h){ var ap = h<12?'AM':'PM', hh = h%12||12; return hh+' '+ap; }
+  var services = [['Engine','Knock, smoke, overheating','i-engine'],['Transmission','Slipping, hard shifts','i-gear'],['Check engine light','Find the cause','i-diag'],['Clutch or drivetrain','Grinding, vibration','i-clutch'],['Swap or replacement','Quote a replacement unit','i-swap'],['Something else','Describe it, we will help','i-wrench']];
+  var st = {step:0, svc:null, day:null, time:null};
+  var titles = ['Book a visit','Your vehicle','Date and time','Your details','Confirmed'];
+  var opts = document.getElementById('svcOpts');
+  services.forEach(function(s){
+    var b = document.createElement('button'); b.type='button'; b.className='opt';
+    b.innerHTML = '<svg class="ico"><use href="#'+s[2]+'"/></svg><span><b>'+s[0]+'</b><small>'+s[1]+'</small></span>';
+    b.onclick = function(){ st.svc=s[0]; [].forEach.call(opts.children,function(c){c.classList.remove('sel');}); b.classList.add('sel'); sync(); };
+    opts.appendChild(b);
+  });
+  var vy = document.getElementById('vy'), o='<option value="">Select</option>';
+  for (var yy=now.getFullYear()+1; yy>=1990; yy--) o += '<option>'+yy+'</option>';
+  vy.innerHTML = o;
+  var ds=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var days=document.getElementById('days'), slots=document.getElementById('slots'), list=[];
+  for (var k=1; list.length<6 && k<21; k++){ var dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()+k); if (dt.getDay()>0 && dt.getDay()<6) list.push(dt); }
+  list.forEach(function(dt){
+    var b=document.createElement('button'); b.type='button'; b.className='day';
+    b.innerHTML='<small>'+ds[dt.getDay()]+'</small><b>'+dt.getDate()+'</b>';
+    b.onclick=function(){ st.day=dt; st.time=null; [].forEach.call(days.children,function(c){c.classList.remove('sel');}); b.classList.add('sel'); drawSlots(dt); sync(); };
+    days.appendChild(b);
+  });
+  function drawSlots(dt){
+    slots.innerHTML='';
+    [8,9,10,11,13,14,15,16].forEach(function(h){
+      var b=document.createElement('button'); b.type='button'; b.className='slot'; b.textContent=fmt(h);
+      if ((dt.getDate()*7+h*3)%5===0) b.disabled=true;
+      b.onclick=function(){ st.time=h; [].forEach.call(slots.children,function(c){c.classList.remove('sel');}); b.classList.add('sel'); sync(); };
+      slots.appendChild(b);
+    });
+  }
+  var panes=document.querySelectorAll('#widget .pane'), prog=document.getElementById('prog').children;
+  var bN=document.getElementById('bNext'), bB=document.getElementById('bBack');
+  function val(id){ return document.getElementById(id).value.trim(); }
+  function esc(s){ return s.replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function ok(){ if(st.step===0) return !!st.svc; if(st.step===1) return !!(val('vy')&&val('vm')&&val('vmod')); if(st.step===2) return !!(st.day&&st.time!==null); if(st.step===3) return !!(val('cn')&&val('cp')); return true; }
+  function when(){ return ds[st.day.getDay()]+', '+mo[st.day.getMonth()]+' '+st.day.getDate()+' at '+fmt(st.time); }
+  function sync(){
+    [].forEach.call(panes,function(p,i){ p.classList.toggle('on',i===st.step); });
+    [].forEach.call(prog,function(p,i){ p.classList.toggle('on',i<=Math.min(st.step,3)); });
+    document.getElementById('wTitle').textContent=titles[st.step];
+    bB.style.visibility=(st.step>0&&st.step<4)?'visible':'hidden';
+    bN.textContent=st.step===3?'Confirm booking':(st.step===4?'Start over':'Continue');
+    bN.disabled=!ok();
+    if(st.step===3) document.getElementById('sum').innerHTML='<div><span>Problem</span><b>'+st.svc+'</b></div><div><span>Vehicle</span><b>'+val('vy')+' '+esc(val('vm'))+' '+esc(val('vmod'))+'</b></div><div><span>Drop-off</span><b>'+when()+'</b></div>';
+  }
+  bN.onclick=function(){
+    if(st.step===4){ st={step:0,svc:null,day:null,time:null}; [].forEach.call(document.querySelectorAll('#widget .sel'),function(c){c.classList.remove('sel');}); slots.innerHTML=''; ['vy','vm','vmod','vn','cn','cp'].forEach(function(i){document.getElementById(i).value='';}); sync(); return; }
+    if(!ok()) return;
+    if(st.step===3) document.getElementById('doneMsg').textContent='See you '+when()+'. A text confirmation would go to '+val('cp')+'.';
+    st.step++; sync();
+  };
+  bB.onclick=function(){ if(st.step>0){ st.step--; sync(); } };
+  document.getElementById('widget').addEventListener('input',sync);
+  sync();
+
+  // AI voice sample call
+  var lines=[['ai','Thanks for calling WL Automotive. This is the shop assistant. How can I help?'],['me','My truck is slipping when it shifts into third.'],['ai','Sorry to hear that. What year, make and model is it?'],['me','2014 F-150.'],['ai','Got it. Can I get your first name and the best number to reach you?'],['me','Dave, this number is fine.'],['ai','Thanks, Dave. I will send this to the shop right now, and they will call you back to get your truck scheduled.']];
+  var chat=document.getElementById('chat'), wave=document.getElementById('wave'), btn=document.getElementById('playCall'), state=document.getElementById('callState'), playing=false;
+  function pickVoice(){ var v=(window.speechSynthesis&&speechSynthesis.getVoices())||[]; return v.filter(function(x){return /en-US/i.test(x.lang)&&/natural|aria|jenny|google us/i.test(x.name);})[0]||v.filter(function(x){return /en-US/i.test(x.lang);})[0]; }
+  function play(i){
+    if(i>=lines.length){ playing=false; wave.classList.remove('on'); state.textContent='Call summary sent to the owner'; btn.disabled=false; btn.lastChild.textContent=' Play again'; return; }
+    var l=lines[i], m=document.createElement('div'); m.className='msg '+l[0]; m.textContent=l[1]; chat.appendChild(m);
+    setTimeout(function(){ m.classList.add('show'); },30);
+    if(l[0]==='ai' && window.speechSynthesis){
+      wave.classList.add('on'); state.textContent='Assistant speaking';
+      var u=new SpeechSynthesisUtterance(l[1]), v=pickVoice(); if(v) u.voice=v; u.rate=1.02;
+      var nx=false, go=function(){ if(nx) return; nx=true; wave.classList.remove('on'); setTimeout(function(){play(i+1);},400); }; u.onend=go; u.onerror=go; setTimeout(go, 2500+l[1].length*85);
+      speechSynthesis.speak(u);
+    } else { wave.classList.remove('on'); state.textContent=l[0]==='ai'?'Assistant speaking':'Caller'; setTimeout(function(){play(i+1);}, 1600); }
+  }
+  btn.onclick=function(){ if(playing) return; playing=true; btn.disabled=true; chat.innerHTML=''; if(window.speechSynthesis) speechSynthesis.cancel(); play(0); };
+})();
+</script>
 </body>
 </html>
