@@ -507,7 +507,7 @@ function drawSweep(tn) {
 function drawUI(tn) {
   text('DEATHS  ' + deaths.n.toLocaleString(), 20, 22, 20, '#c9b9a0', 'left', 700);
   // NERDS credit tag (2026-11-24): always on, bottom-right below the ground line, out of the HUD and HP bar.
-  g.save(); g.globalAlpha = 0.72; text('NERDS  ·  chattnerds.com', W - 18, H - 14, 15, '#d9b860', 'right', 700); g.restore();
+  g.save(); g.globalAlpha = 0.85; text('NERDS  ·  chattnerds.com', W - 18, H - 16, 20, '#d9b860', 'right', 700); g.restore();
   if (phase === 'lobby') {
     const s = Math.max(0, Math.ceil((lobbyEnd - tn) / 1000));
     text('NEXT: ' + boss.name.toUpperCase() + (ng(boss) ? '  (NG+' + ng(boss) + ')' : '') + '  IN ' + s, W - 20, 22, 18, '#c9b9a0', 'right', 700);
