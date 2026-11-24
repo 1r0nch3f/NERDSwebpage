@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Soulslike Boss Battle</title>
+<!--
+  Soulslike Boss Battle (client build, started 2026-11-22). A dark-fantasy chat boss fight for a Twitch stream.
+  Original bosses, knights and art (AI-made locally, finished by NERDS). No Dark Souls names, characters, art, music or logo.
+
+  OBS: Browser source, width 1920, height 300 (scale it to fit the canvas). Reads Twitch chat anonymously (never posts,
+  no login, no bot). URL: boss-battle.html?channel=YOURCHANNEL   Testing: ?demo=1   Transparent sky: ?bg=0
+
+  Sound effects: ?sfxvol=0.6 (default) or ?nosfx=1. All from CC0 public-domain packs (opengameart.org), free for commercial use.
+  Voice: ?vol=0.8 or ?mute=1. Boss voices: tick 'Control audio via OBS' on the browser source so the lines go through the OBS mixer.
+
+  Chat commands:
+    !join (or !rise)   join the fight for good (remembered); !leave to leave
+    !knight 1-8        pick your look (otherwise a look is picked from your name, the same every stream)
+    !praise            PRAISE THE SUN: heals your knight once per boss
+    !summon            broadcaster only: a golden phantom joins the fight for 60 seconds
+  The fight is automatic: knights attack, roll, parry and die on their own. Bosses have two phases, a big telegraphed
+  sweep, a grab (parry it or die) and quick hits. Win = BOSS SLAIN, wipe = YOU DIED. Bosses level up (NG+) when beaten.
+  Spirits (NPC knights) fill the party up to 3 while few viewers have joined.
+-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap');
+  html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+  body { width: 1920px; height: 300px; position: relative; }
+  canvas { position: absolute; left: 0; top: 0; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="300"></canvas>
+<script>
+'use strict';
+const Q = new URLSearchParams(location.search);
+const CHANNEL = (Q.get('channel') || '').toLowerCase().replace(/[^a-z0-9_]/g, '');
+const DEMO = Q.has('demo');
+const SKY = Q.get('bg') !== '0';
+const W = 1920, H = 300, FLOOR = 246, BOSS_X = 1690;
+const cv = document.getElementById('c'), g = cv.getContext('2d');
+g.imageSmoothingEnabled = false;
+const FONT = "'Cinzel', Georgia, serif";
+
+const rnd = (a, b) => a + Math.random() * (b - a);
+const ri = (a, b) => Math.floor(rnd(a, b + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const now = () => performance.now();
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const KEY = 'soulsbb-';
+const load = (k, d) => { try { const v = localStorage.getItem(KEY + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
+const save = (k, v) => { if (DEMO) return; try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) {} };
+const loadImg = src => { const im = new Image(); im.src = src; return im; };
+const ok = im => im && im.complete && im.naturalWidth > 0;
+
+// ---------------------------------------------------------------- art
+const KNIGHTS = [
+  { id: 'k1', kind: 'melee', dmg: [7, 11] },  { id: 'k2', kind: 'melee', dmg: [7, 11] },
+  { id: 'k3', kind: 'quick', dmg: [4, 7] },   { id: 'k4', kind: 'magic', dmg: [6, 10] },
+  { id: 'k5', kind: 'heavy', dmg: [12, 18] }, { id: 'k6', kind: 'cleric', dmg: [4, 7] },
+  { id: 'k7', kind: 'melee', dmg: [7, 11] },  { id: 'k8', kind: 'fire', dmg: [6, 10] },
+];
+for (const k of KNIGHTS) k.img = loadImg('assets/knights/' + k.id + '.png');
+const BOSSES = [
+  { key: 'graveknight', name: 'Vaelric, the Grave Knight', sweep: 'GRAVE CLEAVE', grab: 'EXECUTION', quick: 'SHIELD BASH', aura: '#7fb4ff', rise: 'THE GRAVE WILL NOT HOLD HIM' },
+  { key: 'ashwitch',    name: 'Morwen of the Cinders',     sweep: 'CINDER STORM', grab: 'IMMOLATE', quick: 'EMBER BOLT', aura: '#ff8a2a', rise: 'THE ASHES REKINDLE' },
+  { key: 'rotdragon',   name: 'Grimscale the Rotting Wyrm', sweep: 'ROT BREATH', grab: 'DEVOUR', quick: 'TAIL LASH', aura: '#8cff5a', rise: 'THE ROT SPREADS' },
+  { key: 'bellkeeper',  name: 'The Bell-Helm Brute',       sweep: 'TOLLING SLAM', grab: 'CHAIN DRAG', quick: 'HAMMER SWING', aura: '#e0b060', rise: 'THE BELL TOLLS FOR THEE' },
+  { key: 'bloodsaint',  name: 'Saint Ilsabeth, the Bled',  sweep: 'CRIMSON RAIN', grab: 'IMPALE', quick: 'THORN LANCE', aura: '#ff3a4a', rise: 'HER BLOOD RUNS GOLD' },
+  { key: 'abyssbeast',  name: 'The Thing in the Deep Water', sweep: 'TIDE OF DARK', grab: 'DRAG BELOW', quick: 'TENDRIL', aura: '#b070ff', rise: 'IT OPENS EVERY EYE' },
+  { key: 'wolfknight',  name: 'Fenrath, the Moon-Mad',     sweep: 'HOWLING ARC', grab: 'MAUL', quick: 'CLEAVER', aura: '#cfe0ff', rise: 'THE MOON TAKES HIM' },
+  { key: 'kingofbones', name: 'The Crownless King',        sweep: 'BONE TIDE', grab: 'ROYAL DECREE', quick: 'SCEPTER STRIKE', aura: '#5ad8ff', rise: 'KNEEL BEFORE THE CROWNLESS' },
+];
+for (const b of BOSSES) b.img = loadImg('assets/bosses/' + b.key + '.png');
+// boss voice lines: voice/<key>-intro|rise|wipe|slain.ogg (OBS: tick 'Control audio via OBS' to mix it). ?mute=1 silences, ?vol=0.8 sets volume
+const VOL = Q.has('mute') ? 0 : clamp(parseFloat(Q.get('vol') || '0.9'), 0, 1);
+function say(kind) { if (!VOL) return; try { const a = new Audio('voice/' + boss.key + '-' + kind + '.ogg'); a.volume = VOL; a.play().catch(() => {}); } catch (e) {} }
+// sound effects: sfx/<name><n>.ogg, CC0 (public domain) packs from opengameart.org. ?sfxvol=0.6 sets volume, ?nosfx=1 turns them off
+const SFXVOL = (Q.has('mute') || Q.has('nosfx')) ? 0 : clamp(parseFloat(Q.get('sfxvol') || '0.6'), 0, 1);
+const SFX = { swing: 6, roll: 3, hit: 10, crit: 4, parry: 4, hurt: 10, death: 11, growl: 7, snarl: 11, roar: 1, bossdeath: 1, toll: 1, boom: 1, heal: 1 };
+const SFX_GAP = { swing: 90, hit: 90, crit: 120, hurt: 140, roll: 120, death: 120, heal: 400, growl: 300, snarl: 600 };
+const sfxLast = {}; let sfxLive = 0, fireA = null;
+function sfx(name, vol) {
+  const n = SFX[name]; if (!SFXVOL || !n) return;
+  const tn = now(); if (tn - (sfxLast[name] || 0) < (SFX_GAP[name] || 0) || sfxLive >= 8) return;
+  sfxLast[name] = tn;
+  try {
+    const a = new Audio('sfx/' + name + (n > 1 ? ri(1, n) : '') + '.ogg'); a.volume = clamp(SFXVOL * (vol || 1), 0, 1);
+    let done = false; const fin = () => { if (!done) { done = true; sfxLive--; } };
+    sfxLive++; a.onended = fin; a.onerror = fin; a.play().catch(fin);
+  } catch (e) {}
+}
+function fireLoop(on) {
+  if (!SFXVOL) return;
+  try { if (!fireA) { fireA = new Audio('sfx/fire.ogg'); fireA.loop = true; } fireA.volume = clamp(SFXVOL * 0.5, 0, 1); if (on) fireA.play().catch(() => {}); else fireA.pause(); } catch (e) {}
+}
+const KNIGHT_H = 96, BOSS_H = 230;
+
+// tinted copies of a sprite (ghost, gold, flash), cached per image
+const tintCache = new Map();
+function tinted(img, color, alpha) {
+  const k = img.src + color + alpha;
+  if (tintCache.has(k)) return tintCache.get(k);
+  const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+  const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+  x.globalCompositeOperation = 'source-atop'; x.globalAlpha = alpha; x.fillStyle = color; x.fillRect(0, 0, c.width, c.height);
+  tintCache.set(k, c); return c;
+}
+
+// ---------------------------------------------------------------- party
+const BOTS = new Set(['nightbot', 'streamelements', 'streamlabs', 'moobot', 'fossabot', 'wizebot', 'sery_bot', 'commanderroot',
+  'soundalerts', 'kofistreambot', 'pokemoncommunitygame', 'streamstickers', 'blerp', 'botrixoficial', 'own3d']);
+const isBot = l => BOTS.has(l) || /bot$/.test(l) || /^justinfan/.test(l);
+function seeded(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0) / 4294967296; }
+
+let party = new Set(load('party', []));
+let looks = load('looks', {});
+const knights = new Map();
+let seq = 0;
+
+function lookFor(id) { return KNIGHTS[(looks[id] || (Math.floor(seeded(id) * 8) + 1)) - 1]; }
+function newKnight(id, name, extra) {
+  return Object.assign({ id, name, x: -60, tx: 0, hp: 100, max: 100, down: false, deadT: 0, nextAct: now() + rnd(1000, 3000),
+    dmg: 0, lungeT: 0, hurtT: 0, rollT: 0, praised: false, seq: seq++, look: lookFor(id), chatter: false }, extra || {});
+}
+function join(login, display, chatter) {
+  if (isBot(login) || !party.has(login)) return null;
+  let k = knights.get(login);
+  if (!k) {
+    k = newKnight(login, display || login);
+    if (phase === 'fight') { k.down = false; bossMax += 140; bossHP += 140; }
+    knights.set(login, k); layout();
+  }
+  if (display) k.name = display;
+  if (chatter) k.chatter = true;
+  return k;
+}
+function leave(login) { const k = knights.get(login); if (k && !k.chatter) { knights.delete(login); layout(); } }
+const real = () => [...knights.values()].filter(k => !k.npc && !k.phantom);
+const SPIRITS = 3;
+function keepSpirits() {
+  const want = Math.max(0, SPIRITS - real().length);
+  const have = [...knights.values()].filter(k => k.npc).sort((a, b) => a.seq - b.seq);
+  if (have.length < want) {
+    for (let n = 1; n <= SPIRITS && have.length < want; n++) {
+      const id = '__spirit' + n; if (knights.has(id)) continue;
+      const k = newKnight(id, 'SPIRIT ' + n, { npc: true, seq: 1e6 + n }); k.look = KNIGHTS[(n * 3) % 8];
+      knights.set(id, k); have.push(k);
+    }
+    layout();
+  } else if (have.length > want) {
+    for (const k of have.slice(want)) { floater(k.name + ' FADES', k.x, FLOOR - 110, '#9fb3c8', 16); knights.delete(k.id); }
+    layout();
+  }
+}
+function layout() {
+  const list = [...knights.values()].sort((a, b) => ((a.npc ? 1 : 0) - (b.npc ? 1 : 0)) || (a.seq - b.seq)).slice(0, 20);
+  const shown = new Set(list);
+  list.forEach((k, i) => { k.row = i >= 10 ? 1 : 0; k.tx = 1340 - (i % 10) * 118 - k.row * 58; k.shown = true; });
+  for (const k of knights.values()) if (!shown.has(k)) k.shown = false;
+}
+const shown = () => [...knights.values()].filter(k => k.shown);
+const alive = () => shown().filter(k => !k.down);
+
+// ---------------------------------------------------------------- state
+let levels = load('levels', {});
+const ng = b => levels[b.key] || 0;
+const today = new Date().toDateString();
+let deaths = load('deaths', { day: today, n: 0 });
+if (deaths.day !== today) deaths = { day: today, n: 0 };
+
+let phase = 'lobby', boss = BOSSES[0], bossIdx = 0, bossHP = 1, bossMax = 1, p2 = false, p2T = 0;
+let lobbyEnd = 0, fightEnd = 0, endT = 0, endWin = false, banner = null, shake = 0, bossHitT = 0, bossStagT = 0, bossAtkT = 0;
+let nextQuick = 0, nextSweep = 0, nextGrab = 0, sweep = null, grab = null, phantomEnd = 0;
+const shots = [], floaters = [], parts = [], stains = [];
+const BREAK = DEMO ? 7000 : 20000;
+let bag = [];
+function nextBoss(cur) {
+  const ready = BOSSES.map((b, i) => i).filter(i => ok(BOSSES[i].img));
+  const pool = ready.length ? ready : BOSSES.map((b, i) => i);
+  bag = bag.filter(i => pool.includes(i) && i !== cur);
+  if (!bag.length) { bag = pool.slice().sort(() => Math.random() - 0.5); if (bag.length > 1 && bag[0] === cur) bag.push(bag.shift()); }
+  const i = bag.shift(); save('last', BOSSES[i].key); return i;
+}
+function floater(text, x, y, color, size, life) { floaters.push({ text, x, y, color, size: size || 18, t0: now(), life: life || 1600 }); }
+
+function startLobby() {
+  phase = 'lobby'; boss = BOSSES[bossIdx]; p2 = false; sweep = null; grab = null; bossHP = bossMax = 1;
+  lobbyEnd = now() + BREAK;
+  for (const k of knights.values()) { k.down = false; k.hp = k.max; k.dmg = 0; k.praised = false; }
+  stains.length = 0; fireLoop(true);
+  banner = { title: 'BONFIRE LIT', sub: 'TYPE !join TO RISE  //  NEXT: ' + boss.name.toUpperCase(), until: now() + 5000, color: '#ffb347' };
+}
+function startFight() {
+  phase = 'fight'; p2 = false;
+  const n = Math.max(1, real().filter(k => k.shown).length);
+  bossMax = bossHP = Math.round((160 + 240 * n) * (1 + 0.2 * ng(boss)));
+  fightEnd = now() + 5 * 60000;
+  nextQuick = now() + rnd(4000, 6000); nextSweep = now() + rnd(13000, 17000); nextGrab = now() + rnd(19000, 26000);
+  for (const k of knights.values()) { k.dmg = 0; k.nextAct = now() + rnd(600, 2600); }
+  banner = { title: boss.name, sub: ng(boss) ? 'NEW GAME +' + ng(boss) : '', until: now() + 4200, color: '#e8dcc0', big: true };
+  say('intro'); fireLoop(false); sfx('boom', 0.7);
+}
+function endFight(win) {
+  phase = 'end'; endWin = win; endT = now(); sweep = null; grab = null;
+  const vk = win ? 'slain' : 'wipe'; setTimeout(() => say(vk), 1200); sfx(win ? 'bossdeath' : 'toll');
+  if (win) {
+    levels[boss.key] = ng(boss) + 1; save('levels', levels);
+    const mvp = real().sort((a, b) => b.dmg - a.dmg)[0];
+    banner = { title: 'BOSS SLAIN', sub: mvp && mvp.dmg ? 'MVP: ' + mvp.name.toUpperCase() + ' (' + mvp.dmg + ' DAMAGE)' : '', until: now() + 9000, color: '#e8c060', slain: true };
+    for (let i = 0; i < 90; i++) parts.push({ x: BOSS_X + rnd(-90, 90), y: FLOOR - rnd(0, BOSS_H), vx: rnd(-20, 20), vy: rnd(-90, -30), t0: now(), life: rnd(1500, 3200), c: pick(['#ffd27a', '#ffb347', '#fff2c0', boss.aura]), r: rnd(2, 5) });
+  } else {
+    banner = { title: 'YOU DIED', sub: boss.name.toUpperCase() + ' CLAIMS ANOTHER PARTY', until: now() + 9000, color: '#b01a1a', died: true };
+  }
+  bossIdx = nextBoss(bossIdx);
+}
+
+// ---------------------------------------------------------------- combat
+function hitBoss(k, dmg, crit, label) {
+  if (phase !== 'fight') return;
+  bossHP = Math.max(0, bossHP - dmg); bossHitT = now();
+  if (!k.npc) k.dmg += dmg;
+  if (crit) sfx('crit'); else sfx('hit', 0.75);
+  floater((crit ? (label || 'CRITICAL') + ' ' : '') + dmg, BOSS_X - 60 + rnd(-40, 40), FLOOR - BOSS_H * 0.6 + rnd(-30, 30), crit ? '#ffd27a' : '#f0e6d0', crit ? 26 : 18, 1100);
+  for (let i = 0; i < (crit ? 14 : 6); i++) parts.push({ x: BOSS_X - 70, y: FLOOR - BOSS_H * 0.5 + rnd(-30, 30), vx: rnd(-160, 40), vy: rnd(-120, 60), t0: now(), life: rnd(250, 500), c: crit ? '#ffd27a' : '#fff', r: rnd(1.5, 3) });
+  if (!p2 && bossHP <= bossMax / 2 && bossHP > 0) {
+    p2 = true; p2T = now(); shake = now() + 900; sweep = null; grab = null;
+    nextQuick = now() + 4000; nextSweep = now() + 9000; nextGrab = now() + 15000;
+    say('rise'); sfx('roar', 0.8);
+    banner = { title: boss.rise, sub: boss.name.toUpperCase() + ' ENTERS ITS SECOND FORM', until: now() + 3800, color: boss.aura, big: true };
+  }
+  if (bossHP <= 0) endFight(true);
+}
+function act(k, tn) {
+  const lastOne = alive().length === 1 && shown().length > 1;
+  const critP = (lastOne ? 0.35 : 0.1) + (k.phantom ? 0.2 : 0);
+  const crit = Math.random() < critP;
+  const [a, b] = k.look.dmg;
+  let dmg = ri(a, b) * (crit ? 3 : 1) * (k.phantom ? 2 : 1);
+  if (k.look.kind === 'cleric' && Math.random() < 0.45) {
+    const hurt = alive().filter(o => o.hp < o.max).sort((x, y) => x.hp - y.hp)[0];
+    if (hurt) { sfx('heal', 0.35); hurt.hp = Math.min(hurt.max, hurt.hp + 25); floater('+25', hurt.x, FLOOR - 120, '#ffe9a0', 18); glow(hurt.x, FLOOR - 50, '#ffe9a0'); k.nextAct = tn + rnd(2200, 3600); return; }
+  }
+  if (k.look.kind === 'magic' || k.look.kind === 'fire') {
+    const x0 = k.x + 30, y0 = FLOOR - 62 - k.row * 10;
+    shots.push({ x0, y0, x1: BOSS_X - 70, y1: FLOOR - BOSS_H * 0.5 + rnd(-25, 25), t0: tn, dur: (BOSS_X - x0) / 0.9, k, dmg, crit, fire: k.look.kind === 'fire' });
+  } else {
+    sfx('swing', 0.7); k.lungeT = tn; k.lungeDmg = dmg; k.lungeCrit = crit; k.lungeHit = false;
+  }
+  const speed = k.look.kind === 'heavy' ? [3400, 5200] : k.look.kind === 'quick' ? [1300, 2200] : [2000, 3600];
+  k.nextAct = tn + rnd(speed[0], speed[1]);
+}
+function glow(x, y, c) { for (let i = 0; i < 10; i++) parts.push({ x: x + rnd(-20, 20), y: y + rnd(-30, 20), vx: rnd(-10, 10), vy: rnd(-60, -20), t0: now(), life: rnd(500, 900), c, r: rnd(2, 3.5) }); }
+function hurt(k, dmg, tn, what) {
+  if (k.down) return;
+  if (k.phantom) dmg = Math.round(dmg * 0.4);
+  k.hp -= dmg; k.hurtT = tn;
+  if (k.hp > 0) sfx('hurt', 0.8);
+  floater('-' + dmg, k.x + rnd(-8, 8), FLOOR - 112 + k.row * 10, '#ff6a5a', 18, 1000);
+  if (k.hp <= 0) die(k, tn, what);
+}
+function die(k, tn) {
+  k.hp = 0; k.down = true; k.deadT = tn; sfx('death');
+  if (!k.npc && !k.phantom) { deaths.n++; deaths.day = today; save('deaths', deaths); }
+  if (grab && grab.k === k) grab = null;
+  stains.push({ x: k.x, row: k.row });
+  floater(k.name.toUpperCase() + ' DIED', k.x, FLOOR - 128 - (floaters.filter(f => tn - f.t0 < 500).length % 3) * 16, '#c02020', 17, 2200);
+  if (!alive().length && phase === 'fight') setTimeout(() => { if (phase === 'fight' && !alive().length) endFight(false); }, 900);
+}
+const rollChance = () => (p2 ? 0.3 : 0.4);
+function bossAI(tn) {
+  const sp = p2 ? 1.35 : 1, dm = (p2 ? 1.25 : 1) * (1 + 0.1 * ng(boss));
+  if (tn < p2T + 2200 || tn < bossStagT) return;
+  if (!sweep && !grab && tn > nextQuick) {
+    const v = pick(alive()); if (v) {
+      bossAtkT = tn; sfx('growl', 0.8);
+      shots.push({ x0: BOSS_X - 80, y0: FLOOR - BOSS_H * 0.55, x1: v.x, y1: FLOOR - 50 - v.row * 10, t0: tn, dur: 380, boss: true, v, dmg: Math.round(rnd(14, 24) * dm) });
+      floater(boss.quick, BOSS_X - 120, FLOOR - BOSS_H - 6, boss.aura, 15, 900);
+    }
+    nextQuick = tn + rnd(3200, 6000) / sp;
+  }
+  if (!sweep && !grab && tn > nextSweep) {
+    sweep = { t0: tn, wind: 1500, x: BOSS_X - 60, hit: new Set(), dmg: Math.round(rnd(30, 48) * dm) };
+    banner = { title: boss.sweep, sub: '', until: tn + 1500, color: boss.aura, small: true }; sfx('snarl');
+    nextSweep = tn + rnd(13000, 19000) / sp;
+  }
+  if (!sweep && !grab && tn > nextGrab) {
+    const v = pick(alive().filter(k => !k.phantom)); if (v) { grab = { k: v, t0: tn, wind: 2300 }; sfx('snarl', 0.8); floater(boss.grab, v.x, FLOOR - 150, '#ff3a3a', 20, 2300); }
+    nextGrab = tn + rnd(18000, 26000) / sp;
+  }
+}
+
+// ---------------------------------------------------------------- chat
+function onChat(login, display, text) {
+  const clean = String(text || '').replace(/[^ -~]/g, ' ').trim().toLowerCase();
+  const m = clean.match(/^!?(join|rise|leave|knight|praise|summon)\s*(\d)?/);
+  if (!m || !clean.startsWith('!')) { join(login, display, true); return; }
+  const cmd = m[1], arg = m[2];
+  if (cmd === 'join' || cmd === 'rise') {
+    if (isBot(login)) return;
+    const isNew = !party.has(login); party.add(login); save('party', [...party]);
+    const k = join(login, display, true); if (k && isNew) floater((k.name + ' HAS RISEN').toUpperCase(), k.tx, FLOOR - 136 - (floaters.filter(f => now() - f.t0 < 1200).length % 3) * 18, '#ffb347', 16, 2200);
+  } else if (cmd === 'leave') {
+    party.delete(login); save('party', [...party]); const k = knights.get(login);
+    if (k) { floater((k.name + ' WENT HOLLOW').toUpperCase(), k.x, FLOOR - 130, '#9fb3c8', 16); knights.delete(login); layout(); }
+  } else if (cmd === 'knight') {
+    const n = +arg; if (!party.has(login) || !(n >= 1 && n <= 8)) return;
+    looks[login] = n; save('looks', looks); const k = join(login, display, true);
+    if (k) { k.look = KNIGHTS[n - 1]; floater((k.name + ' CHANGED ARMOR').toUpperCase(), k.x, FLOOR - 130, '#e8dcc0', 15); }
+  } else if (cmd === 'praise') {
+    const k = join(login, display, true);
+    if (k && phase === 'fight' && !k.down && !k.praised) { k.praised = true; k.hp = Math.min(k.max, k.hp + 40); k.praiseT = now(); sfx('heal'); floater('PRAISE THE SUN', k.x, FLOOR - 140, '#ffd24a', 20, 2000); glow(k.x, FLOOR - 50, '#ffd24a'); }
+  } else if (cmd === 'summon') {
+    if (login !== CHANNEL || phase !== 'fight' || knights.has('__phantom')) return;
+    const k = newKnight('__phantom', 'PHANTOM ' + (display || login).toUpperCase(), { phantom: true, max: 200, hp: 200, seq: -1 }); k.look = KNIGHTS[0];
+    knights.set('__phantom', k); layout(); phantomEnd = now() + 60000; shake = now() + 300; sfx('heal'); sfx('boom', 0.5);
+    banner = { title: 'PHANTOM SUMMONED', sub: (display || login).toUpperCase() + ' HAS ANSWERED THE CALL', until: now() + 3000, color: '#ffd27a', small: true };
+  }
+}
+
+// ---------------------------------------------------------------- update
+let last = now();
+function update() {
+  const tn = now(), dt = Math.min(0.1, (tn - last) / 1000); last = tn;
+  if (!DEMO || phase !== 'fight') keepSpirits();
+  for (const k of knights.values()) {
+    if (k.tx === undefined || k.tx === 0) layout();
+    const d = k.tx - k.x; if (Math.abs(d) > 0.5 && !k.down) { k.walk = true; k.x += Math.sign(d) * Math.min(Math.abs(d), (Math.abs(d) > 60 ? 260 : 60) * dt); } else k.walk = false;
+  }
+  if (phase === 'lobby' && tn > lobbyEnd) startFight();
+  if (phase === 'end' && tn > endT + 9500) startLobby();
+  if (knights.has('__phantom') && (tn > phantomEnd || phase !== 'fight')) { const k = knights.get('__phantom'); floater(k.name + ' RETURNS HOME', k.x, FLOOR - 130, '#ffd27a', 15); knights.delete('__phantom'); layout(); }
+  if (phase === 'fight') {
+    if (tn > fightEnd) { for (const k of alive()) die(k, tn); endFight(false); return; }
+    for (const k of alive()) {
+      if (tn > k.nextAct && !k.lungeT && tn > k.rollT + 500) act(k, tn);
+      if (k.lungeT) {
+        const e = tn - k.lungeT;
+        if (e > 260 && !k.lungeHit) { k.lungeHit = true; hitBoss(k, k.lungeDmg, k.lungeCrit, pick(['CRITICAL', 'BACKSTAB', 'RIPOSTE'])); }
+        if (e > 700) k.lungeT = 0;
+      }
+    }
+    bossAI(tn);
+    if (sweep) {
+      const e = tn - sweep.t0;
+      if (e > sweep.wind) {
+        if (!sweep.swung) { sweep.swung = true; sfx('swing'); sfx('boom', 0.45); }
+        sweep.x = BOSS_X - 60 - (e - sweep.wind) * 1.6;
+        for (const k of alive()) if (!sweep.hit.has(k) && k.x > sweep.x) {
+          sweep.hit.add(k);
+          if (Math.random() < rollChance()) { k.rollT = tn; sfx('roll', 0.8); floater('ROLLED', k.x, FLOOR - 120, '#cfe0ff', 15, 900); }
+          else hurt(k, sweep.dmg, tn);
+        }
+        if (sweep.x < -100) sweep = null;
+      }
+    }
+    if (grab) {
+      const e = tn - grab.t0;
+      if (grab.k.down) grab = null;
+      else if (e > grab.wind) {
+        const k = grab.k; grab = null; bossAtkT = tn;
+        if (Math.random() < 0.25) {
+          sfx('parry'); floater('PARRIED', k.x, FLOOR - 140, '#ffd27a', 26, 1400); bossStagT = tn + 1800; shake = tn + 250;
+          setTimeout(() => { if (phase === 'fight' && !k.down) { k.lungeT = now(); k.lungeDmg = ri(...k.look.dmg) * 5; k.lungeCrit = true; k.lungeHit = false; } }, 350);
+        } else { shake = tn + 300; sfx('crit'); hurt(k, 999, tn); }
+      }
+    }
+  }
+  for (let i = shots.length - 1; i >= 0; i--) {
+    const s = shots[i]; if (tn - s.t0 < s.dur) continue;
+    shots.splice(i, 1);
+    if (s.boss) { if (phase === 'fight' && !s.v.down) { if (Math.random() < rollChance()) { s.v.rollT = tn; sfx('roll', 0.8); floater('ROLLED', s.v.x, FLOOR - 120, '#cfe0ff', 15, 900); } else hurt(s.v, s.dmg, tn); } }
+    else hitBoss(s.k, s.dmg, s.crit, s.fire ? 'FIRESTORM' : 'SOUL SPEAR');
+  }
+}
+
+// ---------------------------------------------------------------- background (built once)
+const bgc = document.createElement('canvas'); bgc.width = W; bgc.height = H;
+(function buildBG() {
+  const b = bgc.getContext('2d');
+  if (SKY) {
+    const sk = b.createLinearGradient(0, 0, 0, FLOOR); sk.addColorStop(0, '#06060a'); sk.addColorStop(1, '#1b1822'); b.fillStyle = sk; b.fillRect(0, 0, W, FLOOR);
+    const mg = b.createRadialGradient(560, 70, 10, 560, 70, 140); mg.addColorStop(0, 'rgba(235,220,190,0.35)'); mg.addColorStop(0.3, 'rgba(235,220,190,0.12)'); mg.addColorStop(1, 'rgba(235,220,190,0)');
+    b.fillStyle = mg; b.fillRect(400, 0, 320, 220); b.fillStyle = 'rgba(240,228,200,0.55)'; b.beginPath(); b.arc(560, 70, 26, 0, 7); b.fill();
+    let s = 7; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    for (let layer = 0; layer < 2; layer++) {
+      b.fillStyle = layer ? '#141219' : '#0e0d13';
+      for (let x = -40; x < W; x += 70 + r() * 120) {
+        const h = (layer ? 70 : 110) + r() * (layer ? 70 : 120), wdt = 30 + r() * 60;
+        b.fillRect(x, FLOOR - h, wdt, h);
+        b.beginPath(); b.moveTo(x - 4, FLOOR - h); b.lineTo(x + wdt / 2, FLOOR - h - 20 - r() * 50); b.lineTo(x + wdt + 4, FLOOR - h); b.fill();
+        if (!layer && r() < 0.5) { b.fillStyle = 'rgba(255,160,70,0.5)'; b.fillRect(x + wdt / 2 - 2, FLOOR - h + 18, 4, 8); b.fillStyle = '#0e0d13'; }
+        if (layer) for (let ax = x; ax < x + wdt - 14; ax += 18) { b.fillStyle = '#0a090d'; b.beginPath(); b.arc(ax + 9, FLOOR - h * 0.55, 7, Math.PI, 0); b.fill(); b.fillRect(ax + 2, FLOOR - h * 0.55, 14, 18); b.fillStyle = '#141219'; }
+      }
+    }
+  }
+  const fl = b.createLinearGradient(0, FLOOR, 0, H); fl.addColorStop(0, '#2a2620'); fl.addColorStop(1, '#0d0c0a'); b.fillStyle = fl; b.fillRect(0, FLOOR, W, H - FLOOR);
+  b.fillStyle = 'rgba(0,0,0,0.35)'; for (let y = FLOOR + 10; y < H; y += 14) for (let x = (y / 14 % 2) * 30; x < W; x += 60) b.fillRect(x, y, 2, 13);
+  b.fillRect(0, FLOOR + 10, W, 1); b.fillRect(0, FLOOR + 24, W, 1); b.fillRect(0, FLOOR + 38, W, 1);
+  b.fillStyle = 'rgba(255,230,190,0.12)'; b.fillRect(0, FLOOR, W, 2);
+})();
+const fog = Array.from({ length: 9 }, (_, i) => ({ x: rnd(0, W), y: rnd(FLOOR - 80, FLOOR + 10), r: rnd(160, 320), v: rnd(6, 16) * (i % 2 ? 1 : -1) }));
+const embers = Array.from({ length: 40 }, () => ({ x: rnd(0, W), y: rnd(0, H), v: rnd(8, 22), p: rnd(0, 7) }));
+
+// ---------------------------------------------------------------- draw
+function text(s, x, y, size, color, align, weight, glowC) {
+  g.font = (weight || 700) + ' ' + size + 'px ' + FONT; g.textAlign = align || 'center'; g.textBaseline = 'middle';
+  g.lineWidth = Math.max(3, size / 6); g.strokeStyle = 'rgba(0,0,0,0.85)'; g.strokeText(s, x, y);
+  if (glowC) { g.shadowColor = glowC; g.shadowBlur = size / 2; }
+  g.fillStyle = color; g.fillText(s, x, y); g.shadowBlur = 0;
+}
+function drawSprite(img, cx, base, h, flip, alpha, tint) {
+  if (!ok(img)) return false;
+  const s = h / img.naturalHeight, w = img.naturalWidth * s;
+  const src = tint ? tinted(img, tint[0], tint[1]) : img;
+  g.save(); g.globalAlpha = alpha == null ? 1 : alpha; g.translate(cx, base); if (flip) g.scale(-1, 1);
+  g.drawImage(src, -w / 2, -h, w, h); g.restore(); return true;
+}
+function drawKnight(k, tn) {
+  const base = FLOOR - k.row * 12, h = KNIGHT_H - k.row * 8;
+  let x = k.x, y = base, rot = 0;
+  if (k.down) {
+    const e = tn - k.deadT, a = Math.max(0, 1 - e / 1400);
+    if (a > 0) { drawSprite(k.look.img, x, y, h, false, a * 0.9, ['#b01a1a', 0.5]); for (let i = 0; i < 2; i++) if (Math.random() < a) parts.push({ x: x + rnd(-18, 18), y: y - rnd(0, h), vx: 0, vy: rnd(-50, -20), t0: tn, life: 700, c: '#e8dcc0', r: 2 }); }
+    return;
+  }
+  if (k.lungeT) { const e = (tn - k.lungeT) / 700, reach = Math.max(0, BOSS_X - 190 - k.x); x += Math.sin(Math.min(1, e) * Math.PI) * reach * 0.9; }
+  const re = tn - k.rollT; if (re < 500) { const e = re / 500; x -= Math.sin(e * Math.PI) * 50; rot = e * Math.PI * 2; }
+  if (k.walk) y -= Math.abs(Math.sin(tn / 90)) * 3; else y -= Math.sin(tn / 500 + k.seq) * 1.2;
+  g.fillStyle = 'rgba(0,0,0,0.45)'; g.beginPath(); g.ellipse(x, base + 2, 26, 5, 0, 0, 7); g.fill();
+  const tint = k.phantom ? ['#ffcf5a', 0.55] : k.npc ? ['#bcd4ff', 0.55] : (tn - k.hurtT < 140 ? ['#ffffff', 0.8] : null);
+  const alpha = k.npc ? 0.7 : 1;
+  if (rot) { g.save(); g.translate(x, y - h / 2); g.rotate(rot); g.translate(-x, -(y - h / 2)); }
+  if (!drawSprite(k.look.img, x, y, h, false, alpha, tint)) { g.fillStyle = k.phantom ? '#ffcf5a' : '#8a8f99'; g.fillRect(x - 14, y - h * 0.8, 28, h * 0.8); }
+  if (rot) g.restore();
+  if (k.phantom) { g.save(); g.globalAlpha = 0.25 + 0.15 * Math.sin(tn / 150); g.fillStyle = '#ffcf5a'; g.beginPath(); g.ellipse(x, y - h / 2, 34, h * 0.6, 0, 0, 7); g.fill(); g.restore(); }
+  if (k.lungeT && tn - k.lungeT > 200 && tn - k.lungeT < 420) {
+    const e = (tn - k.lungeT - 200) / 220; g.save(); g.globalAlpha = 1 - e; g.strokeStyle = k.lungeCrit ? '#ffd27a' : '#f5f0e6'; g.lineWidth = k.lungeCrit ? 6 : 4;
+    g.beginPath(); g.arc(x + 30, y - h * 0.55, 46, -1.3 + e * 0.6, 0.9 + e * 0.6); g.stroke(); g.restore();
+  }
+  const hx = k.x - 28, hy = base - h - 14 + k.row * 2;
+  g.fillStyle = 'rgba(0,0,0,0.7)'; g.fillRect(hx, hy, 56, 6);
+  g.fillStyle = k.hp / k.max > 0.35 ? '#a01818' : '#ff3a2a'; g.fillRect(hx + 1, hy + 1, 54 * Math.max(0, k.hp / k.max), 4);
+  text(k.name.length > 14 ? k.name.slice(0, 13) + '.' : k.name, k.x, hy - 10, 13, k.phantom ? '#ffd27a' : k.npc ? '#9fb3c8' : '#e8dcc0', 'center', 700);
+  if (grab && grab.k === k) {
+    const e = (tn - grab.t0) / grab.wind, r = 40 - e * 16, c = Math.floor(tn / 110) % 2 ? '#ff2020' : '#ffd27a';
+    g.strokeStyle = c; g.lineWidth = 3; g.beginPath(); g.arc(k.x, base - h / 2, r, 0, 7); g.stroke();
+    g.beginPath(); g.moveTo(k.x - r - 8, base - h / 2); g.lineTo(k.x - r + 6, base - h / 2); g.moveTo(k.x + r - 6, base - h / 2); g.lineTo(k.x + r + 8, base - h / 2); g.stroke();
+  }
+}
+function drawBoss(tn) {
+  if (phase === 'lobby') return;
+  const dying = phase === 'end' && endWin, e = dying ? (tn - endT) / 2200 : 0;
+  if (dying && e >= 1) return;
+  let h = BOSS_H * (p2 ? 1.1 : 1), x = BOSS_X, y = FLOOR;
+  const atk = tn - bossAtkT; if (atk < 300) x -= Math.sin(atk / 300 * Math.PI) * 26;
+  if (sweep && tn - sweep.t0 < sweep.wind) { const k = (tn - sweep.t0) / sweep.wind; x += k * 14; y -= Math.sin(k * Math.PI / 2) * 6; }
+  if (tn < bossStagT) x += Math.sin(tn / 30) * 3;
+  y -= Math.sin(tn / 700) * 3;
+  g.fillStyle = 'rgba(0,0,0,0.5)'; g.beginPath(); g.ellipse(BOSS_X, FLOOR + 3, 110, 10, 0, 0, 7); g.fill();
+  if (p2 || (sweep && tn - sweep.t0 < sweep.wind)) {
+    g.save(); g.globalAlpha = 0.18 + 0.1 * Math.sin(tn / 120); const ag = g.createRadialGradient(x, y - h / 2, 10, x, y - h / 2, h * 0.75);
+    ag.addColorStop(0, boss.aura); ag.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = ag; g.fillRect(x - h, y - h * 1.3, h * 2, h * 1.4); g.restore();
+    if (Math.random() < 0.6) parts.push({ x: x + rnd(-80, 80), y: y - rnd(0, h), vx: rnd(-10, 10), vy: rnd(-70, -30), t0: tn, life: rnd(500, 1000), c: boss.aura, r: rnd(1.5, 3) });
+  }
+  const flash = tn - bossHitT < 90 ? ['#ffffff', 0.6] : (tn - p2T < 2200 && Math.floor(tn / 120) % 2) ? ['#ffffff', 0.85] : null;
+  if (!drawSprite(boss.img, x, y, h, false, dying ? 1 - e : 1, dying ? [boss.aura, e] : flash)) {
+    g.fillStyle = '#1a1420'; g.beginPath(); g.ellipse(x, y - h / 2, 80, h / 2, 0, 0, 7); g.fill();
+    g.fillStyle = boss.aura; g.fillRect(x - 40, y - h * 0.75, 12, 6); g.fillRect(x - 10, y - h * 0.75, 12, 6);
+  }
+}
+function drawBonfire(tn) {
+  if (phase !== 'lobby' && !(phase === 'end' && tn - endT > 6000)) return;
+  const x = 1560, y = FLOOR;
+  g.fillStyle = '#3a3026'; for (let i = -2; i <= 2; i++) { g.save(); g.translate(x + i * 6, y - 4); g.rotate(i * 0.35); g.fillRect(-3, -26, 6, 30); g.restore(); }
+  g.fillStyle = '#9a9a9a'; g.fillRect(x - 2, y - 64, 4, 52); g.fillRect(x - 9, y - 58, 18, 3);
+  for (let j = 0; j < 26; j++) {
+    const p = (tn / 520 + j * 0.13) % 1, fx = x + Math.sin(j * 5.1 + tn / 180) * 14 * (1 - p), fy = y - 8 - p * 62;
+    g.globalAlpha = (1 - p) * 0.85; g.fillStyle = p < 0.3 ? '#ffe7a0' : p < 0.65 ? '#ff9a2a' : '#c0401a';
+    g.beginPath(); g.ellipse(fx, fy, 8 * (1 - p) + 2, 13 * (1 - p) + 3, 0, 0, 7); g.fill();
+  }
+  g.globalAlpha = 1;
+  const lg = g.createRadialGradient(x, y - 30, 5, x, y - 30, 200); lg.addColorStop(0, 'rgba(255,170,80,0.22)'); lg.addColorStop(1, 'rgba(255,170,80,0)');
+  g.fillStyle = lg; g.fillRect(x - 200, y - 230, 400, 290);
+}
+function drawShots(tn) {
+  for (const s of shots) {
+    const k = Math.min(1, (tn - s.t0) / s.dur), x = s.x0 + (s.x1 - s.x0) * k, y = s.y0 + (s.y1 - s.y0) * k - Math.sin(k * Math.PI) * (s.boss ? 20 : 30);
+    const c = s.boss ? boss.aura : s.fire ? '#ff8a2a' : '#9fd0ff';
+    for (let t = 0; t < 6; t++) { const kk = Math.max(0, k - t * 0.025); const tx = s.x0 + (s.x1 - s.x0) * kk, ty = s.y0 + (s.y1 - s.y0) * kk - Math.sin(kk * Math.PI) * (s.boss ? 20 : 30);
+      g.globalAlpha = 0.5 - t * 0.08; g.fillStyle = c; g.beginPath(); g.arc(tx, ty, (s.crit ? 9 : 6) - t, 0, 7); g.fill(); }
+    g.globalAlpha = 1; g.fillStyle = '#fff'; g.beginPath(); g.arc(x, y, s.crit ? 5 : 3, 0, 7); g.fill();
+  }
+}
+function drawSweep(tn) {
+  if (!sweep) return;
+  const e = tn - sweep.t0;
+  if (e < sweep.wind) {
+    g.save(); g.globalAlpha = 0.25 + 0.25 * Math.sin(e / 60); g.fillStyle = '#ff2020'; g.fillRect(0, FLOOR - 3, BOSS_X - 60, 6); g.restore();
+  } else {
+    const x = sweep.x; g.save();
+    const wg = g.createLinearGradient(x - 10, 0, x + 140, 0); wg.addColorStop(0, boss.aura); wg.addColorStop(1, 'rgba(0,0,0,0)');
+    g.globalAlpha = 0.75; g.fillStyle = wg; g.beginPath(); g.moveTo(x, FLOOR); g.quadraticCurveTo(x + 20, FLOOR - 90, x + 140, FLOOR - 70); g.lineTo(x + 140, FLOOR); g.fill(); g.restore();
+    if (Math.random() < 0.8) parts.push({ x: x + rnd(0, 30), y: FLOOR - rnd(0, 60), vx: rnd(40, 120), vy: rnd(-80, -10), t0: tn, life: 450, c: boss.aura, r: rnd(2, 4) });
+  }
+}
+function drawUI(tn) {
+  text('DEATHS  ' + deaths.n.toLocaleString(), 20, 22, 20, '#c9b9a0', 'left', 700);
+  if (phase === 'lobby') {
+    const s = Math.max(0, Math.ceil((lobbyEnd - tn) / 1000));
+    text('NEXT: ' + boss.name.toUpperCase() + (ng(boss) ? '  (NG+' + ng(boss) + ')' : '') + '  IN ' + s, W - 20, 22, 18, '#c9b9a0', 'right', 700);
+    if (!banner || now() > banner.until) text('TYPE !join TO RISE', 960, 22, 20, '#ffb347', 'center', 900);
+  }
+  if (phase === 'fight' || (phase === 'end' && !endWin)) {
+    const bx = 460, bw = 1000, by = H - 22;
+    text(boss.name + (ng(boss) ? '   NG+' + ng(boss) : ''), bx, by - 18, 22, '#e8dcc0', 'left', 700);
+    g.fillStyle = 'rgba(0,0,0,0.8)'; g.fillRect(bx - 3, by - 3, bw + 6, 14);
+    g.strokeStyle = '#6a5a40'; g.lineWidth = 1.5; g.strokeRect(bx - 3.5, by - 3.5, bw + 7, 15);
+    const k = clamp(bossHP / bossMax, 0, 1);
+    if (!bossHitT || tn - bossHitT > 600) drawUI.lag = (drawUI.lag == null ? k : drawUI.lag + (k - drawUI.lag) * 0.06); else if (drawUI.lag == null) drawUI.lag = k;
+    g.fillStyle = '#d9b860'; g.fillRect(bx, by, bw * clamp(drawUI.lag, k, 1), 8);
+    g.fillStyle = p2 ? '#c41e1e' : '#8a1010'; g.fillRect(bx, by, bw * k, 8);
+    if (phase === 'fight') text(Math.ceil(bossHP) + ' / ' + bossMax, bx + bw, by - 18, 14, '#a8987e', 'right', 400);
+  } else drawUI.lag = null;
+  if (banner && tn < banner.until) {
+    const left = banner.until - tn, a = Math.min(1, (tn - (banner.t0 || (banner.t0 = tn))) / 700, left / 700);
+    g.save(); g.globalAlpha = a;
+    if (banner.died || banner.slain) {
+      const bg = g.createLinearGradient(0, 70, 0, 230); bg.addColorStop(0, 'rgba(0,0,0,0)'); bg.addColorStop(0.5, 'rgba(0,0,0,0.85)'); bg.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = bg; g.fillRect(0, 70, W, 160);
+      g.save(); g.translate(960, 140); const sc = 1 + Math.min(1, (tn - banner.t0) / 6000) * 0.06; g.scale(sc, sc);
+      text(banner.title, 0, 0, 92, banner.color, 'center', 400, banner.died ? '#600' : '#a07020'); g.restore();
+      if (banner.sub) text(banner.sub, 960, 205, 20, '#c9b9a0', 'center', 700);
+    } else if (banner.big) {
+      text(banner.title, 960, 58, 46, banner.color, 'center', 700, '#000'); if (banner.sub) text(banner.sub, 960, 96, 18, '#c9b9a0', 'center', 700);
+    } else if (banner.small) {
+      text(banner.title, BOSS_X - 120, 40, 26, banner.color, 'center', 900, '#000'); if (banner.sub) text(banner.sub, BOSS_X - 120, 68, 15, '#c9b9a0', 'center', 700);
+    } else {
+      text(banner.title, 960, 58, 44, banner.color, 'center', 900, '#000'); if (banner.sub) text(banner.sub, 960, 96, 18, '#c9b9a0', 'center', 700);
+    }
+    g.restore();
+  }
+  if (!CHANNEL && !DEMO) text('Add ?channel=YOURCHANNEL to the browser source URL', 960, 60, 22, '#ffb347', 'center', 700);
+}
+function frame() {
+  const tn = now(); update();
+  const sx = shake > tn ? rnd(-4, 4) : 0;
+  g.setTransform(1, 0, 0, 1, sx, 0); g.clearRect(-10, 0, W + 20, H);
+  g.drawImage(bgc, 0, 0);
+  for (const f of fog) { f.x += f.v * 0.016; if (f.x > W + 300) f.x = -300; if (f.x < -300) f.x = W + 300;
+    const fg = g.createRadialGradient(f.x, f.y, 10, f.x, f.y, f.r); fg.addColorStop(0, 'rgba(150,150,170,0.10)'); fg.addColorStop(1, 'rgba(150,150,170,0)'); g.fillStyle = fg; g.fillRect(f.x - f.r, f.y - f.r, f.r * 2, f.r * 2); }
+  for (const em of embers) { em.y -= em.v * 0.016; em.x += Math.sin(tn / 900 + em.p) * 0.3; if (em.y < -5) { em.y = H; em.x = rnd(0, W); }
+    g.fillStyle = `rgba(255,${140 + Math.floor(60 * Math.sin(em.p + tn / 300))},60,${0.35 + 0.3 * Math.sin(tn / 400 + em.p)})`; g.fillRect(em.x, em.y, 2, 2); }
+  for (const s of stains) { g.fillStyle = 'rgba(120,10,10,0.55)'; g.beginPath(); g.ellipse(s.x, FLOOR - s.row * 12 + 2, 20, 4, 0, 0, 7); g.fill(); }
+  if (p2 && phase === 'fight') { g.save(); g.globalAlpha = 0.07; g.fillStyle = boss.aura; g.fillRect(0, 0, W, H); g.restore(); }
+  drawBonfire(tn);
+  drawBoss(tn);
+  drawSweep(tn);
+  const list = shown().sort((a, b) => b.row - a.row);
+  for (const k of list) drawKnight(k, tn);
+  drawShots(tn);
+  for (let i = parts.length - 1; i >= 0; i--) { const p = parts[i], e = (tn - p.t0) / p.life; if (e >= 1) { parts.splice(i, 1); continue; }
+    const t = (tn - p.t0) / 1000; g.globalAlpha = 1 - e; g.fillStyle = p.c; g.beginPath(); g.arc(p.x + p.vx * t, p.y + p.vy * t, p.r, 0, 7); g.fill(); }
+  g.globalAlpha = 1;
+  for (let i = floaters.length - 1; i >= 0; i--) { const f = floaters[i], e = (tn - f.t0) / f.life; if (e >= 1) { floaters.splice(i, 1); continue; }
+    g.save(); g.globalAlpha = e > 0.7 ? (1 - e) / 0.3 : 1; text(f.text, f.x, f.y - e * 26, f.size, f.color, 'center', 700); g.restore(); }
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  drawUI(tn);
+  requestAnimationFrame(frame);
+}
+
+// ---------------------------------------------------------------- Twitch chat (anonymous, read-only)
+function connectChat() {
+  if (!CHANNEL) return;
+  let ws;
+  try { ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443'); } catch (e) { return setTimeout(connectChat, 10000); }
+  ws.onopen = () => { ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership'); ws.send('PASS SCHMOOPIIE'); ws.send('NICK justinfan' + ri(10000, 99999)); ws.send('JOIN #' + CHANNEL); };
+  ws.onmessage = e => {
+    for (const line of String(e.data).split('\r\n')) {
+      if (!line) continue;
+      if (line.startsWith('PING')) { ws.send('PONG :tmi.twitch.tv'); continue; }
+      let m = line.match(/^(?:@(\S+) )?:(\w+)!\S+ PRIVMSG #\S+ :(.*)$/);
+      if (m) { const tags = {}; (m[1] || '').split(';').forEach(kv => { const i = kv.indexOf('='); if (i > 0) tags[kv.slice(0, i)] = kv.slice(i + 1); });
+        onChat(m[2].toLowerCase(), (tags['display-name'] || m[2]).replace(/\\s/g, ' '), m[3]); continue; }
+      m = line.match(/^:(\w+)!\S+ (JOIN|PART) #\S+$/);
+      if (m) { const l = m[1].toLowerCase(); if (m[2] === 'JOIN') join(l, null, false); else leave(l); }
+    }
+  };
+  ws.onclose = () => setTimeout(connectChat, 5000);
+}
+function runDemo() {
+  const names = ['AshenAnna', 'RollSpammer', 'ParryGod', 'SunBro_Mike', 'GreatswordGreg', 'Pyro_Pat', 'SneakySue', 'HealbotHal'];
+  names.forEach((n, i) => setTimeout(() => onChat(n.toLowerCase(), n, '!join'), 300 + i * 350));
+  setInterval(() => { const n = pick(names); if (Math.random() < 0.15) onChat(n.toLowerCase(), n, '!praise'); }, 2500);
+  if (Q.has('fast')) setTimeout(() => { bossHP = Math.round(bossMax * 0.52); }, BREAK + 3000);
+}
+const ready = Promise.race([Promise.all([...BOSSES, ...KNIGHTS].map(o => o.img.complete ? 0 : new Promise(r => { o.img.onload = o.img.onerror = r; }))), new Promise(r => setTimeout(r, 2500))]);
+Promise.all([ready, document.fonts ? document.fonts.ready : 0]).then(() => {
+  const lastKey = load('last', ''); bossIdx = nextBoss(BOSSES.findIndex(b => b.key === lastKey));
+  startLobby(); requestAnimationFrame(frame);
+});
+if (DEMO) runDemo(); else connectChat();
+</script>
+</body>
+</html>
