@@ -116,17 +116,23 @@
     <button type="button" class="kind" data-k="housecall"><b>House call request</b><span>Case by case, for jobs that can't be moved. $45 trip fee near Dalton.</span></button>
   </div>
 
+  <div id="addrstep" class="bf" hidden>
+    <div class="group" style="text-align:center">Where is it?</div>
+    <div><label for="ba" id="balabel">Address for the pickup</label><input id="ba" maxlength="200" autocomplete="street-address" placeholder="Street, city, state"></div>
+    <button type="button" class="go" id="findt">Show Open Times</button>
+    <p class="muted" style="text-align:center">Mike checks the drive so the times shown actually work.</p>
+  </div>
+
   <div id="step2" hidden>
-    <div class="group">2. Pick a time</div>
+    <div class="group">Pick a time</div>
     <div class="times" id="times"></div>
     <p class="muted" id="tnote"></p>
   </div>
 
   <form id="step3" class="bf" hidden autocomplete="on">
-    <div class="group" style="text-align:center">3. Your info</div>
+    <div class="group" style="text-align:center">Your info</div>
     <div><label for="bn">First name</label><input id="bn" name="name" required maxlength="60" autocomplete="given-name"></div>
     <div><label for="bp">Cell phone (Mike texts you to confirm)</label><input id="bp" name="phone" required inputmode="tel" maxlength="20" autocomplete="tel"></div>
-    <div id="addrwrap" hidden><label for="ba">Address for the pickup</label><input id="ba" name="address" maxlength="200" autocomplete="street-address"></div>
     <div><label for="bd">What's going on?</label><textarea id="bd" name="need" required maxlength="400" placeholder="For example: laptop won't turn on, PC running slow, Wi-Fi drops in the back bedroom"></textarea></div>
     <div><label for="be">Email (optional)</label><input id="be" name="email" type="email" maxlength="120" autocomplete="email"></div>
     <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -146,13 +152,22 @@
       document.querySelectorAll('.kind').forEach(function (x) { x.classList.remove('on'); });
       b.classList.add('on'); kind = b.getAttribute('data-k'); start = '';
       var needAddr = (kind === 'pickup' || kind === 'housecall');
-      $('addrwrap').hidden = !needAddr; $('ba').required = needAddr;
-      $('addrwrap').querySelector('label').textContent = kind === 'housecall' ? 'Address for the house call' : 'Address for the pickup';
-      $('step3').hidden = true; $('step2').hidden = false; $('msg').textContent = '';
+      $('step3').hidden = true; $('step2').hidden = true; $('msg').textContent = '';
+      $('addrstep').hidden = !needAddr;
+      $('balabel').textContent = kind === 'housecall' ? 'Address for the house call' : 'Address for the pickup';
+      if (needAddr) { $('ba').focus(); } else { loadTimes(''); }
+    });
+  });
+  $('findt').addEventListener('click', function () {
+    if (!$('ba').value.trim()) { $('ba').focus(); return; }
+    loadTimes($('ba').value.trim());
+  });
+  function loadTimes(addr) {
+      start = ''; $('step3').hidden = true; $('step2').hidden = false; $('msg').textContent = '';
       $('times').innerHTML = '<span class="muted">Finding open times...</span>'; $('tnote').textContent = '';
-      fetch(API + '/api/slots?kind=' + kind).then(function (r) { return r.json(); }).then(function (j) {
+      fetch(API + '/api/slots?kind=' + kind + '&address=' + encodeURIComponent(addr)).then(function (r) { return r.json(); }).then(function (j) {
         $('times').innerHTML = '';
-        if (!j.slots || !j.slots.length) { $('times').innerHTML = '<span class="muted">' + (j.error || 'No open times this week. Text Mike at 423-521-5694.') + '</span>'; return; }
+        if (!j.slots || !j.slots.length) { $('times').innerHTML = '<span class="muted">' + (j.error || 'No open times in the next two weeks. Text Mike at 423-521-5694.') + '</span>'; return; }
         j.slots.forEach(function (s) {
           var t = document.createElement('button'); t.type = 'button'; t.className = 'time'; t.textContent = s.label;
           t.addEventListener('click', function () {
@@ -163,12 +178,11 @@
         });
         $('tnote').textContent = kind === 'housecall' ? 'House calls are case by case: Mike confirms it fits when he texts you.' : 'Times shown are Eastern.';
       }).catch(function () { $('times').innerHTML = '<span class="muted">Booking is down right now. Text Mike at 423-521-5694.</span>'; });
-    });
-  });
+  }
   $('step3').addEventListener('submit', function (e) {
     e.preventDefault(); if (!kind || !start) return;
     var f = e.target, body = { kind: kind, start: start, name: f.name.value, phone: f.phone.value, need: f.need.value,
-      address: f.address.value, email: f.email.value, website: f.website.value };
+      address: (kind === 'pickup' || kind === 'housecall') ? $('ba').value.trim() : '', email: f.email.value, website: f.website.value };
     $('go').disabled = true; send(body);
   });
   function send(body) {
