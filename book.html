@@ -168,16 +168,28 @@
     e.preventDefault(); if (!kind || !start) return;
     var f = e.target, body = { kind: kind, start: start, name: f.name.value, phone: f.phone.value, need: f.need.value,
       address: f.address.value, email: f.email.value, website: f.website.value };
-    $('go').disabled = true; $('msg').className = 'msg'; $('msg').textContent = 'Sending...';
+    $('go').disabled = true; send(body);
+  });
+  function send(body) {
+    var f = $('step3'); $('msg').className = 'msg'; $('msg').textContent = 'Sending...';
     fetch(API + '/api/book', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
       .then(function (r) { return r.json(); }).then(function (j) {
+        if (j.needs_ok) {   // trip fee: nothing is booked until they agree
+          $('msg').className = 'msg'; $('msg').innerHTML = '';
+          var t = document.createElement('div'); t.textContent = j.message; $('msg').appendChild(t);
+          var yes = document.createElement('button'); yes.type = 'button'; yes.className = 'go'; yes.textContent = "Yes, that's OK";
+          var no = document.createElement('button'); no.type = 'button'; no.className = 'go'; no.style.background = '#444'; no.textContent = 'No thanks';
+          yes.addEventListener('click', function () { yes.disabled = no.disabled = true; body.accept_fee = true; send(body); });
+          no.addEventListener('click', function () { $('msg').className = 'msg'; $('msg').textContent = 'No problem. Text Mike at 423-521-5694 and he will work out another option.'; $('go').disabled = false; });
+          $('msg').appendChild(yes); $('msg').appendChild(no); return;
+        }
         $('msg').className = 'msg ' + (j.ok ? 'ok' : 'err'); $('msg').textContent = j.message || 'Something went wrong.';
         if (j.ok) {
           f.querySelectorAll('input,textarea,button').forEach(function (x) { x.disabled = true; }); $('step2').hidden = true;
           if (window.gtag) gtag('event', 'booking_request', { kind: kind });
         } else { $('go').disabled = false; }
       }).catch(function () { $('go').disabled = false; $('msg').className = 'msg err'; $('msg').textContent = 'Could not send. Text Mike at 423-521-5694.'; });
-  });
+  }
 })();
 </script>
 
