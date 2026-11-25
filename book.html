@@ -94,6 +94,7 @@
   .bf input, .bf textarea { width: 100%; background: #0b0b0d; border: 1px solid #333; border-radius: 8px; color: #fff; padding: 11px 12px; font: 15px 'Open Sans', sans-serif; }
   .bf textarea { min-height: 84px; resize: vertical; }
   .hp { position: absolute; left: -5000px; }
+  [hidden] { display: none !important; }   /* .bf's display:grid was overriding the hidden attribute */
   .go { margin-top: 14px; width: 100%; background: #e53935; color: #fff; border: none; border-radius: 10px; padding: 14px; font: 600 20px 'Oswald', sans-serif; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
   .go:disabled { background: #555; cursor: default; }
   .msg { margin-top: 12px; font-size: 15px; }
